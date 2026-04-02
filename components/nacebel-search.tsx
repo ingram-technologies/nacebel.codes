@@ -161,15 +161,6 @@ export default function NacebelSearchClient({
 		() => filteredCodes.slice(startIndex, endIndex),
 		[filteredCodes, startIndex, endIndex],
 	);
-	const levelCounts = useMemo(
-		() =>
-			nacebelCodes.reduce<Record<number, number>>((accumulator, code) => {
-				accumulator[code.level] = (accumulator[code.level] || 0) + 1;
-				return accumulator;
-			}, {}),
-		[nacebelCodes],
-	);
-
 	const copyToClipboard = (code: string, description: string) => {
 		navigator.clipboard.writeText(`${code} - ${description}`).then(() => {
 			setCopiedCode(code);
@@ -217,32 +208,8 @@ export default function NacebelSearchClient({
 	};
 
 	const t = translations[language];
-	const quickStats = [
-		{
-			label: "Official codes",
-			value: nacebelCodes.length.toLocaleString(),
-			note: "Full 2025 directory",
-		},
-		{
-			label: "Languages",
-			value: "4",
-			note: "EN, FR, DE, NL",
-		},
-		{
-			label: "Hierarchy",
-			value: "Levels 2-5",
-			note: "Browse broad to specific",
-		},
-	];
-	const levelStatLabels = [
-		{ level: 2, label: "Sections" },
-		{ level: 3, label: "Divisions" },
-		{ level: 4, label: "Groups" },
-		{ level: 5, label: "Classes" },
-	];
-	const resultsHeading = searchTerm
-		? `Results for "${searchTerm}"`
-		: "Browse all NACE-BEL codes";
+	const exampleSearches = ["software", "62.01", "consulting"];
+	const resultsHeading = searchTerm ? `Results for "${searchTerm}"` : "All codes";
 
 	if (initialCodes.length === 0 && !isClientProcessing) {
 		return (
@@ -288,85 +255,19 @@ export default function NacebelSearchClient({
 				</div>
 			</header>
 
-			<section className="relative overflow-hidden rounded-[2rem] border border-white/60 bg-white/80 p-6 shadow-[0_30px_90px_-55px_rgba(15,23,42,0.7)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 sm:p-8 lg:p-10">
-				<div className="absolute -left-20 top-0 h-56 w-56 rounded-full bg-sky-300/20 blur-3xl dark:bg-sky-500/15" />
-				<div className="absolute -right-12 bottom-0 h-52 w-52 rounded-full bg-amber-200/30 blur-3xl dark:bg-amber-500/10" />
-				<div className="relative grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-start">
-					<div className="space-y-6">
-						<div className="inline-flex items-center rounded-full border border-border/70 bg-background/75 px-3 py-1 text-sm font-medium text-muted-foreground">
-							Official Belgian activity code directory
-						</div>
-						<div className="space-y-4">
-							<h1 className="font-display text-5xl tracking-tight text-foreground sm:text-6xl">
+			<section className="rounded-[2rem] border border-white/60 bg-white/80 p-5 shadow-[0_24px_70px_-50px_rgba(15,23,42,0.65)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 sm:p-6">
+				<div className="flex flex-col gap-6">
+					<div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+						<div className="space-y-2">
+							<h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
 								{t.title}
 							</h1>
-							<p className="max-w-2xl text-balance text-lg leading-8 text-muted-foreground">
-								Search the complete classification in English, French,
-								Dutch, and German. Copy codes, export the full
-								directory, or use the public API directly.
+							<p className="max-w-2xl text-sm leading-7 text-muted-foreground sm:text-base">
+								Search the official directory, copy codes, export the
+								current results, or jump to the public API.
 							</p>
 						</div>
-						<div className="grid gap-3 sm:grid-cols-3">
-							{quickStats.map((stat) => (
-								<div
-									key={stat.label}
-									className="rounded-[1.5rem] border border-border/70 bg-background/80 p-4 shadow-sm backdrop-blur-sm"
-								>
-									<p className="text-sm text-muted-foreground">
-										{stat.label}
-									</p>
-									<p className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
-										{stat.value}
-									</p>
-									<p className="mt-1 text-sm text-muted-foreground">
-										{stat.note}
-									</p>
-								</div>
-							))}
-						</div>
-						<div className="flex flex-wrap gap-2">
-							{levelStatLabels.map((item) => (
-								<div
-									key={item.level}
-									className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-background/75 px-3 py-1.5 text-sm text-muted-foreground"
-								>
-									<span className="font-semibold text-foreground">
-										{(
-											levelCounts[item.level] || 0
-										).toLocaleString()}
-									</span>
-									<span>{item.label}</span>
-								</div>
-							))}
-						</div>
-					</div>
-
-					<div className="rounded-[1.75rem] border border-border/70 bg-background/80 p-5 shadow-inner shadow-black/5 backdrop-blur-sm dark:bg-slate-950/50">
-						<p className="text-sm font-semibold uppercase tracking-[0.24em] text-muted-foreground">
-							Start searching
-						</p>
-						<div className="mt-4">
-							<SearchInput
-								ref={searchInputRef}
-								searchTerm={searchTerm}
-								setSearchTerm={setSearchTerm}
-								placeholder={t.searchPlaceholder}
-								className="max-w-none"
-								autoFocus
-							/>
-						</div>
-						<div className="mt-4 flex flex-wrap gap-2 text-sm text-muted-foreground">
-							<span className="rounded-full border border-border/70 bg-background/70 px-3 py-1">
-								Try: software
-							</span>
-							<span className="rounded-full border border-border/70 bg-background/70 px-3 py-1">
-								62.01
-							</span>
-							<span className="rounded-full border border-border/70 bg-background/70 px-3 py-1">
-								consulting
-							</span>
-						</div>
-						<div className="mt-6 flex flex-wrap items-center gap-3">
+						<div className="flex flex-wrap items-center gap-3">
 							<Button
 								size="lg"
 								onClick={exportToCSV}
@@ -379,43 +280,48 @@ export default function NacebelSearchClient({
 								<a href="/api/docs">Open API docs</a>
 							</Button>
 						</div>
-						<div className="mt-6 flex items-center justify-between gap-4 rounded-[1.25rem] border border-border/70 bg-background/75 px-4 py-3">
-							<div className="space-y-1">
-								<p className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-									Shortcut
-								</p>
-								<p className="text-sm font-medium text-foreground">
-									Press / or Ctrl/Cmd+K to focus search
-								</p>
-							</div>
-							<div className="hidden items-center gap-2 text-xs font-medium text-muted-foreground sm:flex">
-								<kbd className="rounded-full border border-border/70 bg-background px-3 py-1">
-									/
-								</kbd>
-								<kbd className="rounded-full border border-border/70 bg-background px-3 py-1">
-									Ctrl
-								</kbd>
-								<kbd className="rounded-full border border-border/70 bg-background px-3 py-1">
-									Cmd
-								</kbd>
-								<kbd className="rounded-full border border-border/70 bg-background px-3 py-1">
-									K
-								</kbd>
+					</div>
+
+					<AdvertisementBanner />
+
+					<div className="sticky top-3 z-20 -mx-1 rounded-[1.5rem] border border-border/70 bg-background/92 p-3 shadow-[0_20px_50px_-38px_rgba(15,23,42,0.6)] backdrop-blur-xl dark:bg-slate-950/85 sm:-mx-2 sm:px-4">
+						<div className="flex flex-col gap-3 lg:flex-row lg:items-center">
+							<SearchInput
+								ref={searchInputRef}
+								searchTerm={searchTerm}
+								setSearchTerm={setSearchTerm}
+								placeholder={t.searchPlaceholder}
+								className="max-w-none flex-1"
+								autoFocus
+							/>
+							<div className="flex flex-wrap items-center gap-3">
+								<Button variant="outline" size="lg" asChild>
+									<a href="/api/docs">Open API docs</a>
+								</Button>
 							</div>
 						</div>
+					</div>
+
+					<div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+						<span className="font-medium">Try:</span>
+						{exampleSearches.map((example) => (
+							<button
+								key={example}
+								type="button"
+								onClick={() => setSearchTerm(example)}
+								className="rounded-full border border-border/70 bg-background/70 px-3 py-1 transition-colors hover:border-primary/25 hover:text-foreground"
+							>
+								{example}
+							</button>
+						))}
 					</div>
 				</div>
 			</section>
 
-			<AdvertisementBanner />
-
-			<section className="rounded-[2rem] border border-white/60 bg-white/78 p-5 shadow-[0_24px_70px_-50px_rgba(15,23,42,0.65)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 sm:p-6">
-				<div className="flex flex-col gap-4 border-b border-border/60 pb-5 lg:flex-row lg:items-end lg:justify-between">
-					<div className="space-y-2">
-						<p className="text-xs font-semibold uppercase tracking-[0.28em] text-muted-foreground">
-							Directory
-						</p>
-						<h2 className="font-display text-3xl tracking-tight text-foreground sm:text-4xl">
+			<section className="rounded-[2rem] border border-white/60 bg-white/78 p-4 shadow-[0_24px_70px_-50px_rgba(15,23,42,0.65)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 sm:p-5">
+				<div className="flex flex-col gap-3 border-b border-border/60 pb-4 lg:flex-row lg:items-center lg:justify-between">
+					<div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+						<h2 className="text-base font-semibold tracking-tight text-foreground sm:text-lg">
 							{resultsHeading}
 						</h2>
 						<p className="text-sm text-muted-foreground">
@@ -426,15 +332,27 @@ export default function NacebelSearchClient({
 								&& ` (${t.page} ${currentPage} ${t.of} ${totalPages})`}
 						</p>
 					</div>
-					<PaginationControls
-						currentPage={currentPage}
-						totalPages={totalPages}
-						setCurrentPage={setCurrentPage}
-						translations={t}
-					/>
+					<div className="flex flex-wrap items-center gap-3 lg:justify-end">
+						<Button
+							variant="outline"
+							size="sm"
+							onClick={exportToCSV}
+							className="flex items-center gap-2"
+						>
+							<Download className="h-4 w-4" />
+							<span>{t.exportCsv}</span>
+						</Button>
+						<PaginationControls
+							currentPage={currentPage}
+							totalPages={totalPages}
+							setCurrentPage={setCurrentPage}
+							translations={t}
+							className="justify-start sm:justify-end"
+						/>
+					</div>
 				</div>
 
-				<div className="mt-6">
+				<div className="mt-4">
 					{isClientProcessing && searchTerm ? (
 						<div className="rounded-[1.5rem] border border-dashed border-border/70 bg-background/60 py-14 text-center text-muted-foreground">
 							{t.loading}
@@ -452,19 +370,6 @@ export default function NacebelSearchClient({
 							{t.noCodes}
 						</div>
 					)}
-				</div>
-
-				<div className="mt-6 flex flex-col gap-4 border-t border-border/60 pt-5 sm:flex-row sm:items-center sm:justify-between">
-					<div className="text-sm text-muted-foreground">
-						Official NACE-BEL 2025 directory, searchable locally for fast
-						lookup and export.
-					</div>
-					<PaginationControls
-						currentPage={currentPage}
-						totalPages={totalPages}
-						setCurrentPage={setCurrentPage}
-						translations={t}
-					/>
 				</div>
 			</section>
 

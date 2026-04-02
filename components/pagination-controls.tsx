@@ -11,12 +11,14 @@ import {
 	PaginationNext,
 	PaginationPrevious,
 } from "@/components/ui/pagination";
+import { cn } from "@/lib/utils";
 
 interface PaginationControlsProps {
 	currentPage: number;
 	totalPages: number;
 	setCurrentPage: (page: number) => void;
 	translations: any;
+	className?: string;
 }
 
 export function PaginationControls({
@@ -24,6 +26,7 @@ export function PaginationControls({
 	totalPages,
 	setCurrentPage,
 	translations,
+	className,
 }: PaginationControlsProps) {
 	const getVisiblePages = (page: number, pages: number) => {
 		const visiblePages: number[] = [];
@@ -50,7 +53,7 @@ export function PaginationControls({
 	};
 
 	return (
-		<Pagination className="justify-start sm:justify-center">
+		<Pagination className={cn("justify-start sm:justify-center", className)}>
 			<PaginationContent>
 				<PaginationItem>
 					<PaginationPrevious

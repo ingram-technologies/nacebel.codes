@@ -12,7 +12,7 @@ export function AdvertisementBanner() {
 				<div className="flex flex-col gap-3 text-left md:flex-row md:items-center md:justify-between">
 					<div className="space-y-1">
 						<p className="text-xs font-semibold uppercase tracking-[0.22em] text-sky-700 dark:text-sky-300">
-							Also from Ingram Technologies
+							Recommendation from the team
 						</p>
 						<p className="text-base font-semibold text-slate-900 dark:text-slate-100">
 							Need to incorporate a Belgian company? Beldoc handles it
