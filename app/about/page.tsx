@@ -1,5 +1,5 @@
 import { PageFooter } from "@/components/page-footer";
-import { Badge } from "@/components/ui/badge";
+import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
 import type { Metadata } from "next";
 
@@ -91,34 +91,10 @@ export default function AboutPage() {
 	return (
 		<div className="bg-background text-foreground">
 			<div className="mx-auto max-w-5xl space-y-8 px-4 py-8 sm:py-12">
-				<header className="relative overflow-hidden rounded-[2rem] border border-white/60 bg-white/80 p-8 shadow-[0_30px_90px_-55px_rgba(15,23,42,0.7)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 sm:p-10">
-					<div className="absolute -left-16 top-0 h-52 w-52 rounded-full bg-sky-300/20 blur-3xl dark:bg-sky-500/15" />
-					<div className="absolute -right-10 bottom-0 h-48 w-48 rounded-full bg-amber-200/30 blur-3xl dark:bg-amber-500/10" />
-					<div className="relative space-y-6">
-						<div className="flex flex-wrap gap-3">
-							<Button variant="outline" size="sm" asChild>
-								<a href="/">Back to search</a>
-							</Button>
-							<Button variant="outline" size="sm" asChild>
-								<a href="/api/docs">API Docs</a>
-							</Button>
-						</div>
-						<Badge className="w-fit border-primary/15 bg-primary/10 text-primary hover:bg-primary/10">
-							About the classification
-						</Badge>
-						<div className="space-y-4">
-							<h1 className="font-display text-5xl tracking-tight sm:text-6xl">
-								About NACE-BEL Codes
-							</h1>
-							<p className="max-w-3xl text-balance text-lg leading-8 text-muted-foreground">
-								NACE and NACE-BEL are the shared vocabulary for
-								classifying economic activity in Europe and Belgium.
-								They help businesses, administrations, and analysts talk
-								about the same work with a common structure.
-							</p>
-						</div>
-					</div>
-				</header>
+				<SiteHeader
+					title="About NACE-BEL Codes"
+					subtitle="NACE and NACE-BEL classify economic activity in Belgium and across Europe."
+				/>
 
 				<section className="grid gap-6 lg:grid-cols-2">
 					<article className="rounded-[2rem] border border-white/60 bg-white/78 p-6 shadow-[0_24px_70px_-50px_rgba(15,23,42,0.65)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 sm:p-8">

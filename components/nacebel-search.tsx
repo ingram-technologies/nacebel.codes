@@ -7,18 +7,82 @@ import type { Language, NacebelCode, Theme } from "@/types";
 import { Download } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import { AdvertisementBanner } from "./advertisement-banner";
-import { LanguageSwitcher } from "./language-switcher";
 import { NacebelCodeList } from "./nacebel-code-list";
 import { PageFooter } from "./page-footer";
 import { PaginationControls } from "./pagination-controls";
 import { SearchInput } from "./search-input";
-import { ThemeToggle } from "./theme-toggle";
+import { SiteHeader } from "./site-header";
 
 // Helper function to remove punctuation for search optimization
 function removePunctuationClient(text: string): string {
 	if (!text) return "";
-	return text.replace(/[^\p{L}\p{N}\s]/gu, "").toLowerCase();
+	return text.replace(/[^\p{L}\p{N}\s]/gu, " ").toLowerCase();
+}
+
+function normalizeCodeSearch(text: string) {
+	return text.replace(/[\s.]+/g, "").toLowerCase();
+}
+
+function isCodeLikeSearch(searchTerm: string) {
+	const trimmedSearch = searchTerm.trim();
+	return trimmedSearch.length > 0 && /^[\d.\s]+$/.test(trimmedSearch);
+}
+
+function getSearchTokens(searchTerm: string) {
+	const normalizedTokens = removePunctuationClient(searchTerm)
+		.split(/\s+/)
+		.filter(Boolean);
+
+	return normalizedTokens.map((token) => {
+		const variants = new Set<string>([token]);
+
+		if (token.endsWith("ing") && token.length > 5) {
+			variants.add(token.slice(0, -3));
+		}
+		if (token.endsWith("ies") && token.length > 4) {
+			variants.add(`${token.slice(0, -3)}y`);
+		}
+		if (token.endsWith("s") && token.length > 4) {
+			variants.add(token.slice(0, -1));
+		}
+
+		return Array.from(variants);
+	});
+}
+
+function getSearchableText(code: NacebelCode) {
+	return removePunctuationClient(
+		[
+			code.code,
+			...Object.values(code.titles),
+			...Object.values(code.description),
+		].join(" "),
+	);
+}
+
+function getCodeSearchRank(code: NacebelCode, searchTerm: string) {
+	const trimmedSearch = searchTerm.trim().toLowerCase();
+	const normalizedSearch = normalizeCodeSearch(searchTerm);
+	const codeValue = code.code.toLowerCase();
+	const normalizedCodeValue = normalizeCodeSearch(code.code);
+
+	if (codeValue === trimmedSearch || normalizedCodeValue === normalizedSearch) {
+		return 0;
+	}
+	if (
+		codeValue.startsWith(trimmedSearch)
+		|| normalizedCodeValue.startsWith(normalizedSearch)
+	) {
+		return 1;
+	}
+	if (
+		codeValue.includes(trimmedSearch)
+		|| normalizedCodeValue.includes(normalizedSearch)
+	) {
+		return 2;
+	}
+
+	return 3;
 }
 
 interface NacebelSearchClientProps {
@@ -130,19 +194,46 @@ export default function NacebelSearchClient({
 		setIsClientProcessing(true);
 		setClientError(null);
 		try {
-			const searchableSearchTerm = removePunctuationClient(searchTerm);
-			if (searchableSearchTerm === "") {
+			const trimmedSearch = searchTerm.trim();
+			const isCodeSearch = isCodeLikeSearch(trimmedSearch);
+			const searchTokens = getSearchTokens(trimmedSearch);
+
+			if (trimmedSearch.length === 0) {
 				setFilteredCodes(nacebelCodes);
+			} else if (isCodeSearch) {
+				const normalizedCodeQuery = normalizeCodeSearch(trimmedSearch);
+				const results = nacebelCodes
+					.filter((code) => {
+						const normalizedCodeValue = normalizeCodeSearch(code.code);
+						return (
+							code.code
+								.toLowerCase()
+								.startsWith(trimmedSearch.toLowerCase())
+							|| normalizedCodeValue.startsWith(normalizedCodeQuery)
+						);
+					})
+					.sort((leftCode, rightCode) => {
+						const rankDifference =
+							getCodeSearchRank(leftCode, trimmedSearch)
+							- getCodeSearchRank(rightCode, trimmedSearch);
+
+						if (rankDifference !== 0) {
+							return rankDifference;
+						}
+
+						return (
+							leftCode.code.length - rightCode.code.length
+							|| leftCode.code.localeCompare(rightCode.code)
+						);
+					});
+				setFilteredCodes(results);
 			} else {
-				const results = nacebelCodes.filter(
-					(code) =>
-						removePunctuationClient(code.code).includes(
-							searchableSearchTerm,
-						)
-						|| removePunctuationClient(code.titles[language]).includes(
-							searchableSearchTerm,
-						),
-				);
+				const results = nacebelCodes.filter((code) => {
+					const searchableText = getSearchableText(code);
+					return searchTokens.every((tokenGroup) =>
+						tokenGroup.some((token) => searchableText.includes(token)),
+					);
+				});
 				setFilteredCodes(results);
 			}
 			setCurrentPage(1);
@@ -161,6 +252,13 @@ export default function NacebelSearchClient({
 		() => filteredCodes.slice(startIndex, endIndex),
 		[filteredCodes, startIndex, endIndex],
 	);
+	const copyCodeOnly = (code: string) => {
+		navigator.clipboard.writeText(code).then(() => {
+			setCopiedCode(code);
+			toast({ description: t.copied, duration: 2000 });
+			setTimeout(() => setCopiedCode(null), 2000);
+		});
+	};
 	const copyToClipboard = (code: string, description: string) => {
 		navigator.clipboard.writeText(`${code} - ${description}`).then(() => {
 			setCopiedCode(code);
@@ -202,14 +300,14 @@ export default function NacebelSearchClient({
 		link.click();
 		document.body.removeChild(link);
 		toast({
-			description: `Exported ${filteredCodes.length} codes to CSV`,
+			description: t.exportedCsv(filteredCodes.length),
 			duration: 3000,
 		});
 	};
 
 	const t = translations[language];
 	const exampleSearches = ["software", "62.01", "consulting"];
-	const resultsHeading = searchTerm ? `Results for "${searchTerm}"` : "All codes";
+	const resultsHeading = searchTerm ? t.resultsFor(searchTerm) : t.allCodes;
 
 	if (initialCodes.length === 0 && !isClientProcessing) {
 		return (
@@ -220,135 +318,73 @@ export default function NacebelSearchClient({
 	}
 
 	return (
-		<div className="space-y-8 lg:space-y-10">
-			<header className="rounded-[2rem] border border-white/60 bg-white/75 p-4 shadow-[0_20px_60px_-45px_rgba(15,23,42,0.55)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5">
-				<div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-					<div className="flex flex-wrap items-center gap-2 text-sm">
-						<span className="inline-flex items-center rounded-full border border-primary/15 bg-primary/10 px-3 py-1 font-semibold text-primary">
-							NACE-BEL 2025
-						</span>
-						<span className="inline-flex items-center rounded-full border border-border/70 bg-background/70 px-3 py-1 text-muted-foreground">
-							Public API
-						</span>
-					</div>
-					<div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-						<div className="flex flex-wrap items-center gap-2">
-							<Button variant="outline" size="sm" asChild>
-								<a href="/about">About</a>
-							</Button>
-							<Button variant="outline" size="sm" asChild>
-								<a href="/api/docs">API Docs</a>
-							</Button>
-						</div>
-						<div className="flex items-center gap-3">
-							<ThemeToggle
-								theme={theme}
-								setTheme={setTheme}
-								translations={t}
-							/>
-							<LanguageSwitcher
-								language={language}
-								changeLanguage={changeLanguage}
-							/>
-						</div>
-					</div>
+		<div className="space-y-5 sm:space-y-6">
+			<SiteHeader
+				title={t.title}
+				subtitle={t.subtitle}
+				language={language}
+				onLanguageChange={changeLanguage}
+				theme={theme}
+				onThemeChange={setTheme}
+			/>
+
+			<section className="sticky top-3 z-20 space-y-3 rounded-[1.25rem] border border-white/60 bg-white/88 p-3 shadow-[0_20px_50px_-38px_rgba(15,23,42,0.6)] backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/88 sm:p-4">
+				<div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+					<span className="font-medium">{t.tryLabel}</span>
+					{exampleSearches.map((example) => (
+						<button
+							key={example}
+							type="button"
+							onClick={() => setSearchTerm(example)}
+							className="rounded-full border border-border/70 bg-background/70 px-3 py-1 transition-colors hover:border-primary/25 hover:text-foreground"
+						>
+							{example}
+						</button>
+					))}
 				</div>
-			</header>
-
-			<section className="rounded-[2rem] border border-white/60 bg-white/80 p-5 shadow-[0_24px_70px_-50px_rgba(15,23,42,0.65)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 sm:p-6">
-				<div className="flex flex-col gap-6">
-					<div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-						<div className="space-y-2">
-							<h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-								{t.title}
-							</h1>
-							<p className="max-w-2xl text-sm leading-7 text-muted-foreground sm:text-base">
-								Search the official directory, copy codes, export the
-								current results, or jump to the public API.
-							</p>
-						</div>
-						<div className="flex flex-wrap items-center gap-3">
-							<Button
-								size="lg"
-								onClick={exportToCSV}
-								className="flex items-center gap-2"
-							>
-								<Download className="h-4 w-4" />
-								<span>{t.exportCsv}</span>
-							</Button>
-							<Button variant="outline" size="lg" asChild>
-								<a href="/api/docs">Open API docs</a>
-							</Button>
-						</div>
-					</div>
-
-					<AdvertisementBanner />
-
-					<div className="sticky top-3 z-20 -mx-1 rounded-[1.5rem] border border-border/70 bg-background/92 p-3 shadow-[0_20px_50px_-38px_rgba(15,23,42,0.6)] backdrop-blur-xl dark:bg-slate-950/85 sm:-mx-2 sm:px-4">
-						<div className="flex flex-col gap-3 lg:flex-row lg:items-center">
-							<SearchInput
-								ref={searchInputRef}
-								searchTerm={searchTerm}
-								setSearchTerm={setSearchTerm}
-								placeholder={t.searchPlaceholder}
-								className="max-w-none flex-1"
-								autoFocus
-							/>
-							<div className="flex flex-wrap items-center gap-3">
-								<Button variant="outline" size="lg" asChild>
-									<a href="/api/docs">Open API docs</a>
-								</Button>
-							</div>
-						</div>
-					</div>
-
-					<div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-						<span className="font-medium">Try:</span>
-						{exampleSearches.map((example) => (
-							<button
-								key={example}
-								type="button"
-								onClick={() => setSearchTerm(example)}
-								className="rounded-full border border-border/70 bg-background/70 px-3 py-1 transition-colors hover:border-primary/25 hover:text-foreground"
-							>
-								{example}
-							</button>
-						))}
-					</div>
-				</div>
+				<SearchInput
+					ref={searchInputRef}
+					searchTerm={searchTerm}
+					setSearchTerm={setSearchTerm}
+					placeholder={t.searchPlaceholder}
+					className="max-w-none"
+					autoFocus
+				/>
 			</section>
 
-			<section className="rounded-[2rem] border border-white/60 bg-white/78 p-4 shadow-[0_24px_70px_-50px_rgba(15,23,42,0.65)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 sm:p-5">
-				<div className="flex flex-col gap-3 border-b border-border/60 pb-4 lg:flex-row lg:items-center lg:justify-between">
-					<div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-						<h2 className="text-base font-semibold tracking-tight text-foreground sm:text-lg">
-							{resultsHeading}
-						</h2>
-						<p className="text-sm text-muted-foreground">
-							{t.showing} {filteredCodes.length > 0 ? startIndex + 1 : 0}-
-							{Math.min(endIndex, filteredCodes.length)} {t.of}{" "}
-							{filteredCodes.length.toLocaleString()} {t.codes}
-							{totalPages > 1
-								&& ` (${t.page} ${currentPage} ${t.of} ${totalPages})`}
-						</p>
-					</div>
-					<div className="flex flex-wrap items-center gap-3 lg:justify-end">
+			<PaginationControls
+				currentPage={currentPage}
+				totalPages={totalPages}
+				setCurrentPage={setCurrentPage}
+				translations={t}
+				className="justify-center"
+			/>
+
+			<section className="rounded-[1.75rem] border border-white/60 bg-white/78 p-4 shadow-[0_24px_70px_-50px_rgba(15,23,42,0.65)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 sm:p-4">
+				<div className="border-b border-border/60 pb-4">
+					<div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+						<div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+							<h2 className="text-base font-semibold tracking-tight text-foreground sm:text-lg">
+								{resultsHeading}
+							</h2>
+							<p className="text-sm text-muted-foreground">
+								{t.showing}{" "}
+								{filteredCodes.length > 0 ? startIndex + 1 : 0}-
+								{Math.min(endIndex, filteredCodes.length)} {t.of}{" "}
+								{filteredCodes.length.toLocaleString()} {t.codes}
+								{totalPages > 1
+									&& ` (${t.page} ${currentPage} ${t.of} ${totalPages})`}
+							</p>
+						</div>
 						<Button
 							variant="outline"
 							size="sm"
 							onClick={exportToCSV}
-							className="flex items-center gap-2"
+							className="flex items-center gap-2 self-start lg:self-auto"
 						>
 							<Download className="h-4 w-4" />
 							<span>{t.exportCsv}</span>
 						</Button>
-						<PaginationControls
-							currentPage={currentPage}
-							totalPages={totalPages}
-							setCurrentPage={setCurrentPage}
-							translations={t}
-							className="justify-start sm:justify-end"
-						/>
 					</div>
 				</div>
 
@@ -361,7 +397,9 @@ export default function NacebelSearchClient({
 						<NacebelCodeList
 							codes={paginatedCodes}
 							language={language}
+							searchTerm={searchTerm}
 							copiedCode={copiedCode}
+							onCopyCode={copyCodeOnly}
 							onCopy={copyToClipboard}
 							getExternalLink={getExternalLink}
 						/>
@@ -372,6 +410,14 @@ export default function NacebelSearchClient({
 					)}
 				</div>
 			</section>
+
+			<PaginationControls
+				currentPage={currentPage}
+				totalPages={totalPages}
+				setCurrentPage={setCurrentPage}
+				translations={t}
+				className="justify-center"
+			/>
 
 			<PageFooter />
 		</div>

@@ -1,5 +1,6 @@
 import { CodeBlock } from "@/components/code-block";
 import { PageFooter } from "@/components/page-footer";
+import { SiteHeader } from "@/components/site-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { Metadata } from "next";
@@ -102,74 +103,34 @@ export default function ApiDocsPage() {
 	return (
 		<div className="bg-background text-foreground">
 			<div className="mx-auto max-w-5xl space-y-8 px-4 py-8 sm:py-12">
-				<header className="relative overflow-hidden rounded-[2rem] border border-white/60 bg-white/80 p-8 shadow-[0_30px_90px_-55px_rgba(15,23,42,0.7)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 sm:p-10">
-					<div className="absolute -left-16 top-0 h-52 w-52 rounded-full bg-sky-300/20 blur-3xl dark:bg-sky-500/15" />
-					<div className="absolute -right-10 bottom-0 h-48 w-48 rounded-full bg-amber-200/30 blur-3xl dark:bg-amber-500/10" />
-					<div className="relative space-y-6">
-						<div className="flex flex-wrap gap-3">
-							<Button variant="outline" size="sm" asChild>
-								<a href="/">Search UI</a>
-							</Button>
-							<Button variant="outline" size="sm" asChild>
-								<a href="/about">About NACE-BEL</a>
-							</Button>
-						</div>
-						<div className="flex flex-wrap gap-2">
-							<Badge className="border-primary/15 bg-primary/10 text-primary hover:bg-primary/10">
-								Public API
-							</Badge>
-							<Badge variant="outline" className="bg-background/70">
-								REST
-							</Badge>
-							<Badge variant="outline" className="bg-background/70">
-								JSON
-							</Badge>
-							<Badge variant="outline" className="bg-background/70">
-								CORS enabled
-							</Badge>
-						</div>
-						<div className="space-y-4">
-							<h1 className="font-display text-5xl tracking-tight sm:text-6xl">
-								NACE-BEL 2025 API
-							</h1>
-							<p className="max-w-3xl text-balance text-lg leading-8 text-muted-foreground">
-								The API is public and available as-is for search and
-								lookup use cases. No Stripe plan and no API key. Just
-								hit the endpoints directly, with fair-use throttling on
-								shared capacity.
-							</p>
-						</div>
-						<div className="grid gap-3 sm:grid-cols-3">
-							<div className="rounded-[1.5rem] border border-border/70 bg-background/80 p-4 shadow-sm">
-								<p className="text-sm text-muted-foreground">
-									Endpoints
-								</p>
-								<p className="mt-2 text-2xl font-semibold">2</p>
-								<p className="mt-1 text-sm text-muted-foreground">
-									List/search and detail lookup
-								</p>
-							</div>
-							<div className="rounded-[1.5rem] border border-border/70 bg-background/80 p-4 shadow-sm">
-								<p className="text-sm text-muted-foreground">
-									Max page size
-								</p>
-								<p className="mt-2 text-2xl font-semibold">500</p>
-								<p className="mt-1 text-sm text-muted-foreground">
-									Good for bulk reads and exports
-								</p>
-							</div>
-							<div className="rounded-[1.5rem] border border-border/70 bg-background/80 p-4 shadow-sm">
-								<p className="text-sm text-muted-foreground">
-									Authentication
-								</p>
-								<p className="mt-2 text-2xl font-semibold">None</p>
-								<p className="mt-1 text-sm text-muted-foreground">
-									Contact us for higher limits and support
-								</p>
-							</div>
-						</div>
+				<SiteHeader
+					title="NACE-BEL 2025 API"
+					subtitle="Public API documentation for search and lookup across the NACE-BEL 2025 directory."
+				/>
+
+				<section className="grid gap-3 sm:grid-cols-3">
+					<div className="rounded-[1.5rem] border border-border/70 bg-background/80 p-4 shadow-sm">
+						<p className="text-sm text-muted-foreground">Endpoints</p>
+						<p className="mt-2 text-2xl font-semibold">2</p>
+						<p className="mt-1 text-sm text-muted-foreground">
+							List/search and detail lookup
+						</p>
 					</div>
-				</header>
+					<div className="rounded-[1.5rem] border border-border/70 bg-background/80 p-4 shadow-sm">
+						<p className="text-sm text-muted-foreground">Max page size</p>
+						<p className="mt-2 text-2xl font-semibold">500</p>
+						<p className="mt-1 text-sm text-muted-foreground">
+							Good for bulk reads and exports
+						</p>
+					</div>
+					<div className="rounded-[1.5rem] border border-border/70 bg-background/80 p-4 shadow-sm">
+						<p className="text-sm text-muted-foreground">Authentication</p>
+						<p className="mt-2 text-2xl font-semibold">None</p>
+						<p className="mt-1 text-sm text-muted-foreground">
+							Contact us for higher limits and support
+						</p>
+					</div>
+				</section>
 
 				<section className="rounded-[2rem] border border-white/60 bg-white/78 p-6 shadow-[0_24px_70px_-50px_rgba(15,23,42,0.65)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 sm:p-8">
 					<div className="space-y-4">

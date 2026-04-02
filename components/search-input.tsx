@@ -26,7 +26,7 @@ export const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
 					type="search"
 					placeholder={placeholder}
 					autoFocus={autoFocus}
-					className="h-14 rounded-2xl border-border/70 bg-white/90 pl-12 pr-4 text-base shadow-[0_24px_60px_-40px_rgba(15,23,42,0.65)] placeholder:text-muted-foreground/80 dark:bg-slate-950/60"
+					className="h-12 rounded-[1rem] border-border/70 bg-white/90 pl-12 pr-4 text-base shadow-[0_20px_50px_-40px_rgba(15,23,42,0.65)] placeholder:text-muted-foreground/80 dark:bg-slate-950/60"
 					value={searchTerm}
 					onChange={(e) => setSearchTerm(e.target.value)}
 					aria-label={placeholder}
