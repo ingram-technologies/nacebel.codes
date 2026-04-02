@@ -1,30 +1,29 @@
 import { CodeBlock } from "@/components/code-block";
 import { PageFooter } from "@/components/page-footer";
-import { StripePricingTable } from "@/components/stripe-pricing-table";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-	title: "API Documentation - NACE-BEL 2025",
+	title: "API Documentation",
 	description:
-		"Complete API documentation for the NACE-BEL 2025 classification system. Access economic activity codes programmatically with our REST API.",
+		"Public API documentation for the NACE-BEL 2025 classification system.",
 	openGraph: {
 		title: "API Documentation - NACE-BEL 2025",
 		description:
-			"Complete API documentation for the NACE-BEL 2025 classification system. Access economic activity codes programmatically with our REST API.",
+			"Public API documentation for the NACE-BEL 2025 classification system.",
 		type: "website",
 	},
 };
 
-export default function ApiDocsPage() {
-	const listResponseExample = `{
+const listResponseExample = `{
   "data": [
     {
       "level": 2,
       "code": "01.1",
       "titles": {
         "en": "Growing of non-perennial crops",
-        "de": "Anbau von einjährigen Pflanzen",
+        "de": "Anbau von einjahrigen Pflanzen",
         "fr": "Cultures non permanentes",
         "nl": "Teelt van eenjarige gewassen"
       },
@@ -35,13 +34,13 @@ export default function ApiDocsPage() {
   "totalItems": 2458
 }`;
 
-	const detailResponseExample = `{
+const detailResponseExample = `{
   "level": 4,
   "code": "01.11",
   "titles": {
     "en": "Growing of cereals (except rice), leguminous crops and oil seeds",
-    "de": "Anbau von Getreide (ohne Reis), Hülsenfrüchten und Ölsaaten",
-    "fr": "Culture de céréales (à l'exception du riz), de légumineuses et de graines oléagineuses",
+    "de": "Anbau von Getreide (ohne Reis), Hulsenfruchten und Olsaaten",
+    "fr": "Culture de cereales (a l'exception du riz), de legumineuses et de graines oleagineuses",
     "nl": "Teelt van granen (met uitzondering van rijst), peulgewassen en oliehoudende zaden"
   },
   "description": { "en": "", "de": "", "fr": "", "nl": "" },
@@ -53,202 +52,289 @@ export default function ApiDocsPage() {
   ]
 }`;
 
-	const notFoundResponseExample = `{
+const notFoundResponseExample = `{
   "error": "NACEBEL code not found."
 }`;
 
+const queryParameters = [
+	{
+		name: "q",
+		type: "string",
+		description: "Search query for a code or title. Omit it to list the directory.",
+	},
+	{
+		name: "page",
+		type: "number",
+		description: "Page number for pagination. Default: 1.",
+	},
+	{
+		name: "limit",
+		type: "number",
+		description: "Items per page. Default: 100. Maximum: 500.",
+	},
+	{
+		name: "level",
+		type: "number",
+		description: "Minimum NACE-BEL level to include, from 2 to 5.",
+	},
+];
+
+const endpointCards = [
+	{
+		title: "List and search codes",
+		path: "/api/v1/nacebel-codes/2025",
+		description:
+			"Retrieve paginated codes or search titles and code numbers across the public directory.",
+		request: `curl "https://nacebel.codes/api/v1/nacebel-codes/2025?q=software&level=4"`,
+		response: listResponseExample,
+	},
+	{
+		title: "Get code details",
+		path: "/api/v1/nacebel-codes/2025/{id}",
+		description:
+			"Fetch one code by its dot-less identifier and include its direct children.",
+		request: `curl "https://nacebel.codes/api/v1/nacebel-codes/2025/0111"`,
+		response: detailResponseExample,
+	},
+];
+
+export default function ApiDocsPage() {
 	return (
 		<div className="bg-background text-foreground">
-			<div className="max-w-4xl mx-auto py-12 px-4 space-y-12">
-				<header className="text-center">
-					<h1 className="text-4xl font-bold tracking-tight">
-						NACE-BEL 2025 API Documentation
-					</h1>
-					<p className="mt-4 text-lg text-muted-foreground">
-						Access the complete NACEBEL 2025 classification system
-						programmatically.
-					</p>
+			<div className="mx-auto max-w-5xl space-y-8 px-4 py-8 sm:py-12">
+				<header className="relative overflow-hidden rounded-[2rem] border border-white/60 bg-white/80 p-8 shadow-[0_30px_90px_-55px_rgba(15,23,42,0.7)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 sm:p-10">
+					<div className="absolute -left-16 top-0 h-52 w-52 rounded-full bg-sky-300/20 blur-3xl dark:bg-sky-500/15" />
+					<div className="absolute -right-10 bottom-0 h-48 w-48 rounded-full bg-amber-200/30 blur-3xl dark:bg-amber-500/10" />
+					<div className="relative space-y-6">
+						<div className="flex flex-wrap gap-3">
+							<Button variant="outline" size="sm" asChild>
+								<a href="/">Search UI</a>
+							</Button>
+							<Button variant="outline" size="sm" asChild>
+								<a href="/about">About NACE-BEL</a>
+							</Button>
+						</div>
+						<div className="flex flex-wrap gap-2">
+							<Badge className="border-primary/15 bg-primary/10 text-primary hover:bg-primary/10">
+								Public API
+							</Badge>
+							<Badge variant="outline" className="bg-background/70">
+								REST
+							</Badge>
+							<Badge variant="outline" className="bg-background/70">
+								JSON
+							</Badge>
+							<Badge variant="outline" className="bg-background/70">
+								CORS enabled
+							</Badge>
+						</div>
+						<div className="space-y-4">
+							<h1 className="font-display text-5xl tracking-tight sm:text-6xl">
+								NACE-BEL 2025 API
+							</h1>
+							<p className="max-w-3xl text-balance text-lg leading-8 text-muted-foreground">
+								The API is public and available as-is for search and
+								lookup use cases. No Stripe plan and no API key. Just
+								hit the endpoints directly, with fair-use throttling on
+								shared capacity.
+							</p>
+						</div>
+						<div className="grid gap-3 sm:grid-cols-3">
+							<div className="rounded-[1.5rem] border border-border/70 bg-background/80 p-4 shadow-sm">
+								<p className="text-sm text-muted-foreground">
+									Endpoints
+								</p>
+								<p className="mt-2 text-2xl font-semibold">2</p>
+								<p className="mt-1 text-sm text-muted-foreground">
+									List/search and detail lookup
+								</p>
+							</div>
+							<div className="rounded-[1.5rem] border border-border/70 bg-background/80 p-4 shadow-sm">
+								<p className="text-sm text-muted-foreground">
+									Max page size
+								</p>
+								<p className="mt-2 text-2xl font-semibold">500</p>
+								<p className="mt-1 text-sm text-muted-foreground">
+									Good for bulk reads and exports
+								</p>
+							</div>
+							<div className="rounded-[1.5rem] border border-border/70 bg-background/80 p-4 shadow-sm">
+								<p className="text-sm text-muted-foreground">
+									Authentication
+								</p>
+								<p className="mt-2 text-2xl font-semibold">None</p>
+								<p className="mt-1 text-sm text-muted-foreground">
+									Contact us for higher limits and support
+								</p>
+							</div>
+						</div>
+					</div>
 				</header>
 
-				<section id="authentication">
-					<h2 className="text-2xl font-semibold border-b pb-2 mb-4">
-						Authentication
-					</h2>
-					<p className="text-muted-foreground">
-						An API key is required to use the NACE-BEL 2025 API. You can
-						obtain a key by subscribing to one of our plans below. All API
-						requests must include the API key in the{" "}
-						<code className="bg-muted px-1 py-0.5 rounded-sm">
-							Authorization
-						</code>{" "}
-						header as a Bearer token.
-					</p>
-					<CodeBlock>{`Authorization: Bearer YOUR_API_KEY`}</CodeBlock>
-				</section>
-
-				<section id="endpoints">
-					<h2 className="text-2xl font-semibold border-b pb-2 mb-4">
-						API Endpoints
-					</h2>
-					<div className="space-y-8">
-						{/* Endpoint 1: List & Search */}
-						<div>
-							<h3 className="text-xl font-semibold mb-2">
-								List & Search Codes
-							</h3>
-							<div className="flex items-center gap-2 mb-2">
-								<Badge
-									variant="outline"
-									className="text-green-600 border-green-600"
-								>
-									GET
-								</Badge>
-								<code className="text-sm font-mono">
-									/api/v1/nacebel-codes/2025
-								</code>
-							</div>
-							<p className="text-muted-foreground mb-4">
-								Retrieve a paginated list of all NACEBEL codes, or
-								search for codes based on a query.
-							</p>
-
-							<h4 className="font-semibold mb-2">Query Parameters</h4>
-							<div className="overflow-x-auto">
-								<table className="w-full text-sm text-left">
-									<thead className="bg-muted">
-										<tr>
-											<th className="p-2">Parameter</th>
-											<th className="p-2">Type</th>
-											<th className="p-2">Description</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr className="border-b">
-											<td className="p-2 font-mono">q</td>
-											<td className="p-2 font-mono">string</td>
-											<td className="p-2">
-												Search query for code or description. If
-												omitted, returns all codes.
-											</td>
-										</tr>
-										<tr className="border-b">
-											<td className="p-2 font-mono">page</td>
-											<td className="p-2 font-mono">number</td>
-											<td className="p-2">
-												Page number for pagination. Default:{" "}
-												<code className="text-xs">1</code>.
-											</td>
-										</tr>
-										<tr className="border-b">
-											<td className="p-2 font-mono">limit</td>
-											<td className="p-2 font-mono">number</td>
-											<td className="p-2">
-												Number of items per page. Default:{" "}
-												<code className="text-xs">100</code>,
-												Max:{" "}
-												<code className="text-xs">500</code>.
-											</td>
-										</tr>
-										<tr className="border-b">
-											<td className="p-2 font-mono">level</td>
-											<td className="p-2 font-mono">number</td>
-											<td className="p-2">
-												Minimum NACEBEL level to include (2-5).
-											</td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
-
-							<h4 className="font-semibold mt-4 mb-2">
-								Example Request (Search)
-							</h4>
-							<CodeBlock>{`curl "https://nacebel.codes/api/v1/nacebel-codes/2025?q=software&level=4"`}</CodeBlock>
-
-							<h4 className="font-semibold mt-4 mb-2">
-								Example Response
-							</h4>
-							<CodeBlock>{listResponseExample}</CodeBlock>
-						</div>
-
-						{/* Endpoint 2: Get Details */}
-						<div>
-							<h3 className="text-xl font-semibold mb-2">
-								Get Code Details
-							</h3>
-							<div className="flex items-center gap-2 mb-2">
-								<Badge
-									variant="outline"
-									className="text-green-600 border-green-600"
-								>
-									GET
-								</Badge>
-								<code className="text-sm font-mono">
-									/api/v1/nacebel-codes/2025/{"{id}"}
-								</code>
-							</div>
-							<p className="text-muted-foreground mb-4">
-								Retrieve the full details for a single NACEBEL code,
-								including its direct children. The{" "}
-								<code className="bg-muted px-1 py-0.5 rounded-sm">
-									{"{id}"}
-								</code>{" "}
-								should be the code without any dots (e.g.,{" "}
-								<code className="bg-muted px-1 py-0.5 rounded-sm">
-									0111
-								</code>
-								).
-							</p>
-
-							<h4 className="font-semibold mt-4 mb-2">Example Request</h4>
-							<CodeBlock>{`curl "https://nacebel.codes/api/v1/nacebel-codes/2025/0111"`}</CodeBlock>
-
-							<h4 className="font-semibold mt-4 mb-2">
-								Example Response
-							</h4>
-							<CodeBlock>{detailResponseExample}</CodeBlock>
-
-							<h4 className="font-semibold mt-4 mb-2">
-								Example Not Found Response
-							</h4>
-							<CodeBlock>{notFoundResponseExample}</CodeBlock>
-						</div>
+				<section className="rounded-[2rem] border border-white/60 bg-white/78 p-6 shadow-[0_24px_70px_-50px_rgba(15,23,42,0.65)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 sm:p-8">
+					<div className="space-y-4">
+						<h2 className="font-display text-3xl tracking-tight">
+							Base URL and authentication
+						</h2>
+						<p className="text-muted-foreground">
+							Requests are public. You do not need to send an
+							<code className="rounded bg-muted px-1.5 py-0.5 text-sm">
+								Authorization
+							</code>{" "}
+							header.
+						</p>
+						<CodeBlock>{`https://nacebel.codes/api/v1/nacebel-codes/2025`}</CodeBlock>
 					</div>
 				</section>
 
-				<section id="rate-limiting">
-					<h2 className="text-2xl font-semibold border-b pb-2 mb-4">
-						Rate Limiting
-					</h2>
-					<p className="text-muted-foreground">
-						API access is rate-limited to ensure fair usage. The specific
-						limits depend on your subscription plan. Exceeding the rate
-						limit will result in a{" "}
-						<code className="bg-muted px-1 py-0.5 rounded-sm">
-							429 Too Many Requests
-						</code>{" "}
-						error.
-					</p>
-				</section>
-			</div>
-
-			{/* Pricing section with full width */}
-			<section id="pricing" className="bg-muted/30 py-16">
-				<div className="max-w-6xl mx-auto px-4">
-					<div className="text-center mb-8">
-						<h2 className="text-3xl font-bold tracking-tight">
-							Get Your API Key
+				<section className="space-y-6 rounded-[2rem] border border-white/60 bg-white/78 p-6 shadow-[0_24px_70px_-50px_rgba(15,23,42,0.65)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 sm:p-8">
+					<div className="space-y-2">
+						<h2 className="font-display text-3xl tracking-tight">
+							Query parameters
 						</h2>
-						<p className="mt-4 text-lg text-muted-foreground">
-							Choose the plan that fits your needs and start accessing the
-							NACE-BEL 2025 API today.
+						<p className="text-muted-foreground">
+							The list endpoint supports paging, search, and level
+							filtering.
 						</p>
 					</div>
-					<StripePricingTable />
-				</div>
-			</section>
+					<div className="overflow-hidden rounded-[1.5rem] border border-border/70">
+						<table className="w-full text-left text-sm">
+							<thead className="bg-muted/70">
+								<tr>
+									<th className="px-4 py-3 font-semibold">
+										Parameter
+									</th>
+									<th className="px-4 py-3 font-semibold">Type</th>
+									<th className="px-4 py-3 font-semibold">
+										Description
+									</th>
+								</tr>
+							</thead>
+							<tbody className="bg-background/75">
+								{queryParameters.map((parameter) => (
+									<tr
+										key={parameter.name}
+										className="border-t border-border/70"
+									>
+										<td className="px-4 py-3 font-mono text-sm">
+											{parameter.name}
+										</td>
+										<td className="px-4 py-3 font-mono text-sm">
+											{parameter.type}
+										</td>
+										<td className="px-4 py-3 text-muted-foreground">
+											{parameter.description}
+										</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</div>
+				</section>
 
-			<PageFooter />
+				<section className="space-y-6">
+					{endpointCards.map((endpoint) => (
+						<div
+							key={endpoint.path}
+							className="rounded-[2rem] border border-white/60 bg-white/78 p-6 shadow-[0_24px_70px_-50px_rgba(15,23,42,0.65)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 sm:p-8"
+						>
+							<div className="space-y-4">
+								<div className="flex flex-wrap items-center gap-3">
+									<Badge className="border-emerald-600/20 bg-emerald-500/15 text-emerald-700 hover:bg-emerald-500/15 dark:text-emerald-200">
+										GET
+									</Badge>
+									<code className="rounded-full border border-border/70 bg-background/75 px-4 py-2 text-sm">
+										{endpoint.path}
+									</code>
+								</div>
+								<div>
+									<h3 className="text-2xl font-semibold tracking-tight">
+										{endpoint.title}
+									</h3>
+									<p className="mt-2 text-muted-foreground">
+										{endpoint.description}
+									</p>
+								</div>
+								<div className="space-y-3">
+									<p className="text-sm font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+										Example request
+									</p>
+									<CodeBlock>{endpoint.request}</CodeBlock>
+								</div>
+								<div className="space-y-3">
+									<p className="text-sm font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+										Example response
+									</p>
+									<CodeBlock>{endpoint.response}</CodeBlock>
+								</div>
+							</div>
+						</div>
+					))}
+				</section>
+
+				<section className="rounded-[2rem] border border-white/60 bg-white/78 p-6 shadow-[0_24px_70px_-50px_rgba(15,23,42,0.65)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 sm:p-8">
+					<div className="space-y-4">
+						<h2 className="font-display text-3xl tracking-tight">
+							Errors and throttling
+						</h2>
+						<p className="text-muted-foreground">
+							The API returns standard HTTP status codes. If you request a
+							missing code, you will receive a
+							<code className="mx-1 rounded bg-muted px-1.5 py-0.5 text-sm">
+								404
+							</code>
+							response.
+						</p>
+						<CodeBlock>{notFoundResponseExample}</CodeBlock>
+						<p className="text-muted-foreground">
+							Public traffic is served on shared infrastructure. Excessive
+							usage may be throttled with
+							<code className="mx-1 rounded bg-muted px-1.5 py-0.5 text-sm">
+								429 Too Many Requests
+							</code>
+							to protect the service.
+						</p>
+					</div>
+				</section>
+
+				<section className="rounded-[2rem] border border-primary/15 bg-primary/10 p-6 shadow-[0_24px_70px_-50px_rgba(30,64,175,0.45)] sm:p-8">
+					<div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
+						<div className="space-y-4">
+							<h2 className="font-display text-3xl tracking-tight text-primary">
+								Need higher rate limits or support?
+							</h2>
+							<p className="max-w-2xl text-primary/80">
+								The public API is available as-is. If you need heavier
+								sustained usage, operational support, or a more tailored
+								integration path, email us and we can work out a setup.
+							</p>
+							<div className="flex flex-wrap gap-3">
+								<Button asChild>
+									<a href="mailto:contact@nacebel.codes?subject=NACE-BEL%20API">
+										Contact us
+									</a>
+								</Button>
+								<Button variant="outline" asChild>
+									<a href="/">Try the search UI</a>
+								</Button>
+							</div>
+						</div>
+						<div className="rounded-[1.5rem] border border-primary/15 bg-background/85 p-5 shadow-sm">
+							<p className="text-sm font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+								Typical reasons to reach out
+							</p>
+							<ul className="mt-4 space-y-3 text-sm text-muted-foreground">
+								<li>Higher sustained request volume</li>
+								<li>Priority issue resolution</li>
+								<li>Integration guidance for production use</li>
+								<li>Commercial or custom data access questions</li>
+							</ul>
+						</div>
+					</div>
+				</section>
+
+				<PageFooter />
+			</div>
 		</div>
 	);
 }

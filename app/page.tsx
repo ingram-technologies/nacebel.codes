@@ -22,7 +22,7 @@ export default async function Home() {
 
 	return (
 		<div className="min-h-screen bg-background">
-			<main className="max-w-4xl mx-auto py-12 px-4">
+			<main className="mx-auto max-w-6xl px-4 py-8 sm:py-12">
 				<NacebelSearchClient initialCodes={initialCodes} />
 			</main>
 		</div>

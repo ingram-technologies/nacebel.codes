@@ -19,7 +19,7 @@ export function NacebelCodeList({
 	getExternalLink,
 }: NacebelCodeListProps) {
 	return (
-		<div className="space-y-2">
+		<div className="grid gap-3">
 			{codes.map((code) => (
 				<NacebelCodeItem
 					key={code.code}

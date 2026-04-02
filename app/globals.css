@@ -83,57 +83,57 @@
 
 @layer base {
 	:root {
-		--background: 0 0% 100%;
-		--foreground: 0 0% 3.9%;
+		--background: 40 38% 97%;
+		--foreground: 219 38% 14%;
 		--card: 0 0% 100%;
-		--card-foreground: 0 0% 3.9%;
+		--card-foreground: 219 38% 14%;
 		--popover: 0 0% 100%;
-		--popover-foreground: 0 0% 3.9%;
-		--primary: 0 0% 9%;
+		--popover-foreground: 219 38% 14%;
+		--primary: 213 65% 26%;
 		--primary-foreground: 0 0% 98%;
-		--secondary: 0 0% 96.1%;
-		--secondary-foreground: 0 0% 9%;
-		--muted: 0 0% 96.1%;
-		--muted-foreground: 0 0% 45.1%;
-		--accent: 0 0% 96.1%;
-		--accent-foreground: 0 0% 9%;
+		--secondary: 34 33% 92%;
+		--secondary-foreground: 218 30% 20%;
+		--muted: 36 30% 93%;
+		--muted-foreground: 216 17% 38%;
+		--accent: 190 42% 92%;
+		--accent-foreground: 213 56% 24%;
 		--destructive: 0 84.2% 60.2%;
 		--destructive-foreground: 0 0% 98%;
-		--border: 0 0% 89.8%;
-		--input: 0 0% 89.8%;
-		--ring: 0 0% 3.9%;
-		--chart-1: 12 76% 61%;
-		--chart-2: 173 58% 39%;
-		--chart-3: 197 37% 24%;
-		--chart-4: 43 74% 66%;
-		--chart-5: 27 87% 67%;
-		--radius: 0.5rem;
+		--border: 31 24% 84%;
+		--input: 31 24% 88%;
+		--ring: 196 78% 41%;
+		--chart-1: 213 67% 45%;
+		--chart-2: 167 50% 38%;
+		--chart-3: 27 88% 56%;
+		--chart-4: 45 86% 59%;
+		--chart-5: 343 72% 60%;
+		--radius: 0.9rem;
 	}
 	.dark {
-		--background: 0 0% 3.9%;
-		--foreground: 0 0% 98%;
-		--card: 0 0% 3.9%;
-		--card-foreground: 0 0% 98%;
-		--popover: 0 0% 3.9%;
-		--popover-foreground: 0 0% 98%;
-		--primary: 0 0% 98%;
-		--primary-foreground: 0 0% 9%;
-		--secondary: 0 0% 14.9%;
-		--secondary-foreground: 0 0% 98%;
-		--muted: 0 0% 14.9%;
-		--muted-foreground: 0 0% 63.9%;
-		--accent: 0 0% 14.9%;
-		--accent-foreground: 0 0% 98%;
+		--background: 221 29% 11%;
+		--foreground: 45 36% 95%;
+		--card: 221 24% 14%;
+		--card-foreground: 45 36% 95%;
+		--popover: 221 24% 14%;
+		--popover-foreground: 45 36% 95%;
+		--primary: 194 84% 74%;
+		--primary-foreground: 221 42% 12%;
+		--secondary: 219 18% 19%;
+		--secondary-foreground: 45 36% 95%;
+		--muted: 220 16% 18%;
+		--muted-foreground: 217 15% 70%;
+		--accent: 196 34% 19%;
+		--accent-foreground: 190 90% 86%;
 		--destructive: 0 62.8% 30.6%;
 		--destructive-foreground: 0 0% 98%;
-		--border: 0 0% 14.9%;
-		--input: 0 0% 14.9%;
-		--ring: 0 0% 83.1%;
-		--chart-1: 220 70% 50%;
-		--chart-2: 160 60% 45%;
-		--chart-3: 30 80% 55%;
-		--chart-4: 280 65% 60%;
-		--chart-5: 340 75% 55%;
+		--border: 219 16% 24%;
+		--input: 219 16% 24%;
+		--ring: 192 87% 67%;
+		--chart-1: 194 79% 62%;
+		--chart-2: 158 56% 50%;
+		--chart-3: 34 92% 63%;
+		--chart-4: 49 89% 67%;
+		--chart-5: 343 72% 67%;
 	}
 }
 
@@ -141,8 +141,46 @@
 	* {
 		@apply border-border;
 	}
+	html {
+		scroll-behavior: smooth;
+	}
 	body {
 		@apply bg-background text-foreground;
+		font-family: var(--font-sans), sans-serif;
+		background-image:
+			radial-gradient(
+				circle at top left,
+				rgba(70, 144, 196, 0.16),
+				transparent 32rem
+			),
+			radial-gradient(
+				circle at top right,
+				rgba(226, 187, 111, 0.14),
+				transparent 28rem
+			),
+			linear-gradient(180deg, rgba(255, 255, 255, 0.4), transparent 22rem);
+		background-attachment: fixed;
+	}
+	.dark body {
+		background-image:
+			radial-gradient(
+				circle at top left,
+				rgba(46, 135, 171, 0.26),
+				transparent 30rem
+			),
+			radial-gradient(
+				circle at top right,
+				rgba(182, 128, 57, 0.18),
+				transparent 24rem
+			),
+			linear-gradient(180deg, rgba(7, 13, 24, 0.28), transparent 22rem);
+	}
+	a {
+		transition:
+			color 0.2s ease,
+			opacity 0.2s ease,
+			border-color 0.2s ease,
+			background-color 0.2s ease;
 	}
 }
 
@@ -192,6 +230,14 @@
 
 /* Container configuration for Tailwind CSS v4 */
 @layer utilities {
+	.font-display {
+		font-family: var(--font-display), serif;
+	}
+
+	.text-balance {
+		text-wrap: balance;
+	}
+
 	.container {
 		width: 100%;
 		margin-left: auto;

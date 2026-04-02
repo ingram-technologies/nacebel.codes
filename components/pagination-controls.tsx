@@ -1,6 +1,16 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Fragment } from "react";
+
+import {
+	Pagination,
+	PaginationContent,
+	PaginationEllipsis,
+	PaginationItem,
+	PaginationLink,
+	PaginationNext,
+	PaginationPrevious,
+} from "@/components/ui/pagination";
 
 interface PaginationControlsProps {
 	currentPage: number;
@@ -15,46 +25,77 @@ export function PaginationControls({
 	setCurrentPage,
 	translations,
 }: PaginationControlsProps) {
+	const getVisiblePages = (page: number, pages: number) => {
+		const visiblePages: number[] = [];
+		const left = Math.max(1, page - 2);
+		const right = Math.min(pages, page + 2);
+
+		visiblePages.push(1);
+		for (let pageNumber = left; pageNumber <= right; pageNumber += 1) {
+			visiblePages.push(pageNumber);
+		}
+		visiblePages.push(pages);
+
+		return Array.from(new Set(visiblePages)).sort((a, b) => a - b);
+	};
+
 	if (totalPages <= 1) return null;
+
+	const clampedCurrentPage = Math.min(Math.max(currentPage, 1), totalPages);
+	const visiblePages = getVisiblePages(clampedCurrentPage, totalPages);
+
+	const handlePageChange = (page: number) => {
+		setCurrentPage(page);
+		window.scrollTo({ top: 0, behavior: "smooth" });
+	};
+
 	return (
-		<div className="flex justify-center items-center space-x-2">
-			<Button
-				variant="outline"
-				size="sm"
-				onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-				disabled={currentPage === 1}
-			>
-				{translations.previous}
-			</Button>
-			<div className="flex space-x-1">
-				{Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-					let pageNum;
-					if (totalPages <= 5) pageNum = i + 1;
-					else if (currentPage <= 3) pageNum = i + 1;
-					else if (currentPage >= totalPages - 2)
-						pageNum = totalPages - 4 + i;
-					else pageNum = currentPage - 2 + i;
+		<Pagination className="justify-start sm:justify-center">
+			<PaginationContent>
+				<PaginationItem>
+					<PaginationPrevious
+						label={translations.previous}
+						onClick={() =>
+							handlePageChange(Math.max(1, clampedCurrentPage - 1))
+						}
+						disabled={clampedCurrentPage <= 1}
+					/>
+				</PaginationItem>
+				{visiblePages.map((page, index) => {
+					const previousPage = visiblePages[index - 1];
+
 					return (
-						<Button
-							key={pageNum}
-							variant={currentPage === pageNum ? "default" : "outline"}
-							size="sm"
-							onClick={() => setCurrentPage(pageNum)}
-							className="w-10"
-						>
-							{pageNum}
-						</Button>
+						<Fragment key={`page-fragment-${page}`}>
+							{index > 0
+							&& typeof previousPage === "number"
+							&& page - previousPage > 1 ? (
+								<PaginationItem>
+									<PaginationEllipsis />
+								</PaginationItem>
+							) : null}
+							<PaginationItem>
+								<PaginationLink
+									isActive={page === clampedCurrentPage}
+									onClick={() => handlePageChange(page)}
+								>
+									{page}
+								</PaginationLink>
+							</PaginationItem>
+						</Fragment>
 					);
 				})}
-			</div>
-			<Button
-				variant="outline"
-				size="sm"
-				onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-				disabled={currentPage === totalPages}
-			>
-				{translations.next}
-			</Button>
-		</div>
+				<PaginationItem>
+					<PaginationNext
+						label={translations.next}
+						onClick={() =>
+							handlePageChange(
+								Math.min(totalPages, clampedCurrentPage + 1),
+							)
+						}
+						disabled={clampedCurrentPage >= totalPages}
+					/>
+				</PaginationItem>
+			</PaginationContent>
+		</Pagination>
 	);
 }

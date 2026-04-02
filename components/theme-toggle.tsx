@@ -13,17 +13,17 @@ interface ThemeToggleProps {
 export function ThemeToggle({ theme, setTheme, translations }: ThemeToggleProps) {
 	const t = translations;
 	return (
-		<div className="flex items-center space-x-1 bg-gray-100 dark:bg-gray-700 p-1 rounded-lg shadow-sm">
+		<div className="flex items-center space-x-1 rounded-full border border-border/70 bg-background/80 p-1 shadow-sm backdrop-blur-sm">
 			{(["light", "dark", "system"] as const).map((mode) => (
 				<Button
 					key={mode}
 					variant="ghost"
 					size="icon"
 					onClick={() => setTheme(mode)}
-					className={`p-2 rounded-md h-9 w-9 ${
+					className={`h-9 w-9 rounded-full p-2 ${
 						theme === mode
-							? "bg-white dark:bg-gray-600 text-blue-600 dark:text-blue-300 shadow-sm"
-							: "text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+							? "bg-primary text-primary-foreground shadow-[0_14px_30px_-22px_hsl(var(--primary))]"
+							: "text-muted-foreground hover:bg-accent/80 hover:text-foreground"
 					}`}
 					aria-label={`Set theme to ${mode === "light" ? t.themeLight : mode === "dark" ? t.themeDark : t.themeSystem}`}
 				>
