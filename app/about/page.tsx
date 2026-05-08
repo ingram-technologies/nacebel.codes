@@ -3,15 +3,61 @@ import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
 import type { Metadata } from "next";
 
+const aboutDescription =
+	"Learn how NACE and NACE-BEL classify economic activities in Belgium and across Europe — the hierarchy, the 2003/2008/2025 versions, and where the codes are used.";
+
 export const metadata: Metadata = {
 	title: "About NACE-BEL Codes",
-	description:
-		"Learn how NACE and NACE-BEL classify economic activities in Belgium and across Europe.",
+	description: aboutDescription,
+	alternates: { canonical: "/about" },
 	openGraph: {
 		title: "About NACE-BEL Codes",
-		description:
-			"Learn how NACE and NACE-BEL classify economic activities in Belgium and across Europe.",
-		type: "website",
+		description: aboutDescription,
+		url: "https://nacebel.codes/about",
+		type: "article",
+	},
+	twitter: {
+		card: "summary",
+		title: "About NACE-BEL Codes",
+		description: aboutDescription,
+	},
+};
+
+const breadcrumbJsonLd = {
+	"@context": "https://schema.org",
+	"@type": "BreadcrumbList",
+	itemListElement: [
+		{
+			"@type": "ListItem",
+			position: 1,
+			name: "NACE-BEL 2025 Codes",
+			item: "https://nacebel.codes",
+		},
+		{
+			"@type": "ListItem",
+			position: 2,
+			name: "About",
+			item: "https://nacebel.codes/about",
+		},
+	],
+};
+
+const articleJsonLd = {
+	"@context": "https://schema.org",
+	"@type": "Article",
+	headline: "About NACE-BEL Codes",
+	description: aboutDescription,
+	url: "https://nacebel.codes/about",
+	inLanguage: "en",
+	about: [
+		{ "@type": "Thing", name: "NACE" },
+		{ "@type": "Thing", name: "NACE-BEL" },
+		{ "@type": "Thing", name: "Belgian economic activity classification" },
+	],
+	publisher: {
+		"@type": "Organization",
+		name: "Ingram Technologies",
+		url: "https://ingram.tech",
 	},
 };
 
@@ -90,6 +136,16 @@ const applications = [
 export default function AboutPage() {
 	return (
 		<div className="bg-background text-foreground">
+			<script
+				type="application/ld+json"
+				// biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD payload
+				dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+			/>
+			<script
+				type="application/ld+json"
+				// biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD payload
+				dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+			/>
 			<div className="mx-auto max-w-5xl space-y-8 px-4 py-8 sm:py-12">
 				<SiteHeader
 					title="About NACE-BEL Codes"

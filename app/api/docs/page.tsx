@@ -5,15 +5,63 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { Metadata } from "next";
 
+const apiDescription =
+	"Free public REST API for the NACE-BEL 2025 classification system. List, search, and look up Belgian economic activity codes in JSON across four languages.";
+
 export const metadata: Metadata = {
-	title: "API Documentation",
-	description:
-		"Public API documentation for the NACE-BEL 2025 classification system.",
+	title: "NACE-BEL 2025 API Documentation",
+	description: apiDescription,
+	alternates: { canonical: "/api/docs" },
 	openGraph: {
-		title: "API Documentation - NACE-BEL 2025",
-		description:
-			"Public API documentation for the NACE-BEL 2025 classification system.",
-		type: "website",
+		title: "NACE-BEL 2025 API Documentation",
+		description: apiDescription,
+		url: "https://nacebel.codes/api/docs",
+		type: "article",
+	},
+	twitter: {
+		card: "summary",
+		title: "NACE-BEL 2025 API Documentation",
+		description: apiDescription,
+	},
+};
+
+const breadcrumbJsonLd = {
+	"@context": "https://schema.org",
+	"@type": "BreadcrumbList",
+	itemListElement: [
+		{
+			"@type": "ListItem",
+			position: 1,
+			name: "NACE-BEL 2025 Codes",
+			item: "https://nacebel.codes",
+		},
+		{
+			"@type": "ListItem",
+			position: 2,
+			name: "API Documentation",
+			item: "https://nacebel.codes/api/docs",
+		},
+	],
+};
+
+const apiJsonLd = {
+	"@context": "https://schema.org",
+	"@type": "TechArticle",
+	headline: "NACE-BEL 2025 API Documentation",
+	description: apiDescription,
+	url: "https://nacebel.codes/api/docs",
+	inLanguage: "en",
+	proficiencyLevel: "Beginner",
+	about: {
+		"@type": "WebAPI",
+		name: "NACE-BEL 2025 API",
+		documentation: "https://nacebel.codes/api/docs",
+		url: "https://nacebel.codes/api/v1/nacebel-codes/2025",
+	},
+	publisher: {
+		"@type": "Organization",
+		name: "Ingram Technologies",
+		url: "https://ingram.tech",
 	},
 };
 
@@ -102,6 +150,16 @@ const endpointCards = [
 export default function ApiDocsPage() {
 	return (
 		<div className="bg-background text-foreground">
+			<script
+				type="application/ld+json"
+				// biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD payload
+				dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+			/>
+			<script
+				type="application/ld+json"
+				// biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD payload
+				dangerouslySetInnerHTML={{ __html: JSON.stringify(apiJsonLd) }}
+			/>
 			<div className="mx-auto max-w-5xl space-y-8 px-4 py-8 sm:py-12">
 				<SiteHeader
 					title="NACE-BEL 2025 API"
