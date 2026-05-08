@@ -13,7 +13,7 @@ import {
 } from "@/lib/i18n/locales";
 import { translations } from "@/lib/translations";
 import type { Metadata } from "next";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 
 interface PageProps {
 	params: Promise<{ locale: string; code: string; slug: string }>;
@@ -64,18 +64,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function CodePage({ params }: PageProps) {
-	const { locale, code, slug } = await params;
+	const { locale, code } = await params;
 	if (!isLocale(locale)) notFound();
 
 	const data = await loadCodeData(code.replace(/\./g, ""));
 	if (!data) notFound();
 
 	const canonicalPath = codeHrefFor(data, locale);
-	const expectedPath = `/${locale}/${code}/${slug}`;
-	if (expectedPath !== canonicalPath) {
-		redirect(canonicalPath);
-	}
-
 	const ancestors = await loadAncestors(data.code);
 	const childrenData = await Promise.all(
 		(data.childrenCodes ?? []).map((c) =>

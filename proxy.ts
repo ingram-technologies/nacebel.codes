@@ -1,9 +1,12 @@
+import { codeHrefFor, loadCodeData } from "@/lib/code-page";
+import type { Locale } from "@/lib/i18n/locales";
 import { type NextRequest, NextResponse } from "next/server";
 
 const LOCALE_PREFIX_RE = /^\/(en|nl|fr|de)(\/|$)/;
 const CANONICAL_ONLY_PATHS = new Set(["/", "/about", "/api/docs"]);
+const CODE_PATH_RE = /^\/(en|nl|fr|de)\/([\d.]+)(?:\/([^/]*))?\/?$/;
 
-export function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
 	const { pathname } = request.nextUrl;
 
 	const localeMatch = pathname.match(LOCALE_PREFIX_RE);
@@ -22,6 +25,24 @@ export function proxy(request: NextRequest) {
 				sameSite: "lax",
 			});
 			return response;
+		}
+	}
+
+	const codeMatch = pathname.match(CODE_PATH_RE);
+	if (codeMatch) {
+		const [, locale, code] = codeMatch;
+		const data = await loadCodeData(code.replace(/\./g, ""));
+		if (!data) {
+			return new NextResponse("Not Found", {
+				status: 404,
+				headers: { "Content-Type": "text/plain; charset=utf-8" },
+			});
+		}
+		const canonical = codeHrefFor(data, locale as Locale);
+		if (pathname !== canonical) {
+			const url = request.nextUrl.clone();
+			url.pathname = canonical;
+			return NextResponse.redirect(url, 308);
 		}
 	}
 
