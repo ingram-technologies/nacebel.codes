@@ -1,5 +1,4 @@
 import "@/app/globals.css";
-import { HreflangLinks } from "@/components/hreflang-links";
 import { Toaster } from "@/components/ui/toaster";
 import { LocaleProvider } from "@/contexts/locale-context";
 import { HTML_LANG, OG_LOCALE } from "@/lib/i18n/locales";
@@ -102,9 +101,6 @@ export default async function RootLayout({
 
 	return (
 		<html lang={HTML_LANG[locale]} suppressHydrationWarning>
-			<head>
-				<HreflangLinks />
-			</head>
 			<body
 				className={`${manrope.variable} ${newsreader.variable} min-h-screen bg-background text-foreground antialiased`}
 			>

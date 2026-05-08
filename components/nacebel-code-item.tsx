@@ -128,6 +128,7 @@ interface NacebelCodeItemProps {
 	onCopyCode: (code: string) => void;
 	onCopy: (code: string, description: string) => void;
 	getExternalLink: (code: string) => string;
+	getDetailLink: (code: NacebelCode) => string;
 }
 
 export function NacebelCodeItem({
@@ -138,6 +139,7 @@ export function NacebelCodeItem({
 	onCopyCode,
 	onCopy,
 	getExternalLink,
+	getDetailLink,
 }: NacebelCodeItemProps) {
 	return (
 		<div
@@ -155,9 +157,12 @@ export function NacebelCodeItem({
 				</button>
 			</div>
 			<div className="min-w-0 flex-1">
-				<p className="text-base font-medium leading-7 text-foreground">
+				<a
+					href={getDetailLink(code)}
+					className="text-base font-medium leading-7 text-foreground transition-colors hover:text-primary"
+				>
 					{renderHighlightedText(code.titles[language], searchTerm)}
-				</p>
+				</a>
 			</div>
 			<div className="flex shrink-0 items-center gap-2 self-start sm:self-center">
 				<Button

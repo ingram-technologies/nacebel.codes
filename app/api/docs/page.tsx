@@ -8,10 +8,18 @@ import type { Metadata } from "next";
 const apiDescription =
 	"Free public REST API for the NACE-BEL 2025 classification system. List, search, and look up Belgian economic activity codes in JSON across four languages.";
 
+const apiLanguages: Record<string, string> = {
+	"x-default": "https://nacebel.codes/api/docs",
+	en: "https://nacebel.codes/en/api/docs",
+	"nl-BE": "https://nacebel.codes/nl/api/docs",
+	"fr-BE": "https://nacebel.codes/fr/api/docs",
+	de: "https://nacebel.codes/de/api/docs",
+};
+
 export const metadata: Metadata = {
 	title: "NACE-BEL 2025 API Documentation",
 	description: apiDescription,
-	alternates: { canonical: "/api/docs" },
+	alternates: { canonical: "/api/docs", languages: apiLanguages },
 	openGraph: {
 		title: "NACE-BEL 2025 API Documentation",
 		description: apiDescription,

@@ -30,6 +30,13 @@ export const translations: Record<Language, any> = {
 		themeLight: "Light",
 		themeDark: "Dark",
 		themeSystem: "System",
+		backToDirectory: "Back to directory",
+		parentCode: "Parent code",
+		childCodes: "Child codes",
+		level: "Level",
+		viewOnKbo: "View on KBO (Crossroads Bank for Enterprises)",
+		codeMetaDescription: (code: string, title: string) =>
+			`NACE-BEL 2025 code ${code} — ${title}. Activity classification used by Belgian businesses for registration, tax, and statistics.`,
 	},
 	de: {
 		title: "NACE-BEL 2025 Codes",
@@ -62,6 +69,13 @@ export const translations: Record<Language, any> = {
 		themeLight: "Hell",
 		themeDark: "Dunkel",
 		themeSystem: "System",
+		backToDirectory: "Zurück zum Verzeichnis",
+		parentCode: "Übergeordneter Code",
+		childCodes: "Untercodes",
+		level: "Ebene",
+		viewOnKbo: "Auf der KBO (Zentrale Datenbank der Unternehmen) anzeigen",
+		codeMetaDescription: (code: string, title: string) =>
+			`NACE-BEL 2025 Code ${code} — ${title}. Tätigkeitsklassifikation, die belgische Unternehmen für Registrierung, Steuern und Statistik verwenden.`,
 	},
 	fr: {
 		title: "NACE-BEL 2025 Codes",
@@ -93,6 +107,13 @@ export const translations: Record<Language, any> = {
 		themeLight: "Clair",
 		themeDark: "Sombre",
 		themeSystem: "Système",
+		backToDirectory: "Retour au répertoire",
+		parentCode: "Code parent",
+		childCodes: "Codes enfants",
+		level: "Niveau",
+		viewOnKbo: "Voir sur la BCE (Banque-Carrefour des Entreprises)",
+		codeMetaDescription: (code: string, title: string) =>
+			`Code NACE-BEL 2025 ${code} — ${title}. Classification des activités utilisée par les entreprises belges pour l'enregistrement, la fiscalité et les statistiques.`,
 	},
 	nl: {
 		title: "NACE-BEL 2025 Codes",
@@ -123,5 +144,12 @@ export const translations: Record<Language, any> = {
 		themeLight: "Licht",
 		themeDark: "Donker",
 		themeSystem: "Systeem",
+		backToDirectory: "Terug naar de directory",
+		parentCode: "Bovenliggende code",
+		childCodes: "Onderliggende codes",
+		level: "Niveau",
+		viewOnKbo: "Bekijk op KBO (Kruispuntbank van Ondernemingen)",
+		codeMetaDescription: (code: string, title: string) =>
+			`NACE-BEL 2025 code ${code} — ${title}. Activiteitenclassificatie die Belgische bedrijven gebruiken voor registratie, belastingen en statistieken.`,
 	},
 };

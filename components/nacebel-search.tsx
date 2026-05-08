@@ -5,6 +5,7 @@ import { useLocale } from "@/contexts/locale-context";
 import { useToast } from "@/hooks/use-toast";
 import { translations } from "@/lib/translations";
 import type { Locale } from "@/lib/i18n/locales";
+import { slugify } from "@/lib/slug";
 import type { NacebelCode } from "@/types";
 import { Download } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -222,6 +223,12 @@ export default function NacebelSearchClient({
 		return `https://kbopub.economie.fgov.be/kbopub/naceToelichting.html?lang=${locale}&nace.code=${cleanCode}&nace.version=2025`;
 	};
 
+	const getDetailLink = (code: NacebelCode) => {
+		const title = code.titles[locale] || code.titles.en || code.code;
+		const slug = slugify(title) || "code";
+		return `/${locale}/${code.code}/${slug}`;
+	};
+
 	const exportToCSV = () => {
 		const headers = ["Level", "Code", `Description (${locale.toUpperCase()})`];
 		const csvContent = [
@@ -340,6 +347,7 @@ export default function NacebelSearchClient({
 							onCopyCode={copyCodeOnly}
 							onCopy={copyToClipboard}
 							getExternalLink={getExternalLink}
+							getDetailLink={getDetailLink}
 						/>
 					) : (
 						<div className="rounded-[1.5rem] border border-dashed border-border/70 bg-background/60 py-14 text-center text-muted-foreground">

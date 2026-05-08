@@ -6,10 +6,18 @@ import type { Metadata } from "next";
 const aboutDescription =
 	"Learn how NACE and NACE-BEL classify economic activities in Belgium and across Europe — the hierarchy, the 2003/2008/2025 versions, and where the codes are used.";
 
+const aboutLanguages: Record<string, string> = {
+	"x-default": "https://nacebel.codes/about",
+	en: "https://nacebel.codes/en/about",
+	"nl-BE": "https://nacebel.codes/nl/about",
+	"fr-BE": "https://nacebel.codes/fr/about",
+	de: "https://nacebel.codes/de/about",
+};
+
 export const metadata: Metadata = {
 	title: "About NACE-BEL Codes",
 	description: aboutDescription,
-	alternates: { canonical: "/about" },
+	alternates: { canonical: "/about", languages: aboutLanguages },
 	openGraph: {
 		title: "About NACE-BEL Codes",
 		description: aboutDescription,

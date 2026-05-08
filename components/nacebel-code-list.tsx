@@ -11,6 +11,7 @@ interface NacebelCodeListProps {
 	onCopyCode: (code: string) => void;
 	onCopy: (code: string, description: string) => void;
 	getExternalLink: (code: string) => string;
+	getDetailLink: (code: NacebelCode) => string;
 }
 
 export function NacebelCodeList({
@@ -21,6 +22,7 @@ export function NacebelCodeList({
 	onCopyCode,
 	onCopy,
 	getExternalLink,
+	getDetailLink,
 }: NacebelCodeListProps) {
 	return (
 		<div className="grid gap-2">
@@ -34,6 +36,7 @@ export function NacebelCodeList({
 					onCopyCode={onCopyCode}
 					onCopy={onCopy}
 					getExternalLink={getExternalLink}
+					getDetailLink={getDetailLink}
 				/>
 			))}
 		</div>

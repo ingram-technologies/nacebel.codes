@@ -1,8 +1,16 @@
 import NacebelSearchClient from "@/components/nacebel-search";
+import { HTML_LANG, SUPPORTED_LOCALES } from "@/lib/i18n/locales";
 import { resolveLocale } from "@/lib/i18n/resolve-locale";
 import { getPaginatedNacebelCodes } from "@/lib/nacebelData";
 import { translations } from "@/lib/translations";
 import type { Metadata } from "next";
+
+const HOME_LANGUAGES: Record<string, string> = {
+	"x-default": "https://nacebel.codes/",
+};
+for (const loc of SUPPORTED_LOCALES) {
+	HOME_LANGUAGES[HTML_LANG[loc]] = `https://nacebel.codes/${loc}/`;
+}
 
 export async function generateMetadata(): Promise<Metadata> {
 	const locale = await resolveLocale();
@@ -11,7 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
 	return {
 		title: { absolute: t.metaTitle },
 		description: t.metaDescription,
-		alternates: { canonical: "/" },
+		alternates: { canonical: "/", languages: HOME_LANGUAGES },
 		openGraph: {
 			title: t.metaTitle,
 			description: t.metaDescription,
