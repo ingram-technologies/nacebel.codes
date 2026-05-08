@@ -6,16 +6,13 @@ import { AdvertisementBanner } from "@/components/advertisement-banner";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
+import { useLocale } from "@/contexts/locale-context";
 import { translations } from "@/lib/translations";
-import type { Language, Theme } from "@/types";
+import type { Theme } from "@/types";
 
 interface SiteHeaderProps {
 	title: string;
 	subtitle: string;
-	language?: Language;
-	onLanguageChange?: (language: Language) => void;
-	theme?: Theme;
-	onThemeChange?: (theme: Theme) => void;
 }
 
 function getCookieValue(name: string) {
@@ -25,48 +22,18 @@ function getCookieValue(name: string) {
 		?.split("=")[1];
 }
 
-export function SiteHeader({
-	title,
-	subtitle,
-	language,
-	onLanguageChange,
-	theme,
-	onThemeChange,
-}: SiteHeaderProps) {
-	const isLanguageControlled =
-		language !== undefined && onLanguageChange !== undefined;
-	const isThemeControlled = theme !== undefined && onThemeChange !== undefined;
-
-	const [internalLanguage, setInternalLanguage] = useState<Language>("en");
-	const [internalTheme, setInternalTheme] = useState<Theme>("system");
+export function SiteHeader({ title, subtitle }: SiteHeaderProps) {
+	const locale = useLocale();
+	const [theme, setTheme] = useState<Theme>("system");
 
 	useEffect(() => {
-		if (isLanguageControlled) {
-			return;
-		}
-
-		const storedLanguage = getCookieValue("lang");
-		if (storedLanguage && ["en", "de", "fr", "nl"].includes(storedLanguage)) {
-			setInternalLanguage(storedLanguage as Language);
-		}
-	}, [isLanguageControlled]);
-
-	useEffect(() => {
-		if (isThemeControlled) {
-			return;
-		}
-
 		const storedTheme = getCookieValue("theme") as Theme | undefined;
 		if (storedTheme && ["light", "dark", "system"].includes(storedTheme)) {
-			setInternalTheme(storedTheme);
+			setTheme(storedTheme);
 		}
-	}, [isThemeControlled]);
+	}, []);
 
 	useEffect(() => {
-		if (isThemeControlled) {
-			return;
-		}
-
 		const applyCurrentTheme = (currentTheme: Theme) => {
 			document.cookie = `theme=${currentTheme};path=/;max-age=31536000;samesite=lax`;
 			if (currentTheme === "light") {
@@ -80,40 +47,19 @@ export function SiteHeader({
 			}
 		};
 
-		applyCurrentTheme(internalTheme);
+		applyCurrentTheme(theme);
 		const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 		const handleChange = () => {
-			if (internalTheme === "system") {
+			if (theme === "system") {
 				applyCurrentTheme("system");
 			}
 		};
 
 		mediaQuery.addEventListener("change", handleChange);
 		return () => mediaQuery.removeEventListener("change", handleChange);
-	}, [internalTheme, isThemeControlled]);
+	}, [theme]);
 
-	const resolvedLanguage = language ?? internalLanguage;
-	const resolvedTheme = theme ?? internalTheme;
-	const t = translations[resolvedLanguage];
-
-	const handleLanguageChange = (nextLanguage: Language) => {
-		if (onLanguageChange) {
-			onLanguageChange(nextLanguage);
-			return;
-		}
-
-		setInternalLanguage(nextLanguage);
-		document.cookie = `lang=${nextLanguage};path=/;max-age=31536000;samesite=lax`;
-	};
-
-	const handleThemeChange = (nextTheme: Theme) => {
-		if (onThemeChange) {
-			onThemeChange(nextTheme);
-			return;
-		}
-
-		setInternalTheme(nextTheme);
-	};
+	const t = translations[locale];
 
 	return (
 		<div className="space-y-5 sm:space-y-6">
@@ -139,14 +85,11 @@ export function SiteHeader({
 					</Button>
 					<div className="flex items-center gap-2 sm:gap-3">
 						<ThemeToggle
-							theme={resolvedTheme}
-							setTheme={handleThemeChange}
+							theme={theme}
+							setTheme={setTheme}
 							translations={t}
 						/>
-						<LanguageSwitcher
-							language={resolvedLanguage}
-							changeLanguage={handleLanguageChange}
-						/>
+						<LanguageSwitcher />
 					</div>
 				</div>
 			</header>

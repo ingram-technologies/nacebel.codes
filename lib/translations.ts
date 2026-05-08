@@ -4,6 +4,9 @@ export const translations: Record<Language, any> = {
 	en: {
 		title: "NACE-BEL 2025 Codes",
 		subtitle: "Search the official directory and export the current results.",
+		metaTitle: "NACE-BEL 2025 Codes — Search the Belgian classification",
+		metaDescription:
+			"Search the full NACE-BEL 2025 classification of Belgian economic activity codes in Dutch, French, English, and German. Browse the directory, copy codes, or use the free public API.",
 		searchPlaceholder: "Search by code number or description...",
 		tryLabel: "Try:",
 		allCodes: "All codes",
@@ -32,6 +35,10 @@ export const translations: Record<Language, any> = {
 		title: "NACE-BEL 2025 Codes",
 		subtitle:
 			"Durchsuchen Sie das offizielle Verzeichnis und exportieren Sie die aktuellen Ergebnisse.",
+		metaTitle:
+			"NACE-BEL 2025 Codes — Durchsuchen Sie die belgische Klassifikation",
+		metaDescription:
+			"Durchsuchen Sie die vollständige NACE-BEL 2025 Klassifikation der belgischen Wirtschaftstätigkeiten in Niederländisch, Französisch, Englisch und Deutsch. Verzeichnis, Codes kopieren, oder kostenlose öffentliche API.",
 		searchPlaceholder: "Nach Codenummer oder Beschreibung suchen...",
 		tryLabel: "Versuchen Sie:",
 		allCodes: "Alle Codes",
@@ -60,6 +67,9 @@ export const translations: Record<Language, any> = {
 		title: "NACE-BEL 2025 Codes",
 		subtitle:
 			"Recherchez dans le repertoire officiel et exportez les resultats actuels.",
+		metaTitle: "Codes NACE-BEL 2025 — Recherche de la classification belge",
+		metaDescription:
+			"Recherchez la classification NACE-BEL 2025 complète des activités économiques belges en néerlandais, français, anglais et allemand. Parcourez le répertoire, copiez les codes ou utilisez l'API publique gratuite.",
 		searchPlaceholder: "Rechercher par numéro de code ou description...",
 		tryLabel: "Essayer :",
 		allCodes: "Tous les codes",
@@ -87,6 +97,9 @@ export const translations: Record<Language, any> = {
 	nl: {
 		title: "NACE-BEL 2025 Codes",
 		subtitle: "Doorzoek de officiele directory en exporteer de huidige resultaten.",
+		metaTitle: "NACE-BEL 2025 Codes — Doorzoek de Belgische classificatie",
+		metaDescription:
+			"Doorzoek de volledige NACE-BEL 2025 classificatie van Belgische economische activiteiten in het Nederlands, Frans, Engels en Duits. Blader door de directory, kopieer codes of gebruik de gratis publieke API.",
 		searchPlaceholder: "Zoeken op codenummer of beschrijving...",
 		tryLabel: "Probeer:",
 		allCodes: "Alle codes",

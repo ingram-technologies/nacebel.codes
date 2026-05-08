@@ -1,26 +1,30 @@
 import NacebelSearchClient from "@/components/nacebel-search";
+import { resolveLocale } from "@/lib/i18n/resolve-locale";
 import { getPaginatedNacebelCodes } from "@/lib/nacebelData";
+import { translations } from "@/lib/translations";
 import type { Metadata } from "next";
 
-const description =
-	"Search the full NACE-BEL 2025 classification of Belgian economic activity codes in Dutch, French, English, and German. Browse the directory, copy codes, or use the free public API.";
+export async function generateMetadata(): Promise<Metadata> {
+	const locale = await resolveLocale();
+	const t = translations[locale];
 
-export const metadata: Metadata = {
-	title: { absolute: "NACE-BEL 2025 Codes — Search the Belgian classification" },
-	description,
-	alternates: { canonical: "/" },
-	openGraph: {
-		title: "NACE-BEL 2025 Codes — Search the Belgian classification",
-		description,
-		url: "https://nacebel.codes",
-		type: "website",
-	},
-	twitter: {
-		card: "summary_large_image",
-		title: "NACE-BEL 2025 Codes — Search the Belgian classification",
-		description,
-	},
-};
+	return {
+		title: { absolute: t.metaTitle },
+		description: t.metaDescription,
+		alternates: { canonical: "/" },
+		openGraph: {
+			title: t.metaTitle,
+			description: t.metaDescription,
+			url: "https://nacebel.codes",
+			type: "website",
+		},
+		twitter: {
+			card: "summary_large_image",
+			title: t.metaTitle,
+			description: t.metaDescription,
+		},
+	};
+}
 
 const websiteJsonLd = {
 	"@context": "https://schema.org",
@@ -29,7 +33,6 @@ const websiteJsonLd = {
 	alternateName: "NACEBEL 2025",
 	url: "https://nacebel.codes",
 	inLanguage: ["en", "nl", "fr", "de"],
-	description,
 	publisher: {
 		"@type": "Organization",
 		name: "Ingram Technologies",
@@ -50,7 +53,6 @@ const datasetJsonLd = {
 	"@type": "Dataset",
 	name: "NACE-BEL 2025 — Belgian economic activity classification",
 	alternateName: ["NACE-BEL 2025", "NACEBEL 2025"],
-	description,
 	url: "https://nacebel.codes",
 	inLanguage: ["nl", "fr", "en", "de"],
 	keywords: [
@@ -78,6 +80,7 @@ const datasetJsonLd = {
 
 export default async function Home() {
 	const { data: initialCodes } = await getPaginatedNacebelCodes(1, 100000);
+	const locale = await resolveLocale();
 
 	return (
 		<div className="min-h-screen bg-background">
@@ -92,7 +95,7 @@ export default async function Home() {
 				dangerouslySetInnerHTML={{ __html: JSON.stringify(datasetJsonLd) }}
 			/>
 			<main className="mx-auto max-w-6xl px-4 py-8 sm:py-12">
-				<NacebelSearchClient initialCodes={initialCodes} />
+				<NacebelSearchClient initialCodes={initialCodes} initialLocale={locale} />
 			</main>
 		</div>
 	);

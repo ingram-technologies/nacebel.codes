@@ -1,9 +1,11 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { useLocale } from "@/contexts/locale-context";
 import { useToast } from "@/hooks/use-toast";
 import { translations } from "@/lib/translations";
-import type { Language, NacebelCode, Theme } from "@/types";
+import type { Locale } from "@/lib/i18n/locales";
+import type { NacebelCode } from "@/types";
 import { Download } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
@@ -13,7 +15,6 @@ import { PaginationControls } from "./pagination-controls";
 import { SearchInput } from "./search-input";
 import { SiteHeader } from "./site-header";
 
-// Helper function to remove punctuation for search optimization
 function removePunctuationClient(text: string): string {
 	if (!text) return "";
 	return text.replace(/[^\p{L}\p{N}\s]/gu, " ").toLowerCase();
@@ -87,15 +88,16 @@ function getCodeSearchRank(code: NacebelCode, searchTerm: string) {
 
 interface NacebelSearchClientProps {
 	initialCodes: NacebelCode[];
+	initialLocale?: Locale;
 }
 
 export default function NacebelSearchClient({
 	initialCodes,
 }: NacebelSearchClientProps) {
+	const locale = useLocale();
 	const [searchTerm, setSearchTerm] = useState("");
 	const [nacebelCodes] = useState<NacebelCode[]>(initialCodes);
 	const [filteredCodes, setFilteredCodes] = useState<NacebelCode[]>(initialCodes);
-	const [language, setLanguage] = useState<Language>("en");
 	const [copiedCode, setCopiedCode] = useState<string | null>(null);
 	const [isClientProcessing, setIsClientProcessing] = useState(false);
 	const [clientError, setClientError] = useState<string | null>(null);
@@ -103,58 +105,7 @@ export default function NacebelSearchClient({
 
 	const [currentPage, setCurrentPage] = useState(1);
 	const [itemsPerPage] = useState(100);
-	const [theme, setTheme] = useState<Theme>("system");
 	const searchInputRef = useRef<HTMLInputElement>(null);
-
-	// Load initial language from cookie
-	useEffect(() => {
-		const storedLang = document.cookie
-			.split("; ")
-			.find((row) => row.startsWith("lang="))
-			?.split("=")[1];
-		if (storedLang && ["en", "de", "fr", "nl"].includes(storedLang)) {
-			setLanguage(storedLang as Language);
-		}
-	}, []);
-
-	// Load initial theme from cookie or system preference
-	useEffect(() => {
-		let initialTheme: Theme = "system";
-		const storedTheme = document.cookie
-			.split("; ")
-			.find((row) => row.startsWith("theme="))
-			?.split("=")[1] as Theme | undefined;
-
-		if (storedTheme && ["light", "dark", "system"].includes(storedTheme)) {
-			initialTheme = storedTheme;
-		}
-		setTheme(initialTheme);
-	}, []);
-
-	// Apply theme and listen for system changes
-	useEffect(() => {
-		const applyCurrentTheme = (currentTheme: Theme) => {
-			document.cookie = `theme=${currentTheme};path=/;max-age=31536000;samesite=lax`;
-			if (currentTheme === "light") {
-				document.documentElement.classList.remove("dark");
-			} else if (currentTheme === "dark") {
-				document.documentElement.classList.add("dark");
-			} else {
-				if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-					document.documentElement.classList.add("dark");
-				} else {
-					document.documentElement.classList.remove("dark");
-				}
-			}
-		};
-		applyCurrentTheme(theme);
-		const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-		const handleChange = () => {
-			if (theme === "system") applyCurrentTheme("system");
-		};
-		mediaQuery.addEventListener("change", handleChange);
-		return () => mediaQuery.removeEventListener("change", handleChange);
-	}, [theme]);
 
 	useEffect(() => {
 		const handleKeyDown = (event: KeyboardEvent) => {
@@ -189,7 +140,6 @@ export default function NacebelSearchClient({
 		return () => window.removeEventListener("keydown", handleKeyDown);
 	}, []);
 
-	// Filter codes based on search term
 	useEffect(() => {
 		setIsClientProcessing(true);
 		setClientError(null);
@@ -239,11 +189,11 @@ export default function NacebelSearchClient({
 			setCurrentPage(1);
 		} catch (e) {
 			console.error("Error filtering codes:", e);
-			setClientError(translations[language].error);
+			setClientError(translations[locale].error);
 		} finally {
 			setIsClientProcessing(false);
 		}
-	}, [searchTerm, nacebelCodes, language]);
+	}, [searchTerm, nacebelCodes, locale]);
 
 	const totalPages = Math.ceil(filteredCodes.length / itemsPerPage);
 	const startIndex = (currentPage - 1) * itemsPerPage;
@@ -267,35 +217,30 @@ export default function NacebelSearchClient({
 		});
 	};
 
-	const changeLanguage = (newLanguage: Language) => {
-		setLanguage(newLanguage);
-		document.cookie = `lang=${newLanguage};path=/;max-age=31536000;samesite=lax`;
-	};
-
 	const getExternalLink = (code: string) => {
 		const cleanCode = code.replace(/\./g, "");
-		return `https://kbopub.economie.fgov.be/kbopub/naceToelichting.html?lang=${language}&nace.code=${cleanCode}&nace.version=2025`;
+		return `https://kbopub.economie.fgov.be/kbopub/naceToelichting.html?lang=${locale}&nace.code=${cleanCode}&nace.version=2025`;
 	};
 
 	const exportToCSV = () => {
-		const headers = ["Level", "Code", `Description (${language.toUpperCase()})`];
+		const headers = ["Level", "Code", `Description (${locale.toUpperCase()})`];
 		const csvContent = [
 			headers.join(","),
 			...filteredCodes.map((code) =>
 				[
 					code.level,
 					code.code,
-					`"${(code.titles[language] || "").replace(/"/g, '""')}"`,
+					`"${(code.titles[locale] || "").replace(/"/g, '""')}"`,
 				].join(","),
 			),
 		].join("\n");
 
-		const blob = new Blob([`\uFEFF${csvContent}`], {
+		const blob = new Blob([`﻿${csvContent}`], {
 			type: "text/csv;charset=utf-8;",
 		});
 		const link = document.createElement("a");
 		link.href = URL.createObjectURL(blob);
-		link.download = `nacebel_codes_${language}.csv`;
+		link.download = `nacebel_codes_${locale}.csv`;
 		document.body.appendChild(link);
 		link.click();
 		document.body.removeChild(link);
@@ -305,7 +250,7 @@ export default function NacebelSearchClient({
 		});
 	};
 
-	const t = translations[language];
+	const t = translations[locale];
 	const exampleSearches = ["software", "62.01", "consulting"];
 	const resultsHeading = searchTerm ? t.resultsFor(searchTerm) : t.allCodes;
 
@@ -319,14 +264,7 @@ export default function NacebelSearchClient({
 
 	return (
 		<div className="space-y-5 sm:space-y-6">
-			<SiteHeader
-				title={t.title}
-				subtitle={t.subtitle}
-				language={language}
-				onLanguageChange={changeLanguage}
-				theme={theme}
-				onThemeChange={setTheme}
-			/>
+			<SiteHeader title={t.title} subtitle={t.subtitle} />
 
 			<section className="sticky top-3 z-20 space-y-3 rounded-[1.25rem] border border-white/60 bg-white/88 p-3 shadow-[0_20px_50px_-38px_rgba(15,23,42,0.6)] backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/88 sm:p-4">
 				<div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
@@ -396,7 +334,7 @@ export default function NacebelSearchClient({
 					) : paginatedCodes.length > 0 ? (
 						<NacebelCodeList
 							codes={paginatedCodes}
-							language={language}
+							language={locale}
 							searchTerm={searchTerm}
 							copiedCode={copiedCode}
 							onCopyCode={copyCodeOnly}

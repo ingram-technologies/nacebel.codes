@@ -7,22 +7,16 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import type { Language } from "@/types";
+import { useLocale } from "@/contexts/locale-context";
+import { LOCALE_NAMES, type Locale, SUPPORTED_LOCALES } from "@/lib/i18n/locales";
 import { ChevronDown } from "lucide-react";
+import { usePathname } from "next/navigation";
 
-interface LanguageSwitcherProps {
-	language: Language;
-	changeLanguage: (lang: Language) => void;
-}
+export function LanguageSwitcher() {
+	const locale = useLocale();
+	const pathname = usePathname();
+	const path = pathname === "/" ? "" : pathname;
 
-const languages: Record<Language, { name: string }> = {
-	en: { name: "English" },
-	de: { name: "Deutsch" },
-	fr: { name: "Français" },
-	nl: { name: "Nederlands" },
-};
-
-export function LanguageSwitcher({ language, changeLanguage }: LanguageSwitcherProps) {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
@@ -30,7 +24,7 @@ export function LanguageSwitcher({ language, changeLanguage }: LanguageSwitcherP
 					variant="outline"
 					className="flex items-center gap-2 rounded-full bg-background/80 px-4 backdrop-blur-sm"
 				>
-					<span>{languages[language].name}</span>
+					<span>{LOCALE_NAMES[locale]}</span>
 					<ChevronDown className="h-4 w-4" />
 				</Button>
 			</DropdownMenuTrigger>
@@ -38,13 +32,9 @@ export function LanguageSwitcher({ language, changeLanguage }: LanguageSwitcherP
 				align="start"
 				className="rounded-2xl border-border/70 bg-background/95 p-1 backdrop-blur-xl"
 			>
-				{Object.entries(languages).map(([code, lang]) => (
-					<DropdownMenuItem
-						key={code}
-						onClick={() => changeLanguage(code as Language)}
-						className="rounded-xl"
-					>
-						{lang.name}
+				{SUPPORTED_LOCALES.map((loc: Locale) => (
+					<DropdownMenuItem key={loc} asChild className="rounded-xl">
+						<a href={`/${loc}${path}`}>{LOCALE_NAMES[loc]}</a>
 					</DropdownMenuItem>
 				))}
 			</DropdownMenuContent>
