@@ -4,6 +4,7 @@ import { resolveLocale } from "@/lib/i18n/resolve-locale";
 import { getPaginatedNacebelCodes } from "@/lib/nacebelData";
 import { translations } from "@/lib/translations";
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
 const HOME_LANGUAGES: Record<string, string> = {
 	"x-default": "https://nacebel.codes/",
@@ -102,7 +103,9 @@ export default async function Home() {
 				dangerouslySetInnerHTML={{ __html: JSON.stringify(datasetJsonLd) }}
 			/>
 			<main className="mx-auto max-w-6xl px-4 py-8 sm:py-12">
-				<NacebelSearchClient initialCodes={initialCodes} />
+				<Suspense>
+					<NacebelSearchClient initialCodes={initialCodes} />
+				</Suspense>
 			</main>
 		</div>
 	);

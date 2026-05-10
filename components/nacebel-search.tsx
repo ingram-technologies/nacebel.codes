@@ -7,6 +7,7 @@ import { translations } from "@/lib/translations";
 import { slugify } from "@/lib/slug";
 import type { NacebelCode } from "@/types";
 import { Download } from "lucide-react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { NacebelCodeList } from "./nacebel-code-list";
@@ -17,6 +18,7 @@ import { SiteHeader } from "./site-header";
 
 const ITEMS_PER_PAGE = 100;
 const COPY_FEEDBACK_MS = 2000;
+const URL_SYNC_DEBOUNCE_MS = 250;
 const EXAMPLE_SEARCHES = ["software", "62.01", "consulting"];
 const CODE_LIKE_RE = /^[\d.\s]+$/;
 const PUNCTUATION_RE = /[^\p{L}\p{N}\s]/gu;
@@ -128,10 +130,32 @@ export default function NacebelSearchClient({
 	const t = translations[locale];
 	const { toast } = useToast();
 
-	const [searchTerm, setSearchTerm] = useState("");
+	const router = useRouter();
+	const pathname = usePathname();
+	const searchParams = useSearchParams();
+
+	const [searchTerm, setSearchTerm] = useState(
+		() => searchParams.get("q") ?? "",
+	);
 	const [copiedCode, setCopiedCode] = useState<string | null>(null);
 	const [currentPage, setCurrentPage] = useState(1);
 	const searchInputRef = useRef<HTMLInputElement>(null);
+	const isFirstUrlSync = useRef(true);
+
+	useEffect(() => {
+		if (isFirstUrlSync.current) {
+			isFirstUrlSync.current = false;
+			return;
+		}
+		const handle = setTimeout(() => {
+			const trimmed = searchTerm.trim();
+			const url = trimmed
+				? `${pathname}?q=${encodeURIComponent(trimmed)}`
+				: pathname;
+			router.replace(url, { scroll: false });
+		}, URL_SYNC_DEBOUNCE_MS);
+		return () => clearTimeout(handle);
+	}, [searchTerm, router, pathname]);
 
 	const filteredCodes = useMemo(
 		() => filterCodes(initialCodes, searchTerm),
