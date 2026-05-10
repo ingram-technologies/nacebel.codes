@@ -1,6 +1,41 @@
 import type { Language } from "@/types";
 
-export const translations: Record<Language, any> = {
+export interface Translation {
+	title: string;
+	subtitle: string;
+	metaTitle: string;
+	metaDescription: string;
+	searchPlaceholder: string;
+	tryLabel: string;
+	allCodes: string;
+	resultsFor: (query: string) => string;
+	showing: string;
+	of: string;
+	codes: string;
+	noCodes: string;
+	copied: string;
+	loading: string;
+	error: string;
+	exportCsv: string;
+	previous: string;
+	next: string;
+	page: string;
+	exportedCsv: (count: number) => string;
+	recommendationLabel: string;
+	recommendationText: string;
+	recommendationCta: string;
+	themeLight: string;
+	themeDark: string;
+	themeSystem: string;
+	backToDirectory: string;
+	parentCode: string;
+	childCodes: string;
+	level: string;
+	viewOnKbo: string;
+	codeMetaDescription: (code: string, title: string) => string;
+}
+
+export const translations: Record<Language, Translation> = {
 	en: {
 		title: "NACE-BEL 2025 Codes",
 		subtitle: "Search the official directory and export the current results.",

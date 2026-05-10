@@ -11,13 +11,14 @@ import {
 	PaginationNext,
 	PaginationPrevious,
 } from "@/components/ui/pagination";
+import type { Translation } from "@/lib/translations";
 import { cn } from "@/lib/utils";
 
 interface PaginationControlsProps {
 	currentPage: number;
 	totalPages: number;
 	setCurrentPage: (page: number) => void;
-	translations: any;
+	translations: Translation;
 	className?: string;
 }
 
