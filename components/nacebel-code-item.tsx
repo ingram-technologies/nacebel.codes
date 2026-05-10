@@ -3,54 +3,43 @@
 import { Button } from "@/components/ui/button";
 import type { Language, NacebelCode } from "@/types";
 import { Check, Copy, ExternalLink } from "lucide-react";
-import type { ReactNode } from "react";
+import { memo, type ReactNode } from "react";
 
-const levelColorClasses: { [key: number]: string } = {
+const LEVEL_COLOR_CLASSES: Record<number, string> = {
 	2: "bg-emerald-500/15 text-emerald-700 ring-emerald-600/20 dark:bg-emerald-400/15 dark:text-emerald-200 dark:ring-emerald-300/20",
 	3: "bg-amber-500/15 text-amber-700 ring-amber-600/20 dark:bg-amber-400/15 dark:text-amber-200 dark:ring-amber-300/20",
 	4: "bg-sky-500/15 text-sky-700 ring-sky-600/20 dark:bg-sky-400/15 dark:text-sky-200 dark:ring-sky-300/20",
 	5: "bg-rose-500/15 text-rose-700 ring-rose-600/20 dark:bg-rose-400/15 dark:text-rose-200 dark:ring-rose-300/20",
 };
-const defaultCodeColor = "bg-primary/10 text-primary ring-primary/20";
+const DEFAULT_CODE_COLOR = "bg-primary/10 text-primary ring-primary/20";
 
-function escapeRegExp(value: string) {
-	return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const REGEX_ESCAPE_RE = /[.*+?^${}()|[\]\\]/g;
+const PUNCTUATION_RE = /[^\p{L}\p{N}\s]/gu;
+const CODE_LIKE_RE = /^[\d.\s]+$/;
+
+function escapeRegExp(value: string): string {
+	return value.replace(REGEX_ESCAPE_RE, "\\$&");
 }
 
-function normalizeSearchText(text: string) {
-	return text.replace(/[^\p{L}\p{N}\s]/gu, " ").toLowerCase();
-}
-
-function isCodeLikeQuery(searchTerm: string) {
-	const trimmedSearch = searchTerm.trim();
-	return trimmedSearch.length > 0 && /^[\d.\s]+$/.test(trimmedSearch);
-}
-
-function buildSearchPatterns(searchTerm: string) {
-	const rawTokens = searchTerm.trim().split(/\s+/).filter(Boolean);
-	const normalizedTokens = normalizeSearchText(searchTerm)
-		.split(/\s+/)
-		.filter(Boolean);
+function buildSearchPatterns(searchTerm: string): string[] {
+	const trimmed = searchTerm.trim();
+	if (trimmed.length === 0) return [];
 	const patterns = new Set<string>();
 
-	if (isCodeLikeQuery(searchTerm)) {
-		const trimmedSearch = searchTerm.trim();
-		if (trimmedSearch.length >= 2) {
-			patterns.add(trimmedSearch);
-		}
-		return Array.from(patterns).sort((a, b) => b.length - a.length);
+	if (CODE_LIKE_RE.test(trimmed)) {
+		if (trimmed.length >= 2) patterns.add(trimmed);
+		return Array.from(patterns);
 	}
 
-	for (const token of rawTokens) {
-		if (token.length >= 2) {
-			patterns.add(token);
-		}
+	for (const token of trimmed.split(/\s+/)) {
+		if (token.length >= 2) patterns.add(token);
 	}
-
-	for (const token of normalizedTokens) {
-		if (token.length >= 2) {
-			patterns.add(token);
-		}
+	for (const token of trimmed
+		.replace(PUNCTUATION_RE, " ")
+		.toLowerCase()
+		.split(/\s+/)
+		.filter(Boolean)) {
+		if (token.length >= 2) patterns.add(token);
 		if (token.endsWith("ing") && token.length > 5) {
 			patterns.add(token.slice(0, -3));
 		}
@@ -65,59 +54,46 @@ function buildSearchPatterns(searchTerm: string) {
 	return Array.from(patterns).sort((a, b) => b.length - a.length);
 }
 
-function renderHighlightedText(text: string, searchTerm: string) {
+function renderHighlightedText(text: string, searchTerm: string): ReactNode {
 	const patterns = buildSearchPatterns(searchTerm);
-	if (patterns.length === 0) {
-		return text;
-	}
+	if (patterns.length === 0) return text;
 
 	const ranges: Array<{ start: number; end: number }> = [];
-
 	for (const pattern of patterns) {
 		const regex = new RegExp(escapeRegExp(pattern), "gi");
 		for (const match of text.matchAll(regex)) {
-			const start = match.index;
-			if (start === undefined) continue;
-			ranges.push({ start, end: start + match[0].length });
+			if (match.index !== undefined) {
+				ranges.push({ start: match.index, end: match.index + match[0].length });
+			}
 		}
 	}
-
-	if (ranges.length === 0) {
-		return text;
-	}
+	if (ranges.length === 0) return text;
 
 	ranges.sort((a, b) => a.start - b.start || b.end - a.end);
 
-	const mergedRanges: Array<{ start: number; end: number }> = [];
+	const merged: Array<{ start: number; end: number }> = [];
 	for (const range of ranges) {
-		const previousRange = mergedRanges[mergedRanges.length - 1];
-		if (!previousRange || range.start > previousRange.end) {
-			mergedRanges.push({ ...range });
-			continue;
+		const previous = merged[merged.length - 1];
+		if (!previous || range.start > previous.end) {
+			merged.push({ ...range });
+		} else if (range.end > previous.end) {
+			previous.end = range.end;
 		}
-		previousRange.end = Math.max(previousRange.end, range.end);
 	}
 
-	const highlighted: ReactNode[] = [];
-	let currentIndex = 0;
-
-	for (const range of mergedRanges) {
-		if (range.start > currentIndex) {
-			highlighted.push(text.slice(currentIndex, range.start));
-		}
-		highlighted.push(
+	const out: ReactNode[] = [];
+	let cursor = 0;
+	for (const range of merged) {
+		if (range.start > cursor) out.push(text.slice(cursor, range.start));
+		out.push(
 			<strong key={`${range.start}-${range.end}`} className="font-semibold">
 				{text.slice(range.start, range.end)}
 			</strong>,
 		);
-		currentIndex = range.end;
+		cursor = range.end;
 	}
-
-	if (currentIndex < text.length) {
-		highlighted.push(text.slice(currentIndex));
-	}
-
-	return highlighted;
+	if (cursor < text.length) out.push(text.slice(cursor));
+	return out;
 }
 
 interface NacebelCodeItemProps {
@@ -131,7 +107,7 @@ interface NacebelCodeItemProps {
 	getDetailLink: (code: NacebelCode) => string;
 }
 
-export function NacebelCodeItem({
+function NacebelCodeItemImpl({
 	code,
 	language,
 	searchTerm,
@@ -141,17 +117,17 @@ export function NacebelCodeItem({
 	getExternalLink,
 	getDetailLink,
 }: NacebelCodeItemProps) {
+	const isCopied = copiedCode === code.code;
+	const colorClass = LEVEL_COLOR_CLASSES[code.level] || DEFAULT_CODE_COLOR;
+
 	return (
-		<div
-			key={code.code}
-			className="group flex flex-col gap-3 rounded-[1.25rem] border border-border/70 bg-white/75 p-3 shadow-[0_16px_36px_-34px_rgba(15,23,42,0.45)] backdrop-blur-sm transition-colors duration-200 hover:border-primary/20 dark:bg-white/5 sm:flex-row sm:items-center"
-		>
+		<div className="group flex flex-col gap-3 rounded-[1.25rem] border border-border/70 bg-white/75 p-3 shadow-[0_16px_36px_-34px_rgba(15,23,42,0.45)] backdrop-blur-sm transition-colors duration-200 hover:border-primary/20 dark:bg-white/5 sm:flex-row sm:items-center">
 			<div className="flex items-center gap-2">
 				<button
 					type="button"
 					onClick={() => onCopyCode(code.code)}
 					aria-label={`Copy code ${code.code}`}
-					className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold ring-1 ring-inset ${levelColorClasses[code.level] || defaultCodeColor}`}
+					className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold ring-1 ring-inset ${colorClass}`}
 				>
 					{renderHighlightedText(code.code, searchTerm)}
 				</button>
@@ -172,7 +148,7 @@ export function NacebelCodeItem({
 					className="h-9 w-9 rounded-full p-0"
 					aria-label="Copy to clipboard"
 				>
-					{copiedCode === code.code ? (
+					{isCopied ? (
 						<Check className="h-3.5 w-3.5 text-emerald-500" />
 					) : (
 						<Copy className="h-3.5 w-3.5 text-muted-foreground" />
@@ -200,3 +176,5 @@ export function NacebelCodeItem({
 		</div>
 	);
 }
+
+export const NacebelCodeItem = memo(NacebelCodeItemImpl);
