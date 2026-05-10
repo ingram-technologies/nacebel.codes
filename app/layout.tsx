@@ -101,6 +101,14 @@ export default async function RootLayout({
 
 	return (
 		<html lang={HTML_LANG[locale]} suppressHydrationWarning>
+			<head>
+				<link
+					rel="search"
+					type="application/opensearchdescription+xml"
+					title="NACE-BEL 2025 Codes"
+					href="/opensearch.xml"
+				/>
+			</head>
 			<body
 				className={`${manrope.variable} ${newsreader.variable} min-h-screen bg-background text-foreground antialiased`}
 			>

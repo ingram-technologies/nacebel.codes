@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+	<ShortName>NACE-BEL</ShortName>
+	<LongName>NACE-BEL 2025 Codes</LongName>
+	<Description>Search the NACE-BEL 2025 classification of Belgian economic activity codes.</Description>
+	<InputEncoding>UTF-8</InputEncoding>
+	<Url type="text/html" method="get" template="https://nacebel.codes/?q={searchTerms}"/>
+	<Url type="application/opensearchdescription+xml" rel="self" template="https://nacebel.codes/opensearch.xml"/>
+	<Language>en</Language>
+	<Language>nl</Language>
+	<Language>fr</Language>
+	<Language>de</Language>
+</OpenSearchDescription>
