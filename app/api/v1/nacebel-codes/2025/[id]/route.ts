@@ -1,23 +1,19 @@
-// app/api/v1/nacebel-codes/2025/[id]/route.ts
 import { getNacebelCodeDetails } from "@/lib/nacebelData";
 import { NextResponse } from "next/server";
 
-// CORS headers
 const corsHeaders = {
 	"Access-Control-Allow-Origin": "*",
 	"Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
 	"Access-Control-Allow-Headers": "Content-Type, Authorization",
 };
 
-interface NacebelCodeDetailParams {
-	params: {
-		id: string; // This will be the id without dots
-	};
+interface RouteContext {
+	params: Promise<{ id: string }>;
 }
 
-export async function GET(request: Request, { params }: NacebelCodeDetailParams) {
+export async function GET(_request: Request, { params }: RouteContext) {
 	try {
-		const { id } = params; // id is the dot-less code from the URL
+		const { id } = await params;
 
 		if (!id) {
 			return NextResponse.json(
@@ -35,8 +31,6 @@ export async function GET(request: Request, { params }: NacebelCodeDetailParams)
 			);
 		}
 
-		// The getNacebelCodeDetails function now returns PublicNacebelCode,
-		// which already includes the empty description and handles children.
 		return NextResponse.json(codeDetails, { headers: corsHeaders });
 	} catch (error) {
 		console.error("API Error:", error);

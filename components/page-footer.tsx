@@ -1,5 +1,3 @@
-"use client";
-
 export function PageFooter() {
 	return (
 		<footer className="mt-12 rounded-[2rem] border border-white/60 bg-white/70 px-6 py-6 shadow-[0_20px_60px_-45px_rgba(15,23,42,0.55)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5">

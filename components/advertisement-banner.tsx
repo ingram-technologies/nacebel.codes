@@ -1,5 +1,3 @@
-"use client";
-
 interface AdvertisementBannerProps {
 	label: string;
 	text: string;
