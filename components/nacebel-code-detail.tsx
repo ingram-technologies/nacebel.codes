@@ -1,6 +1,7 @@
 import { ArrowLeft, ChevronRight, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PageFooter } from "@/components/page-footer";
+import { SiteHeader } from "@/components/site-header";
 import { type CodeData, codeHrefFor, codeTitleFor } from "@/lib/code-page";
 import type { Locale } from "@/lib/i18n/locales";
 import { translations } from "@/lib/translations";
@@ -35,6 +36,8 @@ export function NacebelCodeDetail({
 	return (
 		<div className="bg-background text-foreground">
 			<div className="mx-auto max-w-5xl space-y-8 px-4 py-8 sm:py-12">
+				<SiteHeader />
+
 				<nav
 					aria-label="Breadcrumb"
 					className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground"

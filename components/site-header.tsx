@@ -11,8 +11,8 @@ import { translations } from "@/lib/translations";
 import type { Theme } from "@/types";
 
 interface SiteHeaderProps {
-	title: string;
-	subtitle: string;
+	title?: string;
+	subtitle?: string;
 }
 
 function getCookieValue(name: string) {
@@ -71,10 +71,14 @@ export function SiteHeader({ title, subtitle }: SiteHeaderProps) {
 
 			<header className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
 				<div className="space-y-1">
-					<h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-						{title}
-					</h1>
-					<p className="text-sm text-muted-foreground">{subtitle}</p>
+					{title ? (
+						<h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+							{title}
+						</h1>
+					) : null}
+					{subtitle ? (
+						<p className="text-sm text-muted-foreground">{subtitle}</p>
+					) : null}
 				</div>
 				<div className="flex flex-wrap items-center gap-2 sm:gap-3">
 					<Button variant="outline" size="sm" asChild>

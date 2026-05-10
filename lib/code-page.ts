@@ -29,12 +29,15 @@ export function getParentCode(code: string): string | null {
 
 export const loadAncestors = cache(async (code: string): Promise<CodeData[]> => {
 	const ancestors: CodeData[] = [];
-	let parent = getParentCode(code);
-	while (parent) {
-		const data = await loadCodeData(parent.replace(/\./g, ""));
-		if (!data) break;
-		ancestors.unshift(data);
-		parent = getParentCode(parent);
+	let candidate = getParentCode(code);
+	while (candidate) {
+		const data = await loadCodeData(candidate.replace(/\./g, ""));
+		if (data) {
+			ancestors.unshift(data);
+			candidate = getParentCode(data.code);
+		} else {
+			candidate = getParentCode(candidate);
+		}
 	}
 	return ancestors;
 });
