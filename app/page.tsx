@@ -88,7 +88,6 @@ const datasetJsonLd = {
 
 export default async function Home() {
 	const { data: initialCodes } = await getPaginatedNacebelCodes(1, 100000);
-	const locale = await resolveLocale();
 
 	return (
 		<div className="min-h-screen bg-background">
@@ -103,7 +102,7 @@ export default async function Home() {
 				dangerouslySetInnerHTML={{ __html: JSON.stringify(datasetJsonLd) }}
 			/>
 			<main className="mx-auto max-w-6xl px-4 py-8 sm:py-12">
-				<NacebelSearchClient initialCodes={initialCodes} initialLocale={locale} />
+				<NacebelSearchClient initialCodes={initialCodes} />
 			</main>
 		</div>
 	);

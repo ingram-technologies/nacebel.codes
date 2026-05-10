@@ -4,11 +4,10 @@ import { Button } from "@/components/ui/button";
 import { useLocale } from "@/contexts/locale-context";
 import { useToast } from "@/hooks/use-toast";
 import { translations } from "@/lib/translations";
-import type { Locale } from "@/lib/i18n/locales";
 import { slugify } from "@/lib/slug";
 import type { NacebelCode } from "@/types";
 import { Download } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { NacebelCodeList } from "./nacebel-code-list";
 import { PageFooter } from "./page-footer";
@@ -16,44 +15,45 @@ import { PaginationControls } from "./pagination-controls";
 import { SearchInput } from "./search-input";
 import { SiteHeader } from "./site-header";
 
-function removePunctuationClient(text: string): string {
-	if (!text) return "";
-	return text.replace(/[^\p{L}\p{N}\s]/gu, " ").toLowerCase();
+const ITEMS_PER_PAGE = 100;
+const COPY_FEEDBACK_MS = 2000;
+const EXAMPLE_SEARCHES = ["software", "62.01", "consulting"];
+const CODE_LIKE_RE = /^[\d.\s]+$/;
+const PUNCTUATION_RE = /[^\p{L}\p{N}\s]/gu;
+
+function normalizePunctuation(text: string): string {
+	return text.replace(PUNCTUATION_RE, " ").toLowerCase();
 }
 
-function normalizeCodeSearch(text: string) {
+function normalizeCodeSearch(text: string): string {
 	return text.replace(/[\s.]+/g, "").toLowerCase();
 }
 
-function isCodeLikeSearch(searchTerm: string) {
-	const trimmedSearch = searchTerm.trim();
-	return trimmedSearch.length > 0 && /^[\d.\s]+$/.test(trimmedSearch);
+function isCodeLikeSearch(searchTerm: string): boolean {
+	return searchTerm.length > 0 && CODE_LIKE_RE.test(searchTerm);
 }
 
-function getSearchTokens(searchTerm: string) {
-	const normalizedTokens = removePunctuationClient(searchTerm)
+function getSearchTokens(searchTerm: string): string[][] {
+	return normalizePunctuation(searchTerm)
 		.split(/\s+/)
-		.filter(Boolean);
-
-	return normalizedTokens.map((token) => {
-		const variants = new Set<string>([token]);
-
-		if (token.endsWith("ing") && token.length > 5) {
-			variants.add(token.slice(0, -3));
-		}
-		if (token.endsWith("ies") && token.length > 4) {
-			variants.add(`${token.slice(0, -3)}y`);
-		}
-		if (token.endsWith("s") && token.length > 4) {
-			variants.add(token.slice(0, -1));
-		}
-
-		return Array.from(variants);
-	});
+		.filter(Boolean)
+		.map((token) => {
+			const variants = new Set<string>([token]);
+			if (token.endsWith("ing") && token.length > 5) {
+				variants.add(token.slice(0, -3));
+			}
+			if (token.endsWith("ies") && token.length > 4) {
+				variants.add(`${token.slice(0, -3)}y`);
+			}
+			if (token.endsWith("s") && token.length > 4) {
+				variants.add(token.slice(0, -1));
+			}
+			return Array.from(variants);
+		});
 }
 
-function getSearchableText(code: NacebelCode) {
-	return removePunctuationClient(
+function getSearchableText(code: NacebelCode): string {
+	return normalizePunctuation(
 		[
 			code.code,
 			...Object.values(code.titles),
@@ -62,51 +62,85 @@ function getSearchableText(code: NacebelCode) {
 	);
 }
 
-function getCodeSearchRank(code: NacebelCode, searchTerm: string) {
-	const trimmedSearch = searchTerm.trim().toLowerCase();
-	const normalizedSearch = normalizeCodeSearch(searchTerm);
+function getCodeSearchRank(code: NacebelCode, searchTerm: string): number {
 	const codeValue = code.code.toLowerCase();
 	const normalizedCodeValue = normalizeCodeSearch(code.code);
+	const normalizedSearch = normalizeCodeSearch(searchTerm);
 
-	if (codeValue === trimmedSearch || normalizedCodeValue === normalizedSearch) {
+	if (codeValue === searchTerm || normalizedCodeValue === normalizedSearch) {
 		return 0;
 	}
 	if (
-		codeValue.startsWith(trimmedSearch)
+		codeValue.startsWith(searchTerm)
 		|| normalizedCodeValue.startsWith(normalizedSearch)
 	) {
 		return 1;
 	}
 	if (
-		codeValue.includes(trimmedSearch)
+		codeValue.includes(searchTerm)
 		|| normalizedCodeValue.includes(normalizedSearch)
 	) {
 		return 2;
 	}
-
 	return 3;
+}
+
+function filterCodes(codes: NacebelCode[], searchTerm: string): NacebelCode[] {
+	const trimmed = searchTerm.trim();
+	if (trimmed.length === 0) return codes;
+
+	if (isCodeLikeSearch(trimmed)) {
+		const lowered = trimmed.toLowerCase();
+		const normalizedQuery = normalizeCodeSearch(trimmed);
+		return codes
+			.filter((code) => {
+				const normalizedCodeValue = normalizeCodeSearch(code.code);
+				return (
+					code.code.toLowerCase().startsWith(lowered)
+					|| normalizedCodeValue.startsWith(normalizedQuery)
+				);
+			})
+			.sort((a, b) => {
+				const rankDiff =
+					getCodeSearchRank(a, lowered) - getCodeSearchRank(b, lowered);
+				if (rankDiff !== 0) return rankDiff;
+				return a.code.length - b.code.length || a.code.localeCompare(b.code);
+			});
+	}
+
+	const tokens = getSearchTokens(trimmed);
+	return codes.filter((code) => {
+		const text = getSearchableText(code);
+		return tokens.every((tokenGroup) =>
+			tokenGroup.some((token) => text.includes(token)),
+		);
+	});
 }
 
 interface NacebelSearchClientProps {
 	initialCodes: NacebelCode[];
-	initialLocale?: Locale;
 }
 
 export default function NacebelSearchClient({
 	initialCodes,
 }: NacebelSearchClientProps) {
 	const locale = useLocale();
-	const [searchTerm, setSearchTerm] = useState("");
-	const [nacebelCodes] = useState<NacebelCode[]>(initialCodes);
-	const [filteredCodes, setFilteredCodes] = useState<NacebelCode[]>(initialCodes);
-	const [copiedCode, setCopiedCode] = useState<string | null>(null);
-	const [isClientProcessing, setIsClientProcessing] = useState(false);
-	const [clientError, setClientError] = useState<string | null>(null);
+	const t = translations[locale];
 	const { toast } = useToast();
 
+	const [searchTerm, setSearchTerm] = useState("");
+	const [copiedCode, setCopiedCode] = useState<string | null>(null);
 	const [currentPage, setCurrentPage] = useState(1);
-	const [itemsPerPage] = useState(100);
 	const searchInputRef = useRef<HTMLInputElement>(null);
+
+	const filteredCodes = useMemo(
+		() => filterCodes(initialCodes, searchTerm),
+		[initialCodes, searchTerm],
+	);
+
+	useEffect(() => {
+		setCurrentPage(1);
+	}, [searchTerm]);
 
 	useEffect(() => {
 		const handleKeyDown = (event: KeyboardEvent) => {
@@ -122,14 +156,9 @@ export default function NacebelSearchClient({
 				&& event.key.toLowerCase() === "k"
 				&& !event.altKey;
 
-			if (!isSlashShortcut && !isCommandShortcut) {
+			if (!isSlashShortcut && !isCommandShortcut) return;
+			if (isTextInput && target !== searchInputRef.current && !isCommandShortcut) {
 				return;
-			}
-
-			if (isTextInput && target !== searchInputRef.current) {
-				if (!isCommandShortcut) {
-					return;
-				}
 			}
 
 			event.preventDefault();
@@ -141,93 +170,53 @@ export default function NacebelSearchClient({
 		return () => window.removeEventListener("keydown", handleKeyDown);
 	}, []);
 
-	useEffect(() => {
-		setIsClientProcessing(true);
-		setClientError(null);
-		try {
-			const trimmedSearch = searchTerm.trim();
-			const isCodeSearch = isCodeLikeSearch(trimmedSearch);
-			const searchTokens = getSearchTokens(trimmedSearch);
-
-			if (trimmedSearch.length === 0) {
-				setFilteredCodes(nacebelCodes);
-			} else if (isCodeSearch) {
-				const normalizedCodeQuery = normalizeCodeSearch(trimmedSearch);
-				const results = nacebelCodes
-					.filter((code) => {
-						const normalizedCodeValue = normalizeCodeSearch(code.code);
-						return (
-							code.code
-								.toLowerCase()
-								.startsWith(trimmedSearch.toLowerCase())
-							|| normalizedCodeValue.startsWith(normalizedCodeQuery)
-						);
-					})
-					.sort((leftCode, rightCode) => {
-						const rankDifference =
-							getCodeSearchRank(leftCode, trimmedSearch)
-							- getCodeSearchRank(rightCode, trimmedSearch);
-
-						if (rankDifference !== 0) {
-							return rankDifference;
-						}
-
-						return (
-							leftCode.code.length - rightCode.code.length
-							|| leftCode.code.localeCompare(rightCode.code)
-						);
-					});
-				setFilteredCodes(results);
-			} else {
-				const results = nacebelCodes.filter((code) => {
-					const searchableText = getSearchableText(code);
-					return searchTokens.every((tokenGroup) =>
-						tokenGroup.some((token) => searchableText.includes(token)),
-					);
-				});
-				setFilteredCodes(results);
-			}
-			setCurrentPage(1);
-		} catch (e) {
-			console.error("Error filtering codes:", e);
-			setClientError(translations[locale].error);
-		} finally {
-			setIsClientProcessing(false);
-		}
-	}, [searchTerm, nacebelCodes, locale]);
-
-	const totalPages = Math.ceil(filteredCodes.length / itemsPerPage);
-	const startIndex = (currentPage - 1) * itemsPerPage;
-	const endIndex = startIndex + itemsPerPage;
+	const totalPages = Math.ceil(filteredCodes.length / ITEMS_PER_PAGE);
+	const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+	const endIndex = startIndex + ITEMS_PER_PAGE;
 	const paginatedCodes = useMemo(
 		() => filteredCodes.slice(startIndex, endIndex),
 		[filteredCodes, startIndex, endIndex],
 	);
-	const copyCodeOnly = (code: string) => {
-		navigator.clipboard.writeText(code).then(() => {
-			setCopiedCode(code);
-			toast({ description: t.copied, duration: 2000 });
-			setTimeout(() => setCopiedCode(null), 2000);
-		});
-	};
-	const copyToClipboard = (code: string, description: string) => {
-		navigator.clipboard.writeText(`${code} - ${description}`).then(() => {
-			setCopiedCode(code);
-			toast({ description: t.copied, duration: 2000 });
-			setTimeout(() => setCopiedCode(null), 2000);
-		});
-	};
 
-	const getExternalLink = (code: string) => {
-		const cleanCode = code.replace(/\./g, "");
-		return `https://kbopub.economie.fgov.be/kbopub/naceToelichting.html?lang=${locale}&nace.code=${cleanCode}&nace.version=2025`;
-	};
+	const flashCopied = useCallback(
+		(code: string) => {
+			setCopiedCode(code);
+			toast({ description: t.copied, duration: COPY_FEEDBACK_MS });
+			setTimeout(() => setCopiedCode(null), COPY_FEEDBACK_MS);
+		},
+		[toast, t.copied],
+	);
 
-	const getDetailLink = (code: NacebelCode) => {
-		const title = code.titles[locale] || code.titles.en || code.code;
-		const slug = slugify(title) || "code";
-		return `/${locale}/${code.code}/${slug}`;
-	};
+	const copyCodeOnly = useCallback(
+		(code: string) => {
+			navigator.clipboard.writeText(code).then(() => flashCopied(code));
+		},
+		[flashCopied],
+	);
+
+	const copyToClipboard = useCallback(
+		(code: string, description: string) => {
+			navigator.clipboard
+				.writeText(`${code} - ${description}`)
+				.then(() => flashCopied(code));
+		},
+		[flashCopied],
+	);
+
+	const getExternalLink = useCallback(
+		(code: string) =>
+			`https://kbopub.economie.fgov.be/kbopub/naceToelichting.html?lang=${locale}&nace.code=${code.replace(/\./g, "")}&nace.version=2025`,
+		[locale],
+	);
+
+	const getDetailLink = useCallback(
+		(code: NacebelCode) => {
+			const title = code.titles[locale] || code.titles.en || code.code;
+			const slug = slugify(title) || "code";
+			return `/${locale}/${code.code}/${slug}`;
+		},
+		[locale],
+	);
 
 	const exportToCSV = () => {
 		const headers = ["Level", "Code", `Description (${locale.toUpperCase()})`];
@@ -245,29 +234,26 @@ export default function NacebelSearchClient({
 		const blob = new Blob([`﻿${csvContent}`], {
 			type: "text/csv;charset=utf-8;",
 		});
+		const url = URL.createObjectURL(blob);
 		const link = document.createElement("a");
-		link.href = URL.createObjectURL(blob);
+		link.href = url;
 		link.download = `nacebel_codes_${locale}.csv`;
 		document.body.appendChild(link);
 		link.click();
 		document.body.removeChild(link);
-		toast({
-			description: t.exportedCsv(filteredCodes.length),
-			duration: 3000,
-		});
+		URL.revokeObjectURL(url);
+		toast({ description: t.exportedCsv(filteredCodes.length), duration: 3000 });
 	};
 
-	const t = translations[locale];
-	const exampleSearches = ["software", "62.01", "consulting"];
-	const resultsHeading = searchTerm ? t.resultsFor(searchTerm) : t.allCodes;
-
-	if (initialCodes.length === 0 && !isClientProcessing) {
+	if (initialCodes.length === 0) {
 		return (
 			<div className="text-center text-red-500 dark:text-red-400">
-				{clientError || "Could not load NACEBEL codes."}
+				Could not load NACEBEL codes.
 			</div>
 		);
 	}
+
+	const resultsHeading = searchTerm ? t.resultsFor(searchTerm) : t.allCodes;
 
 	return (
 		<div className="space-y-5 sm:space-y-6">
@@ -276,7 +262,7 @@ export default function NacebelSearchClient({
 			<section className="sticky top-3 z-20 space-y-3 rounded-[1.25rem] border border-white/60 bg-white/88 p-3 shadow-[0_20px_50px_-38px_rgba(15,23,42,0.6)] backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/88 sm:p-4">
 				<div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
 					<span className="font-medium">{t.tryLabel}</span>
-					{exampleSearches.map((example) => (
+					{EXAMPLE_SEARCHES.map((example) => (
 						<button
 							key={example}
 							type="button"
@@ -334,11 +320,7 @@ export default function NacebelSearchClient({
 				</div>
 
 				<div className="mt-4">
-					{isClientProcessing && searchTerm ? (
-						<div className="rounded-[1.5rem] border border-dashed border-border/70 bg-background/60 py-14 text-center text-muted-foreground">
-							{t.loading}
-						</div>
-					) : paginatedCodes.length > 0 ? (
+					{paginatedCodes.length > 0 ? (
 						<NacebelCodeList
 							codes={paginatedCodes}
 							language={locale}
