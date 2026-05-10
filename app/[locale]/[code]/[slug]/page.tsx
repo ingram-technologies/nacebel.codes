@@ -71,12 +71,15 @@ export default async function CodePage({ params }: PageProps) {
 	if (!data) notFound();
 
 	const canonicalPath = codeHrefFor(data, locale);
-	const ancestors = await loadAncestors(data.code);
-	const childrenData = await Promise.all(
-		(data.childrenCodes ?? []).map((c) =>
-			loadCodeData(c.replace(/\./g, "")),
+	const codeWithoutDots = data.code.replace(/\./g, "");
+	const [ancestors, childrenData] = await Promise.all([
+		loadAncestors(codeWithoutDots),
+		Promise.all(
+			(data.childrenCodes ?? []).map((c) =>
+				loadCodeData(c.replace(/\./g, "")),
+			),
 		),
-	);
+	]);
 	const children = childrenData.filter(
 		(c): c is NonNullable<typeof c> => c !== null,
 	);

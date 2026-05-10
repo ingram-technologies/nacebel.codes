@@ -153,3 +153,13 @@ export async function getNacebelCodeDetails(
 	if (!code || code.level === 1) return null;
 	return mapToPublicNacebelCode(code, true);
 }
+
+export async function getNacebelAncestors(
+	idWithoutDots: string,
+): Promise<PublicNacebelCode[]> {
+	const ancestors = getNacebelInstance().getAncestors(idWithoutDots);
+	return ancestors
+		.map((code) => mapToPublicNacebelCode(code, false))
+		.filter((code): code is PublicNacebelCode => code !== null)
+		.reverse();
+}
