@@ -70,9 +70,9 @@ export function PaginationControls({
 
 					return (
 						<Fragment key={`page-fragment-${page}`}>
-							{index > 0
-							&& typeof previousPage === "number"
-							&& page - previousPage > 1 ? (
+							{index > 0 &&
+							typeof previousPage === "number" &&
+							page - previousPage > 1 ? (
 								<PaginationItem>
 									<PaginationEllipsis />
 								</PaginationItem>

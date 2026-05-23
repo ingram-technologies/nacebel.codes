@@ -64,13 +64,7 @@ const datasetJsonLd = {
 	alternateName: ["NACE-BEL 2025", "NACEBEL 2025"],
 	url: "https://nacebel.codes",
 	inLanguage: ["nl", "fr", "en", "de"],
-	keywords: [
-		"NACE-BEL",
-		"NACE",
-		"economic activity",
-		"Belgium",
-		"classification",
-	],
+	keywords: ["NACE-BEL", "NACE", "economic activity", "Belgium", "classification"],
 	isAccessibleForFree: true,
 	license: "https://nacebel.codes/about",
 	creator: {

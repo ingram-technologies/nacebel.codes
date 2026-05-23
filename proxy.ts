@@ -31,6 +31,9 @@ export async function proxy(request: NextRequest) {
 	const codeMatch = pathname.match(CODE_PATH_RE);
 	if (codeMatch) {
 		const [, locale, code] = codeMatch;
+		if (!locale || !code) {
+			return NextResponse.next();
+		}
 		const data = await loadCodeData(code.replace(/\./g, ""));
 		if (!data) {
 			return new NextResponse("Not Found", {

@@ -5,9 +5,12 @@
 	"scripts": {
 		"build": "next build",
 		"dev": "next dev",
-		"lint": "next lint",
+		"lint": "biome lint .",
 		"start": "next start",
-		"format": "prettier --write ."
+		"format": "biome format --write .",
+		"check": "biome check .",
+		"type-check": "tsc --noEmit",
+		"prepare": "git config core.hooksPath .githooks || true"
 	},
 	"dependencies": {
 		"@radix-ui/react-dropdown-menu": "latest",
@@ -27,11 +30,13 @@
 		"tailwindcss-animate": "^1.0.7"
 	},
 	"devDependencies": {
+		"@biomejs/biome": "^2.4.15",
+		"@ingram-tech/biome-config": "^0.1.0",
+		"@ingram-tech/git-hooks": "^0.1.0",
+		"@ingram-tech/typescript-config": "^0.1.0",
 		"@types/node": "^25",
 		"@types/react": "^19",
 		"@types/react-dom": "^19",
-		"prettier": "^3.8.3",
-		"prettier-plugin-organize-imports": "^4.3.0",
 		"tailwindcss": "^4.2.4",
 		"typescript": "^6"
 	},

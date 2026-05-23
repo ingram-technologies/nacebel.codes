@@ -77,8 +77,7 @@ export const translations: Record<Language, Translation> = {
 		title: "NACE-BEL 2025 Codes",
 		subtitle:
 			"Durchsuchen Sie das offizielle Verzeichnis und exportieren Sie die aktuellen Ergebnisse.",
-		metaTitle:
-			"NACE-BEL 2025 Codes — Durchsuchen Sie die belgische Klassifikation",
+		metaTitle: "NACE-BEL 2025 Codes — Durchsuchen Sie die belgische Klassifikation",
 		metaDescription:
 			"Durchsuchen Sie die vollständige NACE-BEL 2025 Klassifikation der belgischen Wirtschaftstätigkeiten in Niederländisch, Französisch, Englisch und Deutsch. Verzeichnis, Codes kopieren, oder kostenlose öffentliche API.",
 		searchPlaceholder: "Nach Codenummer oder Beschreibung suchen...",

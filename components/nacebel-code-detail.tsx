@@ -31,7 +31,8 @@ export function NacebelCodeDetail({
 	const description = data.description[locale] || data.description.en || "";
 	const kboLink = `https://kbopub.economie.fgov.be/kbopub/naceToelichting.html?lang=${locale}&nace.code=${data.code.replace(/\./g, "")}&nace.version=2025`;
 	const parent = ancestors.length > 0 ? ancestors[ancestors.length - 1] : null;
-	const levelClass = levelColorClasses[data.level] ?? "bg-primary/10 text-primary ring-primary/20";
+	const levelClass =
+		levelColorClasses[data.level] ?? "bg-primary/10 text-primary ring-primary/20";
 
 	return (
 		<div className="bg-background text-foreground">

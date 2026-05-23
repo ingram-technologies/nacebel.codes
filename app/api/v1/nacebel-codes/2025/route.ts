@@ -33,8 +33,8 @@ export async function GET(request: Request) {
 			);
 		}
 		if (
-			minLevel !== undefined
-			&& (Number.isNaN(minLevel) || minLevel < 2 || minLevel > 5)
+			minLevel !== undefined &&
+			(Number.isNaN(minLevel) || minLevel < 2 || minLevel > 5)
 		) {
 			return NextResponse.json(
 				{

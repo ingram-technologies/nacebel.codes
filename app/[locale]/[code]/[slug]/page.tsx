@@ -75,14 +75,10 @@ export default async function CodePage({ params }: PageProps) {
 	const [ancestors, childrenData] = await Promise.all([
 		loadAncestors(codeWithoutDots),
 		Promise.all(
-			(data.childrenCodes ?? []).map((c) =>
-				loadCodeData(c.replace(/\./g, "")),
-			),
+			(data.childrenCodes ?? []).map((c) => loadCodeData(c.replace(/\./g, ""))),
 		),
 	]);
-	const children = childrenData.filter(
-		(c): c is NonNullable<typeof c> => c !== null,
-	);
+	const children = childrenData.filter((c): c is NonNullable<typeof c> => c !== null);
 
 	const title = codeTitleFor(data, locale);
 	const breadcrumbItems = [

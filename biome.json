@@ -1,0 +1,16 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.4.15/schema.json",
+	"extends": ["@ingram-tech/biome-config/biome.json"],
+	"files": {
+		"includes": [
+			"app/**",
+			"components/**",
+			"contexts/**",
+			"hooks/**",
+			"lib/**",
+			"types/**",
+			"*.{ts,tsx,js,mjs,json}"
+		],
+		"ignoreUnknown": true
+	}
+}

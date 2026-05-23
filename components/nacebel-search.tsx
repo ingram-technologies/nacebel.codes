@@ -73,14 +73,14 @@ function getCodeSearchRank(code: NacebelCode, searchTerm: string): number {
 		return 0;
 	}
 	if (
-		codeValue.startsWith(searchTerm)
-		|| normalizedCodeValue.startsWith(normalizedSearch)
+		codeValue.startsWith(searchTerm) ||
+		normalizedCodeValue.startsWith(normalizedSearch)
 	) {
 		return 1;
 	}
 	if (
-		codeValue.includes(searchTerm)
-		|| normalizedCodeValue.includes(normalizedSearch)
+		codeValue.includes(searchTerm) ||
+		normalizedCodeValue.includes(normalizedSearch)
 	) {
 		return 2;
 	}
@@ -98,8 +98,8 @@ function filterCodes(codes: NacebelCode[], searchTerm: string): NacebelCode[] {
 			.filter((code) => {
 				const normalizedCodeValue = normalizeCodeSearch(code.code);
 				return (
-					code.code.toLowerCase().startsWith(lowered)
-					|| normalizedCodeValue.startsWith(normalizedQuery)
+					code.code.toLowerCase().startsWith(lowered) ||
+					normalizedCodeValue.startsWith(normalizedQuery)
 				);
 			})
 			.sort((a, b) => {
@@ -134,9 +134,7 @@ export default function NacebelSearchClient({
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
 
-	const [searchTerm, setSearchTerm] = useState(
-		() => searchParams.get("q") ?? "",
-	);
+	const [searchTerm, setSearchTerm] = useState(() => searchParams.get("q") ?? "");
 	const [copiedCode, setCopiedCode] = useState<string | null>(null);
 	const [currentPage, setCurrentPage] = useState(1);
 	const searchInputRef = useRef<HTMLInputElement>(null);
@@ -170,18 +168,22 @@ export default function NacebelSearchClient({
 		const handleKeyDown = (event: KeyboardEvent) => {
 			const target = event.target as HTMLElement | null;
 			const isTextInput =
-				target instanceof HTMLInputElement
-				|| target instanceof HTMLTextAreaElement
-				|| target?.isContentEditable === true;
+				target instanceof HTMLInputElement ||
+				target instanceof HTMLTextAreaElement ||
+				target?.isContentEditable === true;
 			const isSlashShortcut =
 				event.key === "/" && !event.metaKey && !event.ctrlKey && !event.altKey;
 			const isCommandShortcut =
-				(event.metaKey || event.ctrlKey)
-				&& event.key.toLowerCase() === "k"
-				&& !event.altKey;
+				(event.metaKey || event.ctrlKey) &&
+				event.key.toLowerCase() === "k" &&
+				!event.altKey;
 
 			if (!isSlashShortcut && !isCommandShortcut) return;
-			if (isTextInput && target !== searchInputRef.current && !isCommandShortcut) {
+			if (
+				isTextInput &&
+				target !== searchInputRef.current &&
+				!isCommandShortcut
+			) {
 				return;
 			}
 
@@ -327,8 +329,8 @@ export default function NacebelSearchClient({
 								{filteredCodes.length > 0 ? startIndex + 1 : 0}-
 								{Math.min(endIndex, filteredCodes.length)} {t.of}{" "}
 								{filteredCodes.length.toLocaleString()} {t.codes}
-								{totalPages > 1
-									&& ` (${t.page} ${currentPage} ${t.of} ${totalPages})`}
+								{totalPages > 1 &&
+									` (${t.page} ${currentPage} ${t.of} ${totalPages})`}
 							</p>
 						</div>
 						<Button

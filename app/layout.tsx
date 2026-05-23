@@ -92,11 +92,7 @@ export const viewport: Viewport = {
 	colorScheme: "light dark",
 };
 
-export default async function RootLayout({
-	children,
-}: {
-	children: React.ReactNode;
-}) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
 	const locale = await resolveLocale();
 
 	return (
