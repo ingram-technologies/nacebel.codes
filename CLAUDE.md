@@ -6,3 +6,5 @@ live in nextkit and are imported below — they update automatically when
 site-specific notes to this file as needed.
 
 @./node_modules/@ingram-tech/agent-guide/guide.md
+
+@./node_modules/@ingram-tech/nk-dev/guide.md

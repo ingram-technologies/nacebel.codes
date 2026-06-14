@@ -92,7 +92,9 @@ export function PaginationControls({
 					<PaginationNext
 						label={t("Next")}
 						onClick={() =>
-							handlePageChange(Math.min(totalPages, clampedCurrentPage + 1))
+							handlePageChange(
+								Math.min(totalPages, clampedCurrentPage + 1),
+							)
 						}
 						disabled={clampedCurrentPage >= totalPages}
 					/>

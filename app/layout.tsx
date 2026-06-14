@@ -1,5 +1,5 @@
 import "@/app/globals.css";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "@/components/ui/sonner";
 import { LocaleProvider } from "@/contexts/locale-context";
 import { createT } from "@/lib/i18n/core";
 import { HTML_LANG, OG_LOCALE } from "@/lib/i18n/locales";
@@ -95,11 +95,7 @@ export const viewport: Viewport = {
 	colorScheme: "light dark",
 };
 
-export default async function RootLayout({
-	children,
-}: {
-	children: React.ReactNode;
-}) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
 	const locale = await resolveLocale();
 
 	return (

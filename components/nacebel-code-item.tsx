@@ -157,18 +157,18 @@ function NacebelCodeItemImpl({
 				<Button
 					variant="outline"
 					size="sm"
-					asChild
+					render={
+						<a
+							href={getExternalLink(code.code)}
+							target="_blank"
+							rel="noopener noreferrer"
+							aria-label="Open external link"
+						>
+							<ExternalLink className="h-3.5 w-3.5 text-muted-foreground group-hover:text-foreground" />
+						</a>
+					}
 					className="h-9 w-9 rounded-full p-0"
-					aria-label="Open external link"
-				>
-					<a
-						href={getExternalLink(code.code)}
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						<ExternalLink className="h-3.5 w-3.5 text-muted-foreground group-hover:text-foreground" />
-					</a>
-				</Button>
+				/>
 				<span className="inline-flex min-w-6 items-center justify-center text-xs font-semibold text-muted-foreground">
 					{code.level}
 				</span>

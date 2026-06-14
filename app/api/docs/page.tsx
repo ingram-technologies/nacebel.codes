@@ -117,8 +117,7 @@ const queryParameters = [
 	{
 		name: "q",
 		type: "string",
-		description:
-			"Search query for a code or title. Omit it to list the directory.",
+		description: "Search query for a code or title. Omit it to list the directory.",
 	},
 	{
 		name: "page",
@@ -221,16 +220,21 @@ export default function ApiDocsPage() {
 							Query parameters
 						</h2>
 						<p className="text-muted-foreground">
-							The list endpoint supports paging, search, and level filtering.
+							The list endpoint supports paging, search, and level
+							filtering.
 						</p>
 					</div>
 					<div className="overflow-hidden rounded-[1.5rem] border border-border/70">
 						<table className="w-full text-left text-sm">
 							<thead className="bg-muted/70">
 								<tr>
-									<th className="px-4 py-3 font-semibold">Parameter</th>
+									<th className="px-4 py-3 font-semibold">
+										Parameter
+									</th>
 									<th className="px-4 py-3 font-semibold">Type</th>
-									<th className="px-4 py-3 font-semibold">Description</th>
+									<th className="px-4 py-3 font-semibold">
+										Description
+									</th>
 								</tr>
 							</thead>
 							<tbody className="bg-background/75">
@@ -310,8 +314,8 @@ export default function ApiDocsPage() {
 						</p>
 						<CodeBlock>{notFoundResponseExample}</CodeBlock>
 						<p className="text-muted-foreground">
-							Public traffic is served on shared infrastructure. Excessive usage
-							may be throttled with
+							Public traffic is served on shared infrastructure. Excessive
+							usage may be throttled with
 							<code className="mx-1 rounded bg-muted px-1.5 py-0.5 text-sm">
 								429 Too Many Requests
 							</code>
@@ -327,19 +331,22 @@ export default function ApiDocsPage() {
 								Need higher rate limits or support?
 							</h2>
 							<p className="max-w-2xl text-primary/80">
-								The public API is available as-is. If you need heavier sustained
-								usage, operational support, or a more tailored integration path,
-								email us and we can work out a setup.
+								The public API is available as-is. If you need heavier
+								sustained usage, operational support, or a more tailored
+								integration path, email us and we can work out a setup.
 							</p>
 							<div className="flex flex-wrap gap-3">
-								<Button asChild>
-									<a href="mailto:contact@nacebel.codes?subject=NACE-BEL%20API">
-										Contact us
-									</a>
-								</Button>
-								<Button variant="outline" asChild>
-									<a href="/">Try the search UI</a>
-								</Button>
+								<Button
+									render={
+										<a href="mailto:contact@nacebel.codes?subject=NACE-BEL%20API">
+											Contact us
+										</a>
+									}
+								/>
+								<Button
+									variant="outline"
+									render={<a href="/">Try the search UI</a>}
+								/>
 							</div>
 						</div>
 						<div className="rounded-[1.5rem] border border-primary/15 bg-background/85 p-5 shadow-sm">

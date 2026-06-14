@@ -24,9 +24,7 @@ function isLocale(value: string): value is Locale {
 	return (SUPPORTED_LOCALES as readonly string[]).includes(value);
 }
 
-export async function generateMetadata({
-	params,
-}: PageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
 	const { locale, code } = await params;
 	if (!isLocale(locale)) return {};
 
@@ -43,8 +41,7 @@ export async function generateMetadata({
 
 	const languages: Record<string, string> = {};
 	for (const loc of SUPPORTED_LOCALES) {
-		languages[HTML_LANG[loc]] =
-			`https://nacebel.codes${codeHrefFor(data, loc)}`;
+		languages[HTML_LANG[loc]] = `https://nacebel.codes${codeHrefFor(data, loc)}`;
 	}
 	languages["x-default"] = `https://nacebel.codes${codeHrefFor(data, "en")}`;
 

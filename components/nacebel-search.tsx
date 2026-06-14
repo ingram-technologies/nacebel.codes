@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { useLocale } from "@/contexts/locale-context";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { useT } from "@/lib/i18n";
 import { siteScope } from "@/lib/i18n/scopes/site";
 import { slugify } from "@/lib/slug";
@@ -129,15 +129,12 @@ export default function NacebelSearchClient({
 }: NacebelSearchClientProps) {
 	const locale = useLocale();
 	const t = useT(siteScope);
-	const { toast } = useToast();
 
 	const router = useRouter();
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
 
-	const [searchTerm, setSearchTerm] = useState(
-		() => searchParams.get("q") ?? "",
-	);
+	const [searchTerm, setSearchTerm] = useState(() => searchParams.get("q") ?? "");
 	const [copiedCode, setCopiedCode] = useState<string | null>(null);
 	const [currentPage, setCurrentPage] = useState(1);
 	const searchInputRef = useRef<HTMLInputElement>(null);
@@ -210,13 +207,12 @@ export default function NacebelSearchClient({
 	const flashCopied = useCallback(
 		(code: string) => {
 			setCopiedCode(code);
-			toast({
-				description: t("Copied to clipboard"),
+			toast(t("Copied to clipboard"), {
 				duration: COPY_FEEDBACK_MS,
 			});
 			setTimeout(() => setCopiedCode(null), COPY_FEEDBACK_MS);
 		},
-		[toast, t],
+		[t],
 	);
 
 	const copyCodeOnly = useCallback(
@@ -274,12 +270,12 @@ export default function NacebelSearchClient({
 		link.click();
 		document.body.removeChild(link);
 		URL.revokeObjectURL(url);
-		toast({
-			description: t("Exported {count} codes to CSV", {
+		toast(
+			t("Exported {count} codes to CSV", {
 				count: filteredCodes.length,
 			}),
-			duration: 3000,
-		});
+			{ duration: 3000 },
+		);
 	};
 
 	if (initialCodes.length === 0) {

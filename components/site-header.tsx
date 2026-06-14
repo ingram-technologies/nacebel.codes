@@ -81,12 +81,16 @@ export function SiteHeader({ title, subtitle }: SiteHeaderProps) {
 					) : null}
 				</div>
 				<div className="flex flex-wrap items-center gap-2 sm:gap-3">
-					<Button variant="outline" size="sm" asChild>
-						<a href="/about">About</a>
-					</Button>
-					<Button variant="outline" size="sm" asChild>
-						<a href="/api/docs">API Docs</a>
-					</Button>
+					<Button
+						variant="outline"
+						size="sm"
+						render={<a href="/about">About</a>}
+					/>
+					<Button
+						variant="outline"
+						size="sm"
+						render={<a href="/api/docs">API Docs</a>}
+					/>
 					<div className="flex items-center gap-2 sm:gap-3">
 						<ThemeToggle theme={theme} setTheme={setTheme} />
 						<LanguageSwitcher />

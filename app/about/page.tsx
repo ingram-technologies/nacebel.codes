@@ -74,8 +74,7 @@ const levels = [
 		level: "Level 2",
 		code: "01",
 		title: "Section",
-		description:
-			"The broadest practical grouping used in the public directory.",
+		description: "The broadest practical grouping used in the public directory.",
 		tone: "bg-emerald-500/15 text-emerald-700 dark:bg-emerald-400/15 dark:text-emerald-200",
 	},
 	{
@@ -89,8 +88,7 @@ const levels = [
 		level: "Level 4",
 		code: "01.11",
 		title: "Group",
-		description:
-			"Narrows the activity into a more precise operational category.",
+		description: "Narrows the activity into a more precise operational category.",
 		tone: "bg-sky-500/15 text-sky-700 dark:bg-sky-400/15 dark:text-sky-200",
 	},
 	{
@@ -169,13 +167,13 @@ export default function AboutPage() {
 						</h2>
 						<p className="mt-4 leading-8 text-muted-foreground">
 							NACE, short for the European statistical classification of
-							economic activities, is used across the European Union to group
-							business activity into a consistent hierarchy.
+							economic activities, is used across the European Union to
+							group business activity into a consistent hierarchy.
 						</p>
 						<p className="mt-4 leading-8 text-muted-foreground">
-							It is the backbone for comparable statistics, business registers,
-							and a range of administrative processes that depend on describing
-							what an organization actually does.
+							It is the backbone for comparable statistics, business
+							registers, and a range of administrative processes that
+							depend on describing what an organization actually does.
 						</p>
 					</article>
 					<article className="rounded-[2rem] border border-white/60 bg-white/78 p-6 shadow-[0_24px_70px_-50px_rgba(15,23,42,0.65)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 sm:p-8">
@@ -183,9 +181,9 @@ export default function AboutPage() {
 							What is NACE-BEL?
 						</h2>
 						<p className="mt-4 leading-8 text-muted-foreground">
-							NACE-BEL is Belgium&apos;s national implementation of NACE. It
-							keeps the European structure but adds the specificity needed for
-							Belgian administrative and economic use.
+							NACE-BEL is Belgium&apos;s national implementation of NACE.
+							It keeps the European structure but adds the specificity
+							needed for Belgian administrative and economic use.
 						</p>
 						<p className="mt-4 leading-8 text-muted-foreground">
 							Belgian businesses rely on NACE-BEL codes for registration,
@@ -201,8 +199,8 @@ export default function AboutPage() {
 						</h2>
 						<p className="max-w-3xl text-muted-foreground">
 							The codes form a hierarchy from broader sectors down to more
-							specific classes. That lets businesses classify themselves at the
-							right degree of detail.
+							specific classes. That lets businesses classify themselves
+							at the right degree of detail.
 						</p>
 					</div>
 					<div className="mt-6 grid gap-4 md:grid-cols-2">
@@ -221,7 +219,9 @@ export default function AboutPage() {
 										{item.code}
 									</code>
 								</div>
-								<h3 className="mt-4 text-xl font-semibold">{item.title}</h3>
+								<h3 className="mt-4 text-xl font-semibold">
+									{item.title}
+								</h3>
 								<p className="mt-2 text-sm leading-7 text-muted-foreground">
 									{item.description}
 								</p>
@@ -241,7 +241,9 @@ export default function AboutPage() {
 									key={version.title}
 									className="rounded-[1.5rem] border border-border/70 bg-background/80 p-5 shadow-sm"
 								>
-									<h3 className="text-xl font-semibold">{version.title}</h3>
+									<h3 className="text-xl font-semibold">
+										{version.title}
+									</h3>
 									<p className="mt-2 leading-7 text-muted-foreground">
 										{version.description}
 									</p>
@@ -254,18 +256,20 @@ export default function AboutPage() {
 							International context
 						</h2>
 						<p className="mt-4 leading-8 text-muted-foreground">
-							NACE is derived from the United Nations ISIC framework, which
-							means European activity data can still be compared in a broader
-							international context.
+							NACE is derived from the United Nations ISIC framework,
+							which means European activity data can still be compared in
+							a broader international context.
 						</p>
 						<p className="mt-4 leading-8 text-muted-foreground">
-							Eurostat and national statistical offices periodically review the
-							classification so it keeps pace with how the economy changes.
+							Eurostat and national statistical offices periodically
+							review the classification so it keeps pace with how the
+							economy changes.
 						</p>
 						<div className="mt-6 rounded-[1.5rem] border border-primary/15 bg-primary/10 p-5">
 							<p className="text-sm leading-7 text-primary/80">
-								The main idea is simple: everyone uses the same structure, so
-								analysis, reporting, and administration stay consistent.
+								The main idea is simple: everyone uses the same
+								structure, so analysis, reporting, and administration
+								stay consistent.
 							</p>
 						</div>
 					</article>
@@ -277,8 +281,9 @@ export default function AboutPage() {
 							Applications and uses
 						</h2>
 						<p className="max-w-3xl text-muted-foreground">
-							NACE-BEL codes matter well beyond statistics. They appear across
-							the practical machinery of running and regulating businesses.
+							NACE-BEL codes matter well beyond statistics. They appear
+							across the practical machinery of running and regulating
+							businesses.
 						</p>
 					</div>
 					<div className="mt-6 grid gap-4 md:grid-cols-2">
@@ -287,7 +292,9 @@ export default function AboutPage() {
 								key={application.title}
 								className="rounded-[1.5rem] border border-border/70 bg-background/80 p-5 shadow-sm"
 							>
-								<h3 className="text-xl font-semibold">{application.title}</h3>
+								<h3 className="text-xl font-semibold">
+									{application.title}
+								</h3>
 								<p className="mt-2 leading-7 text-muted-foreground">
 									{application.description}
 								</p>
@@ -303,18 +310,21 @@ export default function AboutPage() {
 								Finding the right code
 							</h2>
 							<p className="text-primary/80">
-								The best code is the one that reflects the main activity of the
-								business. If you are unsure, use the search directory to explore
-								related activities and cross-check against official Belgian
-								guidance.
+								The best code is the one that reflects the main activity
+								of the business. If you are unsure, use the search
+								directory to explore related activities and cross-check
+								against official Belgian guidance.
 							</p>
 							<div className="flex flex-wrap gap-3">
-								<Button asChild>
-									<a href="/">Start searching</a>
-								</Button>
-								<Button variant="outline" asChild>
-									<a href="mailto:contact@nacebel.codes">Contact us</a>
-								</Button>
+								<Button render={<a href="/">Start searching</a>} />
+								<Button
+									variant="outline"
+									render={
+										<a href="mailto:contact@nacebel.codes">
+											Contact us
+										</a>
+									}
+								/>
 							</div>
 						</div>
 						<div className="rounded-[1.5rem] border border-primary/15 bg-background/85 p-5 shadow-sm">
@@ -323,8 +333,8 @@ export default function AboutPage() {
 							</p>
 							<p className="mt-3 text-sm leading-7 text-muted-foreground">
 								If the classification affects a formal filing or legal
-								obligation, confirm the final choice with a professional advisor
-								or the relevant Belgian authority.
+								obligation, confirm the final choice with a professional
+								advisor or the relevant Belgian authority.
 							</p>
 						</div>
 					</div>

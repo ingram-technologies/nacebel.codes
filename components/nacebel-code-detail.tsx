@@ -33,8 +33,7 @@ export function NacebelCodeDetail({
 	const kboLink = `https://kbopub.economie.fgov.be/kbopub/naceToelichting.html?lang=${locale}&nace.code=${data.code.replace(/\./g, "")}&nace.version=2025`;
 	const parent = ancestors.length > 0 ? ancestors[ancestors.length - 1] : null;
 	const levelClass =
-		levelColorClasses[data.level] ??
-		"bg-primary/10 text-primary ring-primary/20";
+		levelColorClasses[data.level] ?? "bg-primary/10 text-primary ring-primary/20";
 
 	return (
 		<div className="bg-background text-foreground">
@@ -88,18 +87,28 @@ export function NacebelCodeDetail({
 						</p>
 					) : null}
 					<div className="flex flex-wrap gap-3 pt-2">
-						<Button variant="outline" asChild>
-							<a href="/">
-								<ArrowLeft className="mr-2 h-4 w-4" />
-								{t("Back to directory")}
-							</a>
-						</Button>
-						<Button variant="outline" asChild>
-							<a href={kboLink} target="_blank" rel="noopener noreferrer">
-								<ExternalLink className="mr-2 h-4 w-4" />
-								{t("View on KBO (Crossroads Bank for Enterprises)")}
-							</a>
-						</Button>
+						<Button
+							variant="outline"
+							render={
+								<a href="/">
+									<ArrowLeft className="mr-2 h-4 w-4" />
+									{t("Back to directory")}
+								</a>
+							}
+						/>
+						<Button
+							variant="outline"
+							render={
+								<a
+									href={kboLink}
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									<ExternalLink className="mr-2 h-4 w-4" />
+									{t("View on KBO (Crossroads Bank for Enterprises)")}
+								</a>
+							}
+						/>
 					</div>
 				</header>
 
@@ -115,7 +124,9 @@ export function NacebelCodeDetail({
 							<code className="font-mono text-base font-semibold">
 								{parent.code}
 							</code>
-							<span className="text-base">{codeTitleFor(parent, locale)}</span>
+							<span className="text-base">
+								{codeTitleFor(parent, locale)}
+							</span>
 						</a>
 					</section>
 				) : null}

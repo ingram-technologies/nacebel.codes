@@ -17,9 +17,7 @@ for (const loc of SUPPORTED_LOCALES) {
 export async function generateMetadata(): Promise<Metadata> {
 	const locale = await resolveLocale();
 	const t = createT(locale, siteScope);
-	const metaTitle = t(
-		"NACE-BEL 2025 Codes — Search the Belgian classification",
-	);
+	const metaTitle = t("NACE-BEL 2025 Codes — Search the Belgian classification");
 	const metaDescription = t(
 		"Search the full NACE-BEL 2025 classification of Belgian economic activity codes in Dutch, French, English, and German. Browse the directory, copy codes, or use the free public API.",
 	);
@@ -71,13 +69,7 @@ const datasetJsonLd = {
 	alternateName: ["NACE-BEL 2025", "NACEBEL 2025"],
 	url: "https://nacebel.codes",
 	inLanguage: ["nl", "fr", "en", "de"],
-	keywords: [
-		"NACE-BEL",
-		"NACE",
-		"economic activity",
-		"Belgium",
-		"classification",
-	],
+	keywords: ["NACE-BEL", "NACE", "economic activity", "Belgium", "classification"],
 	isAccessibleForFree: true,
 	license: "https://nacebel.codes/about",
 	creator: {

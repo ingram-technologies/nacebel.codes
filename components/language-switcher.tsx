@@ -19,23 +19,27 @@ export function LanguageSwitcher() {
 
 	return (
 		<DropdownMenu>
-			<DropdownMenuTrigger asChild>
-				<Button
-					variant="outline"
-					className="flex items-center gap-2 rounded-full bg-background/80 px-4 backdrop-blur-sm"
-				>
-					<span>{LOCALE_NAMES[locale]}</span>
-					<ChevronDown className="h-4 w-4" />
-				</Button>
+			<DropdownMenuTrigger
+				render={
+					<Button
+						variant="outline"
+						className="flex items-center gap-2 rounded-full bg-background/80 px-4 backdrop-blur-sm"
+					/>
+				}
+			>
+				<span>{LOCALE_NAMES[locale]}</span>
+				<ChevronDown className="h-4 w-4" />
 			</DropdownMenuTrigger>
 			<DropdownMenuContent
 				align="start"
 				className="rounded-2xl border-border/70 bg-background/95 p-1 backdrop-blur-xl"
 			>
 				{SUPPORTED_LOCALES.map((loc: Locale) => (
-					<DropdownMenuItem key={loc} asChild className="rounded-xl">
-						<a href={`/${loc}${path}`}>{LOCALE_NAMES[loc]}</a>
-					</DropdownMenuItem>
+					<DropdownMenuItem
+						key={loc}
+						className="rounded-xl"
+						render={<a href={`/${loc}${path}`}>{LOCALE_NAMES[loc]}</a>}
+					/>
 				))}
 			</DropdownMenuContent>
 		</DropdownMenu>
