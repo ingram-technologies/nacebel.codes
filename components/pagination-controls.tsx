@@ -11,14 +11,14 @@ import {
 	PaginationNext,
 	PaginationPrevious,
 } from "@/components/ui/pagination";
-import type { Translation } from "@/lib/translations";
+import { useT } from "@/lib/i18n";
+import { siteScope } from "@/lib/i18n/scopes/site";
 import { cn } from "@/lib/utils";
 
 interface PaginationControlsProps {
 	currentPage: number;
 	totalPages: number;
 	setCurrentPage: (page: number) => void;
-	translations: Translation;
 	className?: string;
 }
 
@@ -26,9 +26,9 @@ export function PaginationControls({
 	currentPage,
 	totalPages,
 	setCurrentPage,
-	translations,
 	className,
 }: PaginationControlsProps) {
+	const t = useT(siteScope);
 	const getVisiblePages = (page: number, pages: number) => {
 		const visiblePages: number[] = [];
 		const left = Math.max(1, page - 2);
@@ -58,7 +58,7 @@ export function PaginationControls({
 			<PaginationContent>
 				<PaginationItem>
 					<PaginationPrevious
-						label={translations.previous}
+						label={t("Previous")}
 						onClick={() =>
 							handlePageChange(Math.max(1, clampedCurrentPage - 1))
 						}
@@ -90,11 +90,9 @@ export function PaginationControls({
 				})}
 				<PaginationItem>
 					<PaginationNext
-						label={translations.next}
+						label={t("Next")}
 						onClick={() =>
-							handlePageChange(
-								Math.min(totalPages, clampedCurrentPage + 1),
-							)
+							handlePageChange(Math.min(totalPages, clampedCurrentPage + 1))
 						}
 						disabled={clampedCurrentPage >= totalPages}
 					/>

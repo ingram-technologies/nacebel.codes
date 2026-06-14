@@ -1,25 +1,10 @@
-export type Locale = "en" | "nl" | "fr" | "de";
+import { deriveLocaleConstants, localeMap } from "@ingram-tech/nk-i18n";
+import { i18nConfig } from "./config";
 
-export const SUPPORTED_LOCALES: Locale[] = ["en", "nl", "fr", "de"];
-export const DEFAULT_LOCALE: Locale = "en";
+export type Locale = keyof typeof i18nConfig.locales & string;
 
-export const LOCALE_NAMES: Record<Locale, string> = {
-	en: "English",
-	nl: "Nederlands",
-	fr: "Français",
-	de: "Deutsch",
-};
+export const { SUPPORTED_LOCALES, DEFAULT_LOCALE, LOCALE_NAMES } =
+	deriveLocaleConstants(i18nConfig);
 
-export const HTML_LANG: Record<Locale, string> = {
-	en: "en",
-	nl: "nl-BE",
-	fr: "fr-BE",
-	de: "de",
-};
-
-export const OG_LOCALE: Record<Locale, string> = {
-	en: "en_US",
-	nl: "nl_BE",
-	fr: "fr_BE",
-	de: "de_DE",
-};
+export const HTML_LANG = localeMap(i18nConfig, (def) => def.htmlLang);
+export const OG_LOCALE = localeMap(i18nConfig, (def) => def.ogLocale);

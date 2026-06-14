@@ -3,8 +3,9 @@ import { Button } from "@/components/ui/button";
 import { PageFooter } from "@/components/page-footer";
 import { SiteHeader } from "@/components/site-header";
 import { type CodeData, codeHrefFor, codeTitleFor } from "@/lib/code-page";
+import { createT } from "@/lib/i18n/core";
 import type { Locale } from "@/lib/i18n/locales";
-import { translations } from "@/lib/translations";
+import { siteScope } from "@/lib/i18n/scopes/site";
 
 const levelColorClasses: Record<number, string> = {
 	2: "bg-emerald-500/15 text-emerald-700 ring-emerald-600/20 dark:bg-emerald-400/15 dark:text-emerald-200 dark:ring-emerald-300/20",
@@ -26,7 +27,7 @@ export function NacebelCodeDetail({
 	ancestors,
 	childCodes,
 }: CodeDetailProps) {
-	const t = translations[locale];
+	const t = createT(locale, siteScope);
 	const title = codeTitleFor(data, locale);
 	const description = data.description[locale] || data.description.en || "";
 	const kboLink = `https://kbopub.economie.fgov.be/kbopub/naceToelichting.html?lang=${locale}&nace.code=${data.code.replace(/\./g, "")}&nace.version=2025`;
@@ -45,7 +46,7 @@ export function NacebelCodeDetail({
 					className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground"
 				>
 					<a href="/" className="hover:text-foreground">
-						{t.title}
+						{t("NACE-BEL 2025 Codes")}
 					</a>
 					{ancestors.map((ancestor) => (
 						<span key={ancestor.code} className="flex items-center gap-2">
@@ -75,7 +76,7 @@ export function NacebelCodeDetail({
 							<code className="font-mono">{data.code}</code>
 						</span>
 						<span className="text-sm font-medium uppercase tracking-[0.18em] text-muted-foreground">
-							{t.level} {data.level}
+							{t("Level")} {data.level}
 						</span>
 					</div>
 					<h1 className="font-display text-3xl tracking-tight sm:text-4xl">
@@ -90,13 +91,13 @@ export function NacebelCodeDetail({
 						<Button variant="outline" asChild>
 							<a href="/">
 								<ArrowLeft className="mr-2 h-4 w-4" />
-								{t.backToDirectory}
+								{t("Back to directory")}
 							</a>
 						</Button>
 						<Button variant="outline" asChild>
 							<a href={kboLink} target="_blank" rel="noopener noreferrer">
 								<ExternalLink className="mr-2 h-4 w-4" />
-								{t.viewOnKbo}
+								{t("View on KBO (Crossroads Bank for Enterprises)")}
 							</a>
 						</Button>
 					</div>
@@ -105,7 +106,7 @@ export function NacebelCodeDetail({
 				{parent ? (
 					<section className="rounded-[2rem] border border-white/60 bg-white/78 p-6 shadow-[0_24px_70px_-50px_rgba(15,23,42,0.65)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 sm:p-8">
 						<h2 className="text-sm font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-							{t.parentCode}
+							{t("Parent code")}
 						</h2>
 						<a
 							href={codeHrefFor(parent, locale)}
@@ -122,7 +123,7 @@ export function NacebelCodeDetail({
 				{childCodes.length > 0 ? (
 					<section className="rounded-[2rem] border border-white/60 bg-white/78 p-6 shadow-[0_24px_70px_-50px_rgba(15,23,42,0.65)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 sm:p-8">
 						<h2 className="text-sm font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-							{t.childCodes}
+							{t("Child codes")}
 						</h2>
 						<ul className="mt-3 grid gap-2 md:grid-cols-2">
 							{childCodes.map((child) => (

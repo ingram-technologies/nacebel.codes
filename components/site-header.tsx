@@ -6,8 +6,8 @@ import { AdvertisementBanner } from "@/components/advertisement-banner";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
-import { useLocale } from "@/contexts/locale-context";
-import { translations } from "@/lib/translations";
+import { useT } from "@/lib/i18n";
+import { siteScope } from "@/lib/i18n/scopes/site";
 import type { Theme } from "@/types";
 
 interface SiteHeaderProps {
@@ -23,7 +23,7 @@ function getCookieValue(name: string) {
 }
 
 export function SiteHeader({ title, subtitle }: SiteHeaderProps) {
-	const locale = useLocale();
+	const t = useT(siteScope);
 	const [theme, setTheme] = useState<Theme>("system");
 
 	useEffect(() => {
@@ -59,14 +59,14 @@ export function SiteHeader({ title, subtitle }: SiteHeaderProps) {
 		return () => mediaQuery.removeEventListener("change", handleChange);
 	}, [theme]);
 
-	const t = translations[locale];
-
 	return (
 		<div className="space-y-5 sm:space-y-6">
 			<AdvertisementBanner
-				label={t.recommendationLabel}
-				text={t.recommendationText}
-				cta={t.recommendationCta}
+				label={t("Recommendation from the team")}
+				text={t(
+					"Need to incorporate a Belgian company? Beldoc handles it online with a cleaner, lower-friction flow.",
+				)}
+				cta={t("Visit beldoc.be")}
 			/>
 
 			<header className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
@@ -88,11 +88,7 @@ export function SiteHeader({ title, subtitle }: SiteHeaderProps) {
 						<a href="/api/docs">API Docs</a>
 					</Button>
 					<div className="flex items-center gap-2 sm:gap-3">
-						<ThemeToggle
-							theme={theme}
-							setTheme={setTheme}
-							translations={t}
-						/>
+						<ThemeToggle theme={theme} setTheme={setTheme} />
 						<LanguageSwitcher />
 					</div>
 				</div>

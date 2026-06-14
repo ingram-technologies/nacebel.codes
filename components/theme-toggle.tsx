@@ -1,21 +1,21 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import type { Translation } from "@/lib/translations";
+import { useT } from "@/lib/i18n";
+import { siteScope } from "@/lib/i18n/scopes/site";
 import type { Theme } from "@/types";
 import { Monitor, Moon, Sun } from "lucide-react";
 
 interface ThemeToggleProps {
 	theme: Theme;
 	setTheme: (theme: Theme) => void;
-	translations: Translation;
 }
 
-const THEME_LABEL_KEY = {
-	light: "themeLight",
-	dark: "themeDark",
-	system: "themeSystem",
-} as const satisfies Record<Theme, keyof Translation>;
+const THEME_LABEL = {
+	light: "Light",
+	dark: "Dark",
+	system: "System",
+} as const satisfies Record<Theme, string>;
 
 const THEME_ICON = {
 	light: Sun,
@@ -23,12 +23,13 @@ const THEME_ICON = {
 	system: Monitor,
 } as const;
 
-export function ThemeToggle({ theme, setTheme, translations }: ThemeToggleProps) {
+export function ThemeToggle({ theme, setTheme }: ThemeToggleProps) {
+	const t = useT(siteScope);
 	return (
 		<div className="flex items-center space-x-1 rounded-full border border-border/70 bg-background/80 p-1 shadow-sm backdrop-blur-sm">
 			{(["light", "dark", "system"] as const).map((mode) => {
 				const Icon = THEME_ICON[mode];
-				const label = translations[THEME_LABEL_KEY[mode]];
+				const label = t(THEME_LABEL[mode]);
 				return (
 					<Button
 						key={mode}

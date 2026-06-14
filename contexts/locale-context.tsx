@@ -1,17 +1,10 @@
 "use client";
 
-import { createContext, useContext } from "react";
+import { useLocale as useLocaleGeneric } from "@ingram-tech/nk-i18n/client";
 import type { Locale } from "@/lib/i18n/locales";
 
 export type { Locale };
+export { LocaleProvider } from "@ingram-tech/nk-i18n/client";
 
-const LocaleContext = createContext<Locale>("en");
-
-export const useLocale = () => useContext(LocaleContext);
-
-export const LocaleProvider: React.FC<{
-	value: Locale;
-	children: React.ReactNode;
-}> = ({ value, children }) => (
-	<LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>
-);
+/** The active locale, narrowed to this site's `Locale` union. */
+export const useLocale = (): Locale => useLocaleGeneric<Locale>();
