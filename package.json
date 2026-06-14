@@ -5,10 +5,10 @@
 	"scripts": {
 		"build": "next build",
 		"dev": "next dev",
-		"lint": "biome lint .",
+		"lint": "oxlint",
 		"start": "next start",
-		"format": "biome format --write .",
-		"check": "biome check .",
+		"format": "oxfmt --write .",
+		"check": "oxlint && oxfmt --check .",
 		"type-check": "tsc --noEmit",
 		"prepare": "git config core.hooksPath .githooks || true"
 	},
@@ -30,14 +30,15 @@
 		"tailwindcss-animate": "^1.0.7"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^2.4.15",
 		"@ingram-tech/agent-guide": "0.1.0",
-		"@ingram-tech/biome-config": "^0.1.0",
 		"@ingram-tech/git-hooks": "^0.1.0",
+		"@ingram-tech/oxlint-config": "^0.1.0",
 		"@ingram-tech/typescript-config": "^0.1.0",
 		"@types/node": "^25",
 		"@types/react": "^19",
 		"@types/react-dom": "^19",
+		"oxfmt": "^0.54.0",
+		"oxlint": "^1.69.0",
 		"tailwindcss": "^4.2.4",
 		"typescript": "^6"
 	},

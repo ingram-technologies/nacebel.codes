@@ -23,7 +23,9 @@ function isLocale(value: string): value is Locale {
 	return (SUPPORTED_LOCALES as readonly string[]).includes(value);
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+	params,
+}: PageProps): Promise<Metadata> {
 	const { locale, code } = await params;
 	if (!isLocale(locale)) return {};
 
@@ -37,7 +39,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 	const languages: Record<string, string> = {};
 	for (const loc of SUPPORTED_LOCALES) {
-		languages[HTML_LANG[loc]] = `https://nacebel.codes${codeHrefFor(data, loc)}`;
+		languages[HTML_LANG[loc]] =
+			`https://nacebel.codes${codeHrefFor(data, loc)}`;
 	}
 	languages["x-default"] = `https://nacebel.codes${codeHrefFor(data, "en")}`;
 
@@ -78,7 +81,9 @@ export default async function CodePage({ params }: PageProps) {
 			(data.childrenCodes ?? []).map((c) => loadCodeData(c.replace(/\./g, ""))),
 		),
 	]);
-	const children = childrenData.filter((c): c is NonNullable<typeof c> => c !== null);
+	const childCodes = childrenData.filter(
+		(c): c is NonNullable<typeof c> => c !== null,
+	);
 
 	const title = codeTitleFor(data, locale);
 	const breadcrumbItems = [
@@ -128,19 +133,19 @@ export default async function CodePage({ params }: PageProps) {
 		<>
 			<script
 				type="application/ld+json"
-				// biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD payload
+				// oxlint-disable-next-line react/no-danger -- JSON-LD payload
 				dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
 			/>
 			<script
 				type="application/ld+json"
-				// biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD payload
+				// oxlint-disable-next-line react/no-danger -- JSON-LD payload
 				dangerouslySetInnerHTML={{ __html: JSON.stringify(definedTermJsonLd) }}
 			/>
 			<NacebelCodeDetail
 				data={data}
 				locale={locale}
 				ancestors={ancestors}
-				children={children}
+				childCodes={childCodes}
 			/>
 		</>
 	);

@@ -10,8 +10,8 @@ export async function proxy(request: NextRequest) {
 	const { pathname } = request.nextUrl;
 
 	const localeMatch = pathname.match(LOCALE_PREFIX_RE);
-	if (localeMatch) {
-		const locale = localeMatch[1]!;
+	const locale = localeMatch?.[1];
+	if (locale) {
 		const rest = pathname.slice(locale.length + 1) || "/";
 
 		if (CANONICAL_ONLY_PATHS.has(rest)) {

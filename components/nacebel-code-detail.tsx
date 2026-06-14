@@ -17,14 +17,14 @@ interface CodeDetailProps {
 	data: CodeData;
 	locale: Locale;
 	ancestors: CodeData[];
-	children: CodeData[];
+	childCodes: CodeData[];
 }
 
 export function NacebelCodeDetail({
 	data,
 	locale,
 	ancestors,
-	children,
+	childCodes,
 }: CodeDetailProps) {
 	const t = translations[locale];
 	const title = codeTitleFor(data, locale);
@@ -32,7 +32,8 @@ export function NacebelCodeDetail({
 	const kboLink = `https://kbopub.economie.fgov.be/kbopub/naceToelichting.html?lang=${locale}&nace.code=${data.code.replace(/\./g, "")}&nace.version=2025`;
 	const parent = ancestors.length > 0 ? ancestors[ancestors.length - 1] : null;
 	const levelClass =
-		levelColorClasses[data.level] ?? "bg-primary/10 text-primary ring-primary/20";
+		levelColorClasses[data.level] ??
+		"bg-primary/10 text-primary ring-primary/20";
 
 	return (
 		<div className="bg-background text-foreground">
@@ -113,20 +114,18 @@ export function NacebelCodeDetail({
 							<code className="font-mono text-base font-semibold">
 								{parent.code}
 							</code>
-							<span className="text-base">
-								{codeTitleFor(parent, locale)}
-							</span>
+							<span className="text-base">{codeTitleFor(parent, locale)}</span>
 						</a>
 					</section>
 				) : null}
 
-				{children.length > 0 ? (
+				{childCodes.length > 0 ? (
 					<section className="rounded-[2rem] border border-white/60 bg-white/78 p-6 shadow-[0_24px_70px_-50px_rgba(15,23,42,0.65)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 sm:p-8">
 						<h2 className="text-sm font-semibold uppercase tracking-[0.22em] text-muted-foreground">
 							{t.childCodes}
 						</h2>
 						<ul className="mt-3 grid gap-2 md:grid-cols-2">
-							{children.map((child) => (
+							{childCodes.map((child) => (
 								<li key={child.code}>
 									<a
 										href={codeHrefFor(child, locale)}

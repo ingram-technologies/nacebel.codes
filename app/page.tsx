@@ -64,7 +64,13 @@ const datasetJsonLd = {
 	alternateName: ["NACE-BEL 2025", "NACEBEL 2025"],
 	url: "https://nacebel.codes",
 	inLanguage: ["nl", "fr", "en", "de"],
-	keywords: ["NACE-BEL", "NACE", "economic activity", "Belgium", "classification"],
+	keywords: [
+		"NACE-BEL",
+		"NACE",
+		"economic activity",
+		"Belgium",
+		"classification",
+	],
 	isAccessibleForFree: true,
 	license: "https://nacebel.codes/about",
 	creator: {
@@ -88,12 +94,12 @@ export default async function Home() {
 		<div className="min-h-screen bg-background">
 			<script
 				type="application/ld+json"
-				// biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD payload, not user input
+				// oxlint-disable-next-line react/no-danger -- JSON-LD payload, not user input
 				dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
 			/>
 			<script
 				type="application/ld+json"
-				// biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD payload, not user input
+				// oxlint-disable-next-line react/no-danger -- JSON-LD payload, not user input
 				dangerouslySetInnerHTML={{ __html: JSON.stringify(datasetJsonLd) }}
 			/>
 			<main className="mx-auto max-w-6xl px-4 py-8 sm:py-12">
