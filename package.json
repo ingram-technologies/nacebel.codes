@@ -32,7 +32,7 @@
 	},
 	"devDependencies": {
 		"@ingram-tech/agent-guide": "0.1.0",
-		"@ingram-tech/git-hooks": "^0.1.0",
+		"@ingram-tech/git-hooks": "^0.2.0",
 		"@ingram-tech/oxlint-config": "^0.1.0",
 		"@ingram-tech/typescript-config": "^0.1.0",
 		"@types/node": "^25",
