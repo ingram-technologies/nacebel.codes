@@ -1,8 +1,9 @@
 import NacebelSearchClient from "@/components/nacebel-search";
+import { createT } from "@/lib/i18n/core";
 import { HTML_LANG, SUPPORTED_LOCALES } from "@/lib/i18n/locales";
 import { resolveLocale } from "@/lib/i18n/resolve-locale";
+import { siteScope } from "@/lib/i18n/scopes/site";
 import { getPaginatedNacebelCodes } from "@/lib/nacebelData";
-import { translations } from "@/lib/translations";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
@@ -15,22 +16,28 @@ for (const loc of SUPPORTED_LOCALES) {
 
 export async function generateMetadata(): Promise<Metadata> {
 	const locale = await resolveLocale();
-	const t = translations[locale];
+	const t = createT(locale, siteScope);
+	const metaTitle = t(
+		"NACE-BEL 2025 Codes — Search the Belgian classification",
+	);
+	const metaDescription = t(
+		"Search the full NACE-BEL 2025 classification of Belgian economic activity codes in Dutch, French, English, and German. Browse the directory, copy codes, or use the free public API.",
+	);
 
 	return {
-		title: { absolute: t.metaTitle },
-		description: t.metaDescription,
+		title: { absolute: metaTitle },
+		description: metaDescription,
 		alternates: { canonical: "/", languages: HOME_LANGUAGES },
 		openGraph: {
-			title: t.metaTitle,
-			description: t.metaDescription,
+			title: metaTitle,
+			description: metaDescription,
 			url: "https://nacebel.codes",
 			type: "website",
 		},
 		twitter: {
 			card: "summary_large_image",
-			title: t.metaTitle,
-			description: t.metaDescription,
+			title: metaTitle,
+			description: metaDescription,
 		},
 	};
 }

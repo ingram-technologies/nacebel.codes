@@ -5,13 +5,14 @@ import {
 	loadAncestors,
 	loadCodeData,
 } from "@/lib/code-page";
+import { createT } from "@/lib/i18n/core";
 import {
 	HTML_LANG,
 	OG_LOCALE,
 	SUPPORTED_LOCALES,
 	type Locale,
 } from "@/lib/i18n/locales";
-import { translations } from "@/lib/translations";
+import { siteScope } from "@/lib/i18n/scopes/site";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -32,9 +33,12 @@ export async function generateMetadata({
 	const data = await loadCodeData(code.replace(/\./g, ""));
 	if (!data) return {};
 
-	const t = translations[locale];
+	const t = createT(locale, siteScope);
 	const title = codeTitleFor(data, locale);
-	const description = t.codeMetaDescription(data.code, title);
+	const description = t(
+		"NACE-BEL 2025 code {code} — {title}. Activity classification used by Belgian businesses for registration, tax, and statistics.",
+		{ code: data.code, title },
+	);
 	const canonicalPath = codeHrefFor(data, locale);
 
 	const languages: Record<string, string> = {};
@@ -85,12 +89,13 @@ export default async function CodePage({ params }: PageProps) {
 		(c): c is NonNullable<typeof c> => c !== null,
 	);
 
+	const t = createT(locale, siteScope);
 	const title = codeTitleFor(data, locale);
 	const breadcrumbItems = [
 		{
 			"@type": "ListItem" as const,
 			position: 1,
-			name: translations[locale].title,
+			name: t("NACE-BEL 2025 Codes"),
 			item: "https://nacebel.codes/",
 		},
 		...ancestors.map((ancestor, index) => ({

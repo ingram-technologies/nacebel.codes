@@ -3,7 +3,8 @@
 import { Button } from "@/components/ui/button";
 import { useLocale } from "@/contexts/locale-context";
 import { useToast } from "@/hooks/use-toast";
-import { translations } from "@/lib/translations";
+import { useT } from "@/lib/i18n";
+import { siteScope } from "@/lib/i18n/scopes/site";
 import { slugify } from "@/lib/slug";
 import type { NacebelCode } from "@/types";
 import { Download } from "lucide-react";
@@ -127,14 +128,16 @@ export default function NacebelSearchClient({
 	initialCodes,
 }: NacebelSearchClientProps) {
 	const locale = useLocale();
-	const t = translations[locale];
+	const t = useT(siteScope);
 	const { toast } = useToast();
 
 	const router = useRouter();
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
 
-	const [searchTerm, setSearchTerm] = useState(() => searchParams.get("q") ?? "");
+	const [searchTerm, setSearchTerm] = useState(
+		() => searchParams.get("q") ?? "",
+	);
 	const [copiedCode, setCopiedCode] = useState<string | null>(null);
 	const [currentPage, setCurrentPage] = useState(1);
 	const searchInputRef = useRef<HTMLInputElement>(null);
@@ -207,10 +210,13 @@ export default function NacebelSearchClient({
 	const flashCopied = useCallback(
 		(code: string) => {
 			setCopiedCode(code);
-			toast({ description: t.copied, duration: COPY_FEEDBACK_MS });
+			toast({
+				description: t("Copied to clipboard"),
+				duration: COPY_FEEDBACK_MS,
+			});
 			setTimeout(() => setCopiedCode(null), COPY_FEEDBACK_MS);
 		},
-		[toast, t.copied],
+		[toast, t],
 	);
 
 	const copyCodeOnly = useCallback(
@@ -268,7 +274,12 @@ export default function NacebelSearchClient({
 		link.click();
 		document.body.removeChild(link);
 		URL.revokeObjectURL(url);
-		toast({ description: t.exportedCsv(filteredCodes.length), duration: 3000 });
+		toast({
+			description: t("Exported {count} codes to CSV", {
+				count: filteredCodes.length,
+			}),
+			duration: 3000,
+		});
 	};
 
 	if (initialCodes.length === 0) {
@@ -279,15 +290,22 @@ export default function NacebelSearchClient({
 		);
 	}
 
-	const resultsHeading = searchTerm ? t.resultsFor(searchTerm) : t.allCodes;
+	const resultsHeading = searchTerm
+		? t('Results for "{query}"', { query: searchTerm })
+		: t("All codes");
 
 	return (
 		<div className="space-y-5 sm:space-y-6">
-			<SiteHeader title={t.title} subtitle={t.subtitle} />
+			<SiteHeader
+				title={t("NACE-BEL 2025 Codes")}
+				subtitle={t(
+					"Search the official directory and export the current results.",
+				)}
+			/>
 
 			<section className="sticky top-3 z-20 space-y-3 rounded-[1.25rem] border border-white/60 bg-white/88 p-3 shadow-[0_20px_50px_-38px_rgba(15,23,42,0.6)] backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/88 sm:p-4">
 				<div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-					<span className="font-medium">{t.tryLabel}</span>
+					<span className="font-medium">{t("Try:")}</span>
 					{EXAMPLE_SEARCHES.map((example) => (
 						<button
 							key={example}
@@ -303,7 +321,7 @@ export default function NacebelSearchClient({
 					ref={searchInputRef}
 					searchTerm={searchTerm}
 					setSearchTerm={setSearchTerm}
-					placeholder={t.searchPlaceholder}
+					placeholder={t("Search by code number or description...")}
 					className="max-w-none"
 					autoFocus
 				/>
@@ -313,7 +331,6 @@ export default function NacebelSearchClient({
 				currentPage={currentPage}
 				totalPages={totalPages}
 				setCurrentPage={setCurrentPage}
-				translations={t}
 				className="justify-center"
 			/>
 
@@ -325,12 +342,16 @@ export default function NacebelSearchClient({
 								{resultsHeading}
 							</h2>
 							<p className="text-sm text-muted-foreground">
-								{t.showing}{" "}
-								{filteredCodes.length > 0 ? startIndex + 1 : 0}-
-								{Math.min(endIndex, filteredCodes.length)} {t.of}{" "}
-								{filteredCodes.length.toLocaleString()} {t.codes}
+								{t("Showing {from}-{to} of {total, number} codes", {
+									from: filteredCodes.length > 0 ? startIndex + 1 : 0,
+									to: Math.min(endIndex, filteredCodes.length),
+									total: filteredCodes.length,
+								})}
 								{totalPages > 1 &&
-									` (${t.page} ${currentPage} ${t.of} ${totalPages})`}
+									` (${t("Page {page} of {pages}", {
+										page: currentPage,
+										pages: totalPages,
+									})})`}
 							</p>
 						</div>
 						<Button
@@ -340,7 +361,7 @@ export default function NacebelSearchClient({
 							className="flex items-center gap-2 self-start lg:self-auto"
 						>
 							<Download className="h-4 w-4" />
-							<span>{t.exportCsv}</span>
+							<span>{t("Export CSV")}</span>
 						</Button>
 					</div>
 				</div>
@@ -359,7 +380,7 @@ export default function NacebelSearchClient({
 						/>
 					) : (
 						<div className="rounded-[1.5rem] border border-dashed border-border/70 bg-background/60 py-14 text-center text-muted-foreground">
-							{t.noCodes}
+							{t("No NACEBEL codes found matching your search criteria")}
 						</div>
 					)}
 				</div>
@@ -369,7 +390,6 @@ export default function NacebelSearchClient({
 				currentPage={currentPage}
 				totalPages={totalPages}
 				setCurrentPage={setCurrentPage}
-				translations={t}
 				className="justify-center"
 			/>
 

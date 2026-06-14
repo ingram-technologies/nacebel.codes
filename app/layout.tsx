@@ -1,9 +1,10 @@
 import "@/app/globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { LocaleProvider } from "@/contexts/locale-context";
+import { createT } from "@/lib/i18n/core";
 import { HTML_LANG, OG_LOCALE } from "@/lib/i18n/locales";
 import { resolveLocale } from "@/lib/i18n/resolve-locale";
-import { translations } from "@/lib/translations";
+import { siteScope } from "@/lib/i18n/scopes/site";
 import type { Metadata, Viewport } from "next";
 import { Manrope, Newsreader } from "next/font/google";
 import type React from "react";
@@ -22,8 +23,10 @@ const siteName = "NACE-BEL 2025 Codes";
 
 export async function generateMetadata(): Promise<Metadata> {
 	const locale = await resolveLocale();
-	const t = translations[locale];
-	const description = t.metaDescription;
+	const t = createT(locale, siteScope);
+	const description = t(
+		"Search the full NACE-BEL 2025 classification of Belgian economic activity codes in Dutch, French, English, and German. Browse the directory, copy codes, or use the free public API.",
+	);
 
 	return {
 		metadataBase: new URL("https://nacebel.codes"),
@@ -92,7 +95,11 @@ export const viewport: Viewport = {
 	colorScheme: "light dark",
 };
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({
+	children,
+}: {
+	children: React.ReactNode;
+}) {
 	const locale = await resolveLocale();
 
 	return (

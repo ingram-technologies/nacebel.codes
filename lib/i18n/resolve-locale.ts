@@ -1,3 +1,4 @@
+import { negotiateAcceptLanguage } from "@ingram-tech/nk-i18n";
 import { cookies, headers } from "next/headers";
 import { cache } from "react";
 import { DEFAULT_LOCALE, type Locale, SUPPORTED_LOCALES } from "./locales";
@@ -11,14 +12,9 @@ async function resolveLocaleImpl(): Promise<Locale> {
 	const cookieLocale = cookieStore.get("locale")?.value;
 	if (cookieLocale && isLocale(cookieLocale)) return cookieLocale;
 
-	const headerStore = await headers();
-	const acceptLanguage = headerStore.get("accept-language");
-	if (acceptLanguage) {
-		for (const part of acceptLanguage.split(",")) {
-			const lang = part.split(";")[0]?.trim().split("-")[0]?.toLowerCase();
-			if (lang && isLocale(lang)) return lang;
-		}
-	}
+	const acceptLanguage = (await headers()).get("accept-language");
+	const negotiated = negotiateAcceptLanguage(acceptLanguage, SUPPORTED_LOCALES);
+	if (negotiated && isLocale(negotiated)) return negotiated;
 
 	return DEFAULT_LOCALE;
 }
