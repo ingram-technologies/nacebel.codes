@@ -5,7 +5,7 @@
     "": {
       "name": "nacebel-codes",
       "dependencies": {
-        "@ingram-tech/nk-i18n": "^0.1.0",
+        "@ingram-tech/nk-i18n": "^0.1.1",
         "@radix-ui/react-dropdown-menu": "latest",
         "@radix-ui/react-slot": "latest",
         "@radix-ui/react-toast": "latest",
@@ -114,7 +114,7 @@
 
     "@ingram-tech/git-hooks": ["@ingram-tech/git-hooks@0.1.0", "", { "bin": { "nextkit-format-staged": "bin/format-staged.mjs" } }, "sha512-vxWC6gkQkr+iPW+Lyb403L38ts/csqdf3X/9ItYQcskNac/7fPPz7QaS4F3NMZnQd8aV8RiJLgQMndqzv5sRyA=="],
 
-    "@ingram-tech/nk-i18n": ["@ingram-tech/nk-i18n@0.1.0", "", { "dependencies": { "intl-messageformat": "^11.2.8" }, "peerDependencies": { "react": "^18.0.0 || ^19.0.0" }, "optionalPeers": ["react"] }, "sha512-TSigIJ5c0esdJwIsw9x7720WaXCnLQT3VKjGP5q1EWb3jvI5kO9vIacP+t3X7gyZQTjgj/tVlNSKUrUkcbLU1w=="],
+    "@ingram-tech/nk-i18n": ["@ingram-tech/nk-i18n@0.1.1", "", { "dependencies": { "intl-messageformat": "^11.2.8" }, "peerDependencies": { "react": "^18.0.0 || ^19.0.0" }, "optionalPeers": ["react"] }, "sha512-sEv1LGyJQMXaYbc2iMhYIqLamaEB3hXyrCM4zjTpYOmBixivBhaalnd8wr3v9vUtxfXLkHvP89xX+Zx7v4KXzA=="],
 
     "@ingram-tech/oxlint-config": ["@ingram-tech/oxlint-config@0.1.0", "", { "peerDependencies": { "oxfmt": "^0.54.0", "oxlint": "^1.69.0" } }, "sha512-HndbpP0dp3Rwjt9CF7c7SAMU7f5FQVDadyXgdWc3/9YvSrB17sPYM1lWv0jOLryzsYElBRyfIYHtHs23U6HApQ=="],
 
