@@ -1,18 +1,14 @@
 import { ArrowLeft, ChevronRight, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PageFooter } from "@/components/page-footer";
-import { SiteHeader } from "@/components/site-header";
 import { type CodeData, codeHrefFor, codeTitleFor } from "@/lib/code-page";
 import { createT } from "@/lib/i18n/core";
 import type { Locale } from "@/lib/i18n/locales";
 import { siteScope } from "@/lib/i18n/scopes/site";
 
-const levelColorClasses: Record<number, string> = {
-	2: "bg-emerald-500/15 text-emerald-700 ring-emerald-600/20 dark:bg-emerald-400/15 dark:text-emerald-200 dark:ring-emerald-300/20",
-	3: "bg-amber-500/15 text-amber-700 ring-amber-600/20 dark:bg-amber-400/15 dark:text-amber-200 dark:ring-amber-300/20",
-	4: "bg-sky-500/15 text-sky-700 ring-sky-600/20 dark:bg-sky-400/15 dark:text-sky-200 dark:ring-sky-300/20",
-	5: "bg-rose-500/15 text-rose-700 ring-rose-600/20 dark:bg-rose-400/15 dark:text-rose-200 dark:ring-rose-300/20",
-};
+function levelVar(level: number): string {
+	return `var(--color-level-${Math.min(Math.max(level, 2), 6)})`;
+}
 
 interface CodeDetailProps {
 	data: CodeData;
@@ -32,79 +28,90 @@ export function NacebelCodeDetail({
 	const description = data.description[locale] || data.description.en || "";
 	const kboLink = `https://kbopub.economie.fgov.be/kbopub/naceToelichting.html?lang=${locale}&nace.code=${data.code.replace(/\./g, "")}&nace.version=2025`;
 	const parent = ancestors.length > 0 ? ancestors[ancestors.length - 1] : null;
-	const levelClass =
-		levelColorClasses[data.level] ?? "bg-primary/10 text-primary ring-primary/20";
+	const color = levelVar(data.level);
 
 	return (
-		<div className="bg-background text-foreground">
-			<div className="mx-auto max-w-5xl space-y-8 px-4 py-8 sm:py-12">
-				<SiteHeader />
-
+		<>
+			<main className="container py-8 sm:py-12">
 				<nav
 					aria-label="Breadcrumb"
-					className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground"
+					className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground"
 				>
-					<a href="/" className="hover:text-foreground">
+					<a href="/" className="transition-colors hover:text-foreground">
 						{t("NACE-BEL 2025 Codes")}
 					</a>
 					{ancestors.map((ancestor) => (
 						<span key={ancestor.code} className="flex items-center gap-2">
-							<ChevronRight className="h-3.5 w-3.5" />
+							<ChevronRight
+								className="h-3.5 w-3.5 opacity-40"
+								aria-hidden
+							/>
 							<a
 								href={codeHrefFor(ancestor, locale)}
-								className="hover:text-foreground"
+								className="transition-colors hover:text-foreground"
 							>
-								<code className="font-mono">{ancestor.code}</code>{" "}
-								{codeTitleFor(ancestor, locale)}
+								<span data-code className="text-foreground/70">
+									{ancestor.code}
+								</span>{" "}
+								<span className="hidden sm:inline">
+									{codeTitleFor(ancestor, locale)}
+								</span>
 							</a>
 						</span>
 					))}
 					<span className="flex items-center gap-2">
-						<ChevronRight className="h-3.5 w-3.5" />
-						<span className="text-foreground">
-							<code className="font-mono">{data.code}</code>
+						<ChevronRight className="h-3.5 w-3.5 opacity-40" aria-hidden />
+						<span data-code className="font-medium text-foreground">
+							{data.code}
 						</span>
 					</span>
 				</nav>
 
-				<header className="space-y-4 rounded-[2rem] border border-white/60 bg-white/78 p-6 shadow-[0_24px_70px_-50px_rgba(15,23,42,0.65)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 sm:p-8">
+				<header className="mt-8 border-b border-border pb-8">
 					<div className="flex flex-wrap items-center gap-3">
 						<span
-							className={`inline-flex rounded-full px-3 py-1 text-sm font-semibold ring-1 ring-inset ${levelClass}`}
+							data-code
+							className="text-2xl leading-none font-bold sm:text-3xl"
+							style={{ color }}
 						>
-							<code className="font-mono">{data.code}</code>
+							{data.code}
 						</span>
-						<span className="text-sm font-medium uppercase tracking-[0.18em] text-muted-foreground">
+						<span
+							className="inline-flex items-center rounded-full border px-2.5 py-0.5 font-mono text-xs font-medium"
+							style={{ color, borderColor: color }}
+						>
 							{t("Level")} {data.level}
 						</span>
 					</div>
-					<h1 className="font-display text-3xl tracking-tight sm:text-4xl">
+					<h1 className="mt-4 max-w-4xl text-[1.75rem] leading-tight font-extrabold tracking-tight sm:text-4xl">
 						{title}
 					</h1>
 					{description && description !== title ? (
-						<p className="text-lg leading-8 text-muted-foreground">
+						<p className="measure mt-4 text-lg leading-8 text-muted-foreground">
 							{description}
 						</p>
 					) : null}
-					<div className="flex flex-wrap gap-3 pt-2">
+					<div className="mt-6 flex flex-wrap gap-3">
 						<Button
 							variant="outline"
+							size="sm"
 							render={
 								<a href="/">
-									<ArrowLeft className="mr-2 h-4 w-4" />
+									<ArrowLeft className="mr-1.5 h-4 w-4" />
 									{t("Back to directory")}
 								</a>
 							}
 						/>
 						<Button
 							variant="outline"
+							size="sm"
 							render={
 								<a
 									href={kboLink}
 									target="_blank"
 									rel="noopener noreferrer"
 								>
-									<ExternalLink className="mr-2 h-4 w-4" />
+									<ExternalLink className="mr-1.5 h-4 w-4" />
 									{t("View on KBO (Crossroads Bank for Enterprises)")}
 								</a>
 							}
@@ -113,51 +120,72 @@ export function NacebelCodeDetail({
 				</header>
 
 				{parent ? (
-					<section className="rounded-[2rem] border border-white/60 bg-white/78 p-6 shadow-[0_24px_70px_-50px_rgba(15,23,42,0.65)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 sm:p-8">
-						<h2 className="text-sm font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+					<section className="mt-8">
+						<h2 className="text-sm font-semibold tracking-tight">
 							{t("Parent code")}
 						</h2>
 						<a
 							href={codeHrefFor(parent, locale)}
-							className="mt-3 flex items-center gap-3 rounded-[1.5rem] border border-border/70 bg-background/80 p-5 transition-colors hover:border-primary/30"
+							className="group mt-3 flex items-center gap-3 rounded-lg border border-border bg-card px-4 py-3 transition-colors hover:border-border-strong hover:bg-muted/50"
 						>
-							<code className="font-mono text-base font-semibold">
+							<span
+								data-code
+								className="font-semibold"
+								style={{ color: levelVar(parent.level) }}
+							>
 								{parent.code}
-							</code>
-							<span className="text-base">
+							</span>
+							<span className="min-w-0 flex-1 truncate text-foreground">
 								{codeTitleFor(parent, locale)}
 							</span>
+							<ChevronRight
+								className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5"
+								aria-hidden
+							/>
 						</a>
 					</section>
 				) : null}
 
 				{childCodes.length > 0 ? (
-					<section className="rounded-[2rem] border border-white/60 bg-white/78 p-6 shadow-[0_24px_70px_-50px_rgba(15,23,42,0.65)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 sm:p-8">
-						<h2 className="text-sm font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+					<section className="mt-8">
+						<h2 className="flex items-baseline gap-2 text-sm font-semibold tracking-tight">
 							{t("Child codes")}
+							<span className="font-mono text-xs font-normal text-muted-foreground">
+								{childCodes.length}
+							</span>
 						</h2>
-						<ul className="mt-3 grid gap-2 md:grid-cols-2">
+						<div className="mt-3 divide-y divide-border overflow-hidden rounded-lg border border-border bg-card">
 							{childCodes.map((child) => (
-								<li key={child.code}>
-									<a
-										href={codeHrefFor(child, locale)}
-										className="flex items-center gap-3 rounded-[1.25rem] border border-border/70 bg-background/80 p-4 transition-colors hover:border-primary/30"
+								<a
+									key={child.code}
+									href={codeHrefFor(child, locale)}
+									className="group flex items-center gap-3 px-4 py-2.5 transition-colors hover:bg-muted/60"
+								>
+									<span
+										data-code
+										className="shrink-0 font-semibold"
+										style={{
+											color: levelVar(child.level),
+											minWidth: "5ch",
+										}}
 									>
-										<code className="font-mono text-sm font-semibold">
-											{child.code}
-										</code>
-										<span className="text-sm">
-											{codeTitleFor(child, locale)}
-										</span>
-									</a>
-								</li>
+										{child.code}
+									</span>
+									<span className="min-w-0 flex-1 truncate text-[0.95rem] text-foreground">
+										{codeTitleFor(child, locale)}
+									</span>
+									<ChevronRight
+										className="h-4 w-4 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100"
+										aria-hidden
+									/>
+								</a>
 							))}
-						</ul>
+						</div>
 					</section>
 				) : null}
+			</main>
 
-				<PageFooter />
-			</div>
-		</div>
+			<PageFooter />
+		</>
 	);
 }

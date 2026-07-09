@@ -1,6 +1,5 @@
 import { CodeBlock } from "@/components/code-block";
 import { PageFooter } from "@/components/page-footer";
-import { SiteHeader } from "@/components/site-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { Metadata } from "next";
@@ -169,27 +168,32 @@ export default function ApiDocsPage() {
 				dangerouslySetInnerHTML={{ __html: JSON.stringify(apiJsonLd) }}
 			/>
 			<div className="mx-auto max-w-5xl space-y-8 px-4 py-8 sm:py-12">
-				<SiteHeader
-					title="NACE-BEL 2025 API"
-					subtitle="Public API documentation for search and lookup across the NACE-BEL 2025 directory."
-				/>
+				<header className="border-b border-border pb-8">
+					<h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
+						NACE-BEL 2025 API
+					</h1>
+					<p className="measure mt-3 text-lg text-muted-foreground">
+						Public API documentation for search and lookup across the
+						NACE-BEL 2025 directory.
+					</p>
+				</header>
 
 				<section className="grid gap-3 sm:grid-cols-3">
-					<div className="rounded-[1.5rem] border border-border/70 bg-background/80 p-4 shadow-sm">
+					<div className="rounded-lg border border-border bg-muted/40 p-4">
 						<p className="text-sm text-muted-foreground">Endpoints</p>
 						<p className="mt-2 text-2xl font-semibold">2</p>
 						<p className="mt-1 text-sm text-muted-foreground">
 							List/search and detail lookup
 						</p>
 					</div>
-					<div className="rounded-[1.5rem] border border-border/70 bg-background/80 p-4 shadow-sm">
+					<div className="rounded-lg border border-border bg-muted/40 p-4">
 						<p className="text-sm text-muted-foreground">Max page size</p>
 						<p className="mt-2 text-2xl font-semibold">500</p>
 						<p className="mt-1 text-sm text-muted-foreground">
 							Good for bulk reads and exports
 						</p>
 					</div>
-					<div className="rounded-[1.5rem] border border-border/70 bg-background/80 p-4 shadow-sm">
+					<div className="rounded-lg border border-border bg-muted/40 p-4">
 						<p className="text-sm text-muted-foreground">Authentication</p>
 						<p className="mt-2 text-2xl font-semibold">None</p>
 						<p className="mt-1 text-sm text-muted-foreground">
@@ -198,9 +202,9 @@ export default function ApiDocsPage() {
 					</div>
 				</section>
 
-				<section className="rounded-[2rem] border border-white/60 bg-white/78 p-6 shadow-[0_24px_70px_-50px_rgba(15,23,42,0.65)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 sm:p-8">
+				<section className="rounded-lg border border-border bg-card p-6 sm:p-8">
 					<div className="space-y-4">
-						<h2 className="font-display text-3xl tracking-tight">
+						<h2 className="font-bold text-3xl tracking-tight">
 							Base URL and authentication
 						</h2>
 						<p className="text-muted-foreground">
@@ -214,9 +218,9 @@ export default function ApiDocsPage() {
 					</div>
 				</section>
 
-				<section className="space-y-6 rounded-[2rem] border border-white/60 bg-white/78 p-6 shadow-[0_24px_70px_-50px_rgba(15,23,42,0.65)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 sm:p-8">
+				<section className="space-y-6 rounded-lg border border-border bg-card p-6 sm:p-8">
 					<div className="space-y-2">
-						<h2 className="font-display text-3xl tracking-tight">
+						<h2 className="font-bold text-3xl tracking-tight">
 							Query parameters
 						</h2>
 						<p className="text-muted-foreground">
@@ -224,7 +228,7 @@ export default function ApiDocsPage() {
 							filtering.
 						</p>
 					</div>
-					<div className="overflow-hidden rounded-[1.5rem] border border-border/70">
+					<div className="overflow-hidden rounded-lg border border-border">
 						<table className="w-full text-left text-sm">
 							<thead className="bg-muted/70">
 								<tr>
@@ -237,11 +241,11 @@ export default function ApiDocsPage() {
 									</th>
 								</tr>
 							</thead>
-							<tbody className="bg-background/75">
+							<tbody className="bg-card">
 								{queryParameters.map((parameter) => (
 									<tr
 										key={parameter.name}
-										className="border-t border-border/70"
+										className="border-t border-border"
 									>
 										<td className="px-4 py-3 font-mono text-sm">
 											{parameter.name}
@@ -263,14 +267,14 @@ export default function ApiDocsPage() {
 					{endpointCards.map((endpoint) => (
 						<div
 							key={endpoint.path}
-							className="rounded-[2rem] border border-white/60 bg-white/78 p-6 shadow-[0_24px_70px_-50px_rgba(15,23,42,0.65)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 sm:p-8"
+							className="rounded-lg border border-border bg-card p-6 sm:p-8"
 						>
 							<div className="space-y-4">
 								<div className="flex flex-wrap items-center gap-3">
 									<Badge className="border-emerald-600/20 bg-emerald-500/15 text-emerald-700 hover:bg-emerald-500/15 dark:text-emerald-200">
 										GET
 									</Badge>
-									<code className="rounded-full border border-border/70 bg-background/75 px-4 py-2 text-sm">
+									<code className="rounded-full border border-border bg-card px-4 py-2 text-sm">
 										{endpoint.path}
 									</code>
 								</div>
@@ -299,9 +303,9 @@ export default function ApiDocsPage() {
 					))}
 				</section>
 
-				<section className="rounded-[2rem] border border-white/60 bg-white/78 p-6 shadow-[0_24px_70px_-50px_rgba(15,23,42,0.65)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 sm:p-8">
+				<section className="rounded-lg border border-border bg-card p-6 sm:p-8">
 					<div className="space-y-4">
-						<h2 className="font-display text-3xl tracking-tight">
+						<h2 className="font-bold text-3xl tracking-tight">
 							Errors and throttling
 						</h2>
 						<p className="text-muted-foreground">
@@ -324,10 +328,10 @@ export default function ApiDocsPage() {
 					</div>
 				</section>
 
-				<section className="rounded-[2rem] border border-primary/15 bg-primary/10 p-6 shadow-[0_24px_70px_-50px_rgba(30,64,175,0.45)] sm:p-8">
+				<section className="rounded-lg border border-primary/20 bg-primary/5 p-6 sm:p-8">
 					<div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
 						<div className="space-y-4">
-							<h2 className="font-display text-3xl tracking-tight text-primary">
+							<h2 className="font-bold text-3xl tracking-tight text-primary">
 								Need higher rate limits or support?
 							</h2>
 							<p className="max-w-2xl text-primary/80">
@@ -349,7 +353,7 @@ export default function ApiDocsPage() {
 								/>
 							</div>
 						</div>
-						<div className="rounded-[1.5rem] border border-primary/15 bg-background/85 p-5 shadow-sm">
+						<div className="rounded-lg border border-primary/15 bg-card p-5 shadow-sm">
 							<p className="text-sm font-semibold uppercase tracking-[0.22em] text-muted-foreground">
 								Typical reasons to reach out
 							</p>

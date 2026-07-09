@@ -25,7 +25,7 @@ export function NacebelCodeList({
 	getDetailLink,
 }: NacebelCodeListProps) {
 	return (
-		<div className="grid gap-2">
+		<div className="divide-y divide-border">
 			{codes.map((code) => (
 				<NacebelCodeItem
 					key={code.code}

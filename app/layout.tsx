@@ -1,4 +1,5 @@
 import "@/app/globals.css";
+import { SiteHeader } from "@/components/site-header";
 import { Toaster } from "@/components/ui/sonner";
 import { LocaleProvider } from "@/contexts/locale-context";
 import { createT } from "@/lib/i18n/core";
@@ -6,17 +7,19 @@ import { HTML_LANG, OG_LOCALE } from "@/lib/i18n/locales";
 import { resolveLocale } from "@/lib/i18n/resolve-locale";
 import { siteScope } from "@/lib/i18n/scopes/site";
 import type { Metadata, Viewport } from "next";
-import { Manrope, Newsreader } from "next/font/google";
+import { Archivo, JetBrains_Mono } from "next/font/google";
 import type React from "react";
 
-const manrope = Manrope({
+const archivo = Archivo({
 	subsets: ["latin"],
-	variable: "--font-sans",
+	weight: ["400", "500", "600", "700", "800"],
+	variable: "--font-archivo",
 });
 
-const newsreader = Newsreader({
+const jetbrainsMono = JetBrains_Mono({
 	subsets: ["latin"],
-	variable: "--font-display",
+	weight: ["400", "500", "600", "700"],
+	variable: "--font-jetbrains-mono",
 });
 
 const siteName = "NACE-BEL 2025 Codes";
@@ -99,7 +102,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 	const locale = await resolveLocale();
 
 	return (
-		<html lang={HTML_LANG[locale]} suppressHydrationWarning>
+		<html
+			lang={HTML_LANG[locale]}
+			suppressHydrationWarning
+			className={`${archivo.variable} ${jetbrainsMono.variable}`}
+		>
 			<head>
 				<link
 					rel="search"
@@ -108,10 +115,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 					href="/opensearch.xml"
 				/>
 			</head>
-			<body
-				className={`${manrope.variable} ${newsreader.variable} min-h-screen bg-background text-foreground antialiased`}
-			>
+			<body className="min-h-screen bg-background text-foreground antialiased">
 				<LocaleProvider value={locale}>
+					<SiteHeader />
 					{children}
 					<Toaster />
 				</LocaleProvider>

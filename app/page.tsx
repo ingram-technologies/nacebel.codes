@@ -101,11 +101,9 @@ export default async function Home() {
 				// oxlint-disable-next-line react/no-danger -- JSON-LD payload, not user input
 				dangerouslySetInnerHTML={{ __html: JSON.stringify(datasetJsonLd) }}
 			/>
-			<main className="mx-auto max-w-6xl px-4 py-8 sm:py-12">
-				<Suspense>
-					<NacebelSearchClient initialCodes={initialCodes} />
-				</Suspense>
-			</main>
+			<Suspense>
+				<NacebelSearchClient initialCodes={initialCodes} />
+			</Suspense>
 		</div>
 	);
 }

@@ -23,7 +23,7 @@ export function LanguageSwitcher() {
 				render={
 					<Button
 						variant="outline"
-						className="flex items-center gap-2 rounded-full bg-background/80 px-4 backdrop-blur-sm"
+						className="flex items-center gap-2 rounded-full bg-card px-4"
 					/>
 				}
 			>
@@ -32,7 +32,7 @@ export function LanguageSwitcher() {
 			</DropdownMenuTrigger>
 			<DropdownMenuContent
 				align="start"
-				className="rounded-2xl border-border/70 bg-background/95 p-1 backdrop-blur-xl"
+				className="rounded-2xl border-border bg-popover p-1"
 			>
 				{SUPPORTED_LOCALES.map((loc: Locale) => (
 					<DropdownMenuItem

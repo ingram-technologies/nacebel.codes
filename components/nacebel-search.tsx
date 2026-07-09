@@ -15,7 +15,6 @@ import { NacebelCodeList } from "./nacebel-code-list";
 import { PageFooter } from "./page-footer";
 import { PaginationControls } from "./pagination-controls";
 import { SearchInput } from "./search-input";
-import { SiteHeader } from "./site-header";
 
 const ITEMS_PER_PAGE = 100;
 const COPY_FEEDBACK_MS = 2000;
@@ -289,80 +288,80 @@ export default function NacebelSearchClient({
 	const resultsHeading = searchTerm
 		? t('Results for "{query}"', { query: searchTerm })
 		: t("All codes");
+	const total = initialCodes.length;
 
 	return (
-		<div className="space-y-5 sm:space-y-6">
-			<SiteHeader
-				title={t("NACE-BEL 2025 Codes")}
-				subtitle={t(
-					"Search the official directory and export the current results.",
-				)}
-			/>
+		<>
+			{/* Board hero — the committed surface. */}
+			<section className="border-b border-border bg-board text-board-foreground">
+				<div className="container py-10 sm:py-14">
+					<p className="font-mono text-xs tracking-wider text-board-muted uppercase">
+						NACE-BEL 2025 · Belgium
+					</p>
+					<h1 className="mt-3 max-w-4xl text-3xl leading-[1.03] font-extrabold tracking-tight sm:text-5xl">
+						{t("NACE-BEL 2025 Codes")}
+					</h1>
+					<p className="mt-4 max-w-xl leading-relaxed text-board-muted">
+						{t(
+							"Search the official directory and export the current results.",
+						)}
+					</p>
 
-			<section className="sticky top-3 z-20 space-y-3 rounded-[1.25rem] border border-white/60 bg-white/88 p-3 shadow-[0_20px_50px_-38px_rgba(15,23,42,0.6)] backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/88 sm:p-4">
-				<div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-					<span className="font-medium">{t("Try:")}</span>
-					{EXAMPLE_SEARCHES.map((example) => (
-						<button
-							key={example}
-							type="button"
-							onClick={() => setSearchTerm(example)}
-							className="rounded-full border border-border/70 bg-background/70 px-3 py-1 transition-colors hover:border-primary/25 hover:text-foreground"
-						>
-							{example}
-						</button>
-					))}
-				</div>
-				<SearchInput
-					ref={searchInputRef}
-					searchTerm={searchTerm}
-					setSearchTerm={setSearchTerm}
-					placeholder={t("Search by code number or description...")}
-					className="max-w-none"
-					autoFocus
-				/>
-			</section>
-
-			<PaginationControls
-				currentPage={currentPage}
-				totalPages={totalPages}
-				setCurrentPage={setCurrentPage}
-				className="justify-center"
-			/>
-
-			<section className="rounded-[1.75rem] border border-white/60 bg-white/78 p-4 shadow-[0_24px_70px_-50px_rgba(15,23,42,0.65)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 sm:p-4">
-				<div className="border-b border-border/60 pb-4">
-					<div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-						<div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-							<h2 className="text-base font-semibold tracking-tight text-foreground sm:text-lg">
-								{resultsHeading}
-							</h2>
-							<p className="text-sm text-muted-foreground">
-								{t("Showing {from}-{to} of {total, number} codes", {
-									from: filteredCodes.length > 0 ? startIndex + 1 : 0,
-									to: Math.min(endIndex, filteredCodes.length),
-									total: filteredCodes.length,
-								})}
-								{totalPages > 1 &&
-									` (${t("Page {page} of {pages}", {
-										page: currentPage,
-										pages: totalPages,
-									})})`}
-							</p>
+					<div className="mt-7 max-w-2xl">
+						<SearchInput
+							ref={searchInputRef}
+							searchTerm={searchTerm}
+							setSearchTerm={setSearchTerm}
+							placeholder={t("Search by code number or description...")}
+							autoFocus
+						/>
+						<div className="mt-3 flex flex-wrap items-center gap-2 text-sm text-board-muted">
+							<span>{t("Try:")}</span>
+							{EXAMPLE_SEARCHES.map((example) => (
+								<button
+									key={example}
+									type="button"
+									onClick={() => setSearchTerm(example)}
+									data-code
+									className="rounded-md border border-white/15 bg-white/5 px-2 py-0.5 text-board-foreground transition-colors hover:border-primary/60 hover:bg-white/10"
+								>
+									{example}
+								</button>
+							))}
 						</div>
-						<Button
-							variant="outline"
-							size="sm"
-							onClick={exportToCSV}
-							className="flex items-center gap-2 self-start lg:self-auto"
-						>
-							<Download className="h-4 w-4" />
-							<span>{t("Export CSV")}</span>
-						</Button>
 					</div>
 				</div>
+			</section>
 
-				<div className="mt-4">
+			<main className="container py-6 sm:py-8">
+				{/* Results header — the index masthead row. */}
+				<div className="flex flex-col gap-3 pb-3 sm:flex-row sm:items-end sm:justify-between">
+					<div className="min-w-0">
+						<h2 className="truncate text-lg font-bold tracking-tight">
+							{resultsHeading}
+						</h2>
+						<p className="mt-0.5 font-mono text-xs text-muted-foreground">
+							{t("Showing {from}-{to} of {total, number} codes", {
+								from: filteredCodes.length > 0 ? startIndex + 1 : 0,
+								to: Math.min(endIndex, filteredCodes.length),
+								total: filteredCodes.length,
+							})}
+							{searchTerm ? ` · ${total.toLocaleString()} indexed` : null}
+						</p>
+					</div>
+					<Button
+						variant="outline"
+						size="sm"
+						onClick={exportToCSV}
+						className="h-9 shrink-0 gap-2 self-start px-3 sm:self-auto"
+					>
+						<Download className="h-4 w-4" />
+						<span>{t("Export CSV")}</span>
+					</Button>
+				</div>
+
+				{/* The ruled directory index. */}
+				<div className="rounded-lg border border-border bg-card">
 					{paginatedCodes.length > 0 ? (
 						<NacebelCodeList
 							codes={paginatedCodes}
@@ -375,21 +374,27 @@ export default function NacebelSearchClient({
 							getDetailLink={getDetailLink}
 						/>
 					) : (
-						<div className="rounded-[1.5rem] border border-dashed border-border/70 bg-background/60 py-14 text-center text-muted-foreground">
-							{t("No NACEBEL codes found matching your search criteria")}
+						<div className="px-4 py-16 text-center">
+							<p className="font-medium text-foreground">
+								{t(
+									"No NACEBEL codes found matching your search criteria",
+								)}
+							</p>
 						</div>
 					)}
 				</div>
-			</section>
 
-			<PaginationControls
-				currentPage={currentPage}
-				totalPages={totalPages}
-				setCurrentPage={setCurrentPage}
-				className="justify-center"
-			/>
+				{totalPages > 1 ? (
+					<PaginationControls
+						currentPage={currentPage}
+						totalPages={totalPages}
+						setCurrentPage={setCurrentPage}
+						className="mt-6 justify-center"
+					/>
+				) : null}
+			</main>
 
 			<PageFooter />
-		</div>
+		</>
 	);
 }

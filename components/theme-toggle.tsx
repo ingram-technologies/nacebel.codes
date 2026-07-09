@@ -26,7 +26,7 @@ const THEME_ICON = {
 export function ThemeToggle({ theme, setTheme }: ThemeToggleProps) {
 	const t = useT(siteScope);
 	return (
-		<div className="flex items-center space-x-1 rounded-full border border-border/70 bg-background/80 p-1 shadow-sm backdrop-blur-sm">
+		<div className="flex items-center space-x-1 rounded-full border border-border bg-card p-1 shadow-sm">
 			{(["light", "dark", "system"] as const).map((mode) => {
 				const Icon = THEME_ICON[mode];
 				const label = t(THEME_LABEL[mode]);

@@ -4,136 +4,151 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/*
+  nacebel.codes — "official directory / wayfinding board"
+  Cool paper, near-black ink, one committed signal-vermilion accent, a dark board
+  masthead, and a systematic depth ramp for the 5 classification levels. Grotesque
+  sans (Archivo) + monospace for the codes themselves. No cream, no glass, no aurora.
+*/
+
 @theme {
-	--color-background: hsl(var(--background));
-	--color-foreground: hsl(var(--foreground));
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
 
-	--color-card: hsl(var(--card));
-	--color-card-foreground: hsl(var(--card-foreground));
+	--color-card: var(--card);
+	--color-card-foreground: var(--card-foreground);
 
-	--color-popover: hsl(var(--popover));
-	--color-popover-foreground: hsl(var(--popover-foreground));
+	--color-popover: var(--popover);
+	--color-popover-foreground: var(--popover-foreground);
 
-	--color-primary: hsl(var(--primary));
-	--color-primary-foreground: hsl(var(--primary-foreground));
+	--color-primary: var(--primary);
+	--color-primary-foreground: var(--primary-foreground);
 
-	--color-secondary: hsl(var(--secondary));
-	--color-secondary-foreground: hsl(var(--secondary-foreground));
+	--color-secondary: var(--secondary);
+	--color-secondary-foreground: var(--secondary-foreground);
 
-	--color-muted: hsl(var(--muted));
-	--color-muted-foreground: hsl(var(--muted-foreground));
+	--color-muted: var(--muted);
+	--color-muted-foreground: var(--muted-foreground);
 
-	--color-accent: hsl(var(--accent));
-	--color-accent-foreground: hsl(var(--accent-foreground));
+	--color-accent: var(--accent);
+	--color-accent-foreground: var(--accent-foreground);
 
-	--color-destructive: hsl(var(--destructive));
-	--color-destructive-foreground: hsl(var(--destructive-foreground));
+	--color-destructive: var(--destructive);
+	--color-destructive-foreground: var(--destructive-foreground);
 
-	--color-border: hsl(var(--border));
-	--color-input: hsl(var(--input));
-	--color-ring: hsl(var(--ring));
+	--color-border: var(--border);
+	--color-border-strong: var(--border-strong);
+	--color-input: var(--input);
+	--color-ring: var(--ring);
 
-	--color-chart-1: hsl(var(--chart-1));
-	--color-chart-2: hsl(var(--chart-2));
-	--color-chart-3: hsl(var(--chart-3));
-	--color-chart-4: hsl(var(--chart-4));
-	--color-chart-5: hsl(var(--chart-5));
+	/* The dark "board" surface — masthead / section index, in both themes. */
+	--color-board: var(--board);
+	--color-board-foreground: var(--board-foreground);
+	--color-board-muted: var(--board-muted);
+
+	/* Classification depth ramp (section → subclass). Read as depth, not rainbow. */
+	--color-level-2: var(--level-2);
+	--color-level-3: var(--level-3);
+	--color-level-4: var(--level-4);
+	--color-level-5: var(--level-5);
+	--color-level-6: var(--level-6);
 
 	--radius-lg: var(--radius);
-	--radius-md: calc(var(--radius) - 2px);
-	--radius-sm: calc(var(--radius) - 4px);
-}
+	--radius-md: calc(var(--radius) - 3px);
+	--radius-sm: calc(var(--radius) - 5px);
 
-/*
-  The default border color has changed to `currentcolor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
+	--font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+	--font-mono: var(--font-jetbrains-mono), ui-monospace, "SFMono-Regular", monospace;
 
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
-*/
-@layer base {
-	*,
-	::after,
-	::before,
-	::backdrop,
-	::file-selector-button {
-		border-color: var(--color-gray-200, currentcolor);
-	}
+	/* Motion */
+	--ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+	--ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 
-	/* * color swatch styles for color picker */
-	::-webkit-color-swatch-wrapper {
-		padding: 0;
-		border-radius: inherit;
-	}
-	::-webkit-color-swatch {
-		border: 0;
-		border-radius: inherit;
-	}
-
-	::-moz-color-swatch,
-	::-moz-focus-inner {
-		border: 0;
-		border-radius: inherit;
-	}
-	::-moz-focus-inner {
-		padding: 0;
-	}
+	--z-dropdown: 1000;
+	--z-sticky: 1100;
+	--z-toast: 1400;
+	--z-tooltip: 1500;
 }
 
 @layer base {
 	:root {
-		--background: 40 38% 97%;
-		--foreground: 219 38% 14%;
-		--card: 0 0% 100%;
-		--card-foreground: 219 38% 14%;
-		--popover: 0 0% 100%;
-		--popover-foreground: 219 38% 14%;
-		--primary: 213 65% 26%;
-		--primary-foreground: 0 0% 98%;
-		--secondary: 34 33% 92%;
-		--secondary-foreground: 218 30% 20%;
-		--muted: 36 30% 93%;
-		--muted-foreground: 216 17% 38%;
-		--accent: 190 42% 92%;
-		--accent-foreground: 213 56% 24%;
-		--destructive: 0 84.2% 60.2%;
-		--destructive-foreground: 0 0% 98%;
-		--border: 31 24% 84%;
-		--input: 31 24% 88%;
-		--ring: 196 78% 41%;
-		--chart-1: 213 67% 45%;
-		--chart-2: 167 50% 38%;
-		--chart-3: 27 88% 56%;
-		--chart-4: 45 86% 59%;
-		--chart-5: 343 72% 60%;
-		--radius: 0.9rem;
+		/* Light — cool paper */
+		--background: oklch(0.985 0.003 250);
+		--foreground: oklch(0.24 0.018 262);
+		--card: oklch(1 0 0);
+		--card-foreground: oklch(0.24 0.018 262);
+		--popover: oklch(1 0 0);
+		--popover-foreground: oklch(0.24 0.018 262);
+
+		/* Committed accent — signal vermilion */
+		--primary: oklch(0.57 0.208 31);
+		--primary-foreground: oklch(0.99 0.004 60);
+
+		--secondary: oklch(0.955 0.004 255);
+		--secondary-foreground: oklch(0.28 0.018 262);
+		--muted: oklch(0.955 0.004 255);
+		--muted-foreground: oklch(0.46 0.016 262);
+		--accent: oklch(0.955 0.03 40);
+		--accent-foreground: oklch(0.47 0.17 32);
+		--destructive: oklch(0.55 0.2 27);
+		--destructive-foreground: oklch(0.99 0.004 60);
+
+		--border: oklch(0.905 0.005 255);
+		--border-strong: oklch(0.83 0.008 258);
+		--input: oklch(0.9 0.005 255);
+		--ring: oklch(0.57 0.208 31);
+
+		/* Dark board — used on light theme too (masthead, section index) */
+		--board: oklch(0.235 0.022 264);
+		--board-foreground: oklch(0.97 0.004 250);
+		--board-muted: oklch(0.72 0.02 258);
+
+		/* Depth ramp — hue carries depth (section → subclass); lightness held near
+		   0.5 so every colored code clears AA on paper. */
+		--level-2: oklch(0.5 0.07 258);
+		--level-3: oklch(0.5 0.1 230);
+		--level-4: oklch(0.5 0.1 176);
+		--level-5: oklch(0.51 0.13 58);
+		--level-6: oklch(0.53 0.18 40);
+
+		--radius: 0.5rem;
 	}
+
 	.dark {
-		--background: 221 29% 11%;
-		--foreground: 45 36% 95%;
-		--card: 221 24% 14%;
-		--card-foreground: 45 36% 95%;
-		--popover: 221 24% 14%;
-		--popover-foreground: 45 36% 95%;
-		--primary: 194 84% 74%;
-		--primary-foreground: 221 42% 12%;
-		--secondary: 219 18% 19%;
-		--secondary-foreground: 45 36% 95%;
-		--muted: 220 16% 18%;
-		--muted-foreground: 217 15% 70%;
-		--accent: 196 34% 19%;
-		--accent-foreground: 190 90% 86%;
-		--destructive: 0 62.8% 30.6%;
-		--destructive-foreground: 0 0% 98%;
-		--border: 219 16% 24%;
-		--input: 219 16% 24%;
-		--ring: 192 87% 67%;
-		--chart-1: 194 79% 62%;
-		--chart-2: 158 56% 50%;
-		--chart-3: 34 92% 63%;
-		--chart-4: 49 89% 67%;
-		--chart-5: 343 72% 67%;
+		/* Dark — the board is native here */
+		--background: oklch(0.205 0.02 264);
+		--foreground: oklch(0.955 0.004 250);
+		--card: oklch(0.245 0.021 264);
+		--card-foreground: oklch(0.955 0.004 250);
+		--popover: oklch(0.245 0.021 264);
+		--popover-foreground: oklch(0.955 0.004 250);
+
+		--primary: oklch(0.7 0.185 38);
+		--primary-foreground: oklch(0.2 0.03 40);
+
+		--secondary: oklch(0.27 0.02 264);
+		--secondary-foreground: oklch(0.955 0.004 250);
+		--muted: oklch(0.27 0.02 264);
+		--muted-foreground: oklch(0.73 0.018 258);
+		--accent: oklch(0.31 0.035 40);
+		--accent-foreground: oklch(0.82 0.14 46);
+		--destructive: oklch(0.62 0.2 27);
+		--destructive-foreground: oklch(0.99 0.004 60);
+
+		--border: oklch(0.32 0.02 264);
+		--border-strong: oklch(0.42 0.02 264);
+		--input: oklch(0.32 0.02 264);
+		--ring: oklch(0.7 0.185 38);
+
+		--board: oklch(0.17 0.018 264);
+		--board-foreground: oklch(0.97 0.004 250);
+		--board-muted: oklch(0.7 0.02 258);
+
+		--level-2: oklch(0.72 0.06 258);
+		--level-3: oklch(0.74 0.1 232);
+		--level-4: oklch(0.76 0.09 178);
+		--level-5: oklch(0.8 0.11 82);
+		--level-6: oklch(0.76 0.15 46);
 	}
 }
 
@@ -143,79 +158,119 @@
 	}
 	html {
 		scroll-behavior: smooth;
+		-webkit-text-size-adjust: 100%;
 	}
 	body {
 		@apply bg-background text-foreground;
-		font-family: var(--font-sans), sans-serif;
-		background-image:
-			radial-gradient(
-				circle at top left,
-				rgba(70, 144, 196, 0.16),
-				transparent 32rem
-			),
-			radial-gradient(
-				circle at top right,
-				rgba(226, 187, 111, 0.14),
-				transparent 28rem
-			),
-			linear-gradient(180deg, rgba(255, 255, 255, 0.4), transparent 22rem);
-		background-attachment: fixed;
+		font-family: var(--font-sans);
+		-webkit-font-smoothing: antialiased;
+		text-rendering: optimizeLegibility;
 	}
-	.dark body {
-		background-image:
-			radial-gradient(
-				circle at top left,
-				rgba(46, 135, 171, 0.26),
-				transparent 30rem
-			),
-			radial-gradient(
-				circle at top right,
-				rgba(182, 128, 57, 0.18),
-				transparent 24rem
-			),
-			linear-gradient(180deg, rgba(7, 13, 24, 0.28), transparent 22rem);
+	/* Codes are set in mono with tabular figures so digits align in the index. */
+	code,
+	.font-mono,
+	[data-code] {
+		font-family: var(--font-mono);
+		font-feature-settings:
+			"tnum" 1,
+			"zero" 1;
+		letter-spacing: -0.01em;
+	}
+	h1,
+	h2,
+	h3 {
+		text-wrap: balance;
+		letter-spacing: -0.02em;
+	}
+	p {
+		text-wrap: pretty;
 	}
 	a {
 		transition:
-			color 0.2s ease,
-			opacity 0.2s ease,
-			border-color 0.2s ease,
-			background-color 0.2s ease;
+			color 0.18s var(--ease-out-quart),
+			background-color 0.18s var(--ease-out-quart),
+			border-color 0.18s var(--ease-out-quart),
+			opacity 0.18s var(--ease-out-quart);
 	}
-}
-
-/* Accordion animations */
-@keyframes accordion-down {
-	from {
-		height: 0;
+	::selection {
+		background: color-mix(in oklch, var(--primary) 26%, transparent);
 	}
-	to {
-		height: var(--radix-accordion-content-height);
-	}
-}
-
-@keyframes accordion-up {
-	from {
-		height: var(--radix-accordion-content-height);
-	}
-	to {
-		height: 0;
-	}
-}
-
-.animate-accordion-down {
-	animation: accordion-down 0.2s ease-out;
-}
-
-.animate-accordion-up {
-	animation: accordion-up 0.2s ease-out;
-}
-
-/* Fade out animation for save indicator */
-@keyframes fade-out {
-	0% {
+	::placeholder {
+		color: var(--muted-foreground);
 		opacity: 1;
 	}
+	:focus-visible {
+		outline: 2px solid var(--ring);
+		outline-offset: 2px;
+	}
+}
+
+@layer utilities {
+	/* Prose measure — cap reading columns at a comfortable line length. */
+	.measure {
+		max-width: 68ch;
+	}
+	.text-balance {
+		text-wrap: balance;
+	}
+	/* Hairline top rule used across the index and detail lists. */
+	.rule-top {
+		border-top: 1px solid var(--border);
+	}
+
+	.container {
+		width: 100%;
+		margin-inline: auto;
+		padding-inline: 1.25rem;
+		max-width: 72rem;
+	}
+	@media (min-width: 640px) {
+		.container {
+			padding-inline: 2rem;
+		}
+	}
+}
+
+/* Motion — entrances that enhance already-visible content. */
+@keyframes rise-in {
+	from {
+		opacity: 0;
+		transform: translateY(0.5rem);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+@keyframes fade-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+@keyframes sweep-in {
+	from {
+		clip-path: inset(0 100% 0 0);
+	}
+	to {
+		clip-path: inset(0 0 0 0);
+	}
+}
+
+.animate-rise {
+	animation: rise-in 0.5s var(--ease-out-expo) both;
+}
+.animate-fade {
+	animation: fade-in 0.5s var(--ease-out-quart) both;
+}
+.animate-sweep {
+	animation: sweep-in 0.7s var(--ease-out-expo) both;
+}
+
+@keyframes fade-out {
+	0%,
 	70% {
 		opacity: 1;
 	}
@@ -223,58 +278,20 @@
 		opacity: 0;
 	}
 }
-
 .animate-fade-out {
 	animation: fade-out 2s ease-out forwards;
 }
 
-/* Container configuration for Tailwind CSS v4 */
-@layer utilities {
-	.font-display {
-		font-family: var(--font-display), serif;
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.001ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.001ms !important;
+		scroll-behavior: auto !important;
 	}
-
-	.text-balance {
-		text-wrap: balance;
-	}
-
-	.container {
-		width: 100%;
-		margin-left: auto;
-		margin-right: auto;
-		padding-left: 1rem;
-		padding-right: 1rem;
-	}
-
-	@media (min-width: 640px) {
-		.container {
-			max-width: 640px;
-			padding-left: 2rem;
-			padding-right: 2rem;
-		}
-	}
-
-	@media (min-width: 768px) {
-		.container {
-			max-width: 768px;
-		}
-	}
-
-	@media (min-width: 1024px) {
-		.container {
-			max-width: 1024px;
-		}
-	}
-
-	@media (min-width: 1280px) {
-		.container {
-			max-width: 1280px;
-		}
-	}
-
-	@media (min-width: 1536px) {
-		.container {
-			max-width: 1536px;
-		}
+	.animate-sweep {
+		clip-path: none;
 	}
 }

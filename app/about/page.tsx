@@ -1,5 +1,4 @@
 import { PageFooter } from "@/components/page-footer";
-import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
 import type { Metadata } from "next";
 
@@ -71,32 +70,32 @@ const articleJsonLd = {
 
 const levels = [
 	{
+		depth: 2,
 		level: "Level 2",
 		code: "01",
 		title: "Section",
 		description: "The broadest practical grouping used in the public directory.",
-		tone: "bg-emerald-500/15 text-emerald-700 dark:bg-emerald-400/15 dark:text-emerald-200",
 	},
 	{
+		depth: 3,
 		level: "Level 3",
 		code: "01.1",
 		title: "Division",
 		description: "Adds a more specific economic branch within the section.",
-		tone: "bg-amber-500/15 text-amber-700 dark:bg-amber-400/15 dark:text-amber-200",
 	},
 	{
+		depth: 4,
 		level: "Level 4",
 		code: "01.11",
 		title: "Group",
 		description: "Narrows the activity into a more precise operational category.",
-		tone: "bg-sky-500/15 text-sky-700 dark:bg-sky-400/15 dark:text-sky-200",
 	},
 	{
+		depth: 5,
 		level: "Level 5",
 		code: "01.111",
 		title: "Class",
 		description: "The most specific level published in this directory.",
-		tone: "bg-rose-500/15 text-rose-700 dark:bg-rose-400/15 dark:text-rose-200",
 	},
 ];
 
@@ -155,14 +154,19 @@ export default function AboutPage() {
 				dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
 			/>
 			<div className="mx-auto max-w-5xl space-y-8 px-4 py-8 sm:py-12">
-				<SiteHeader
-					title="About NACE-BEL Codes"
-					subtitle="NACE and NACE-BEL classify economic activity in Belgium and across Europe."
-				/>
+				<header className="border-b border-border pb-8">
+					<h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
+						About NACE-BEL Codes
+					</h1>
+					<p className="measure mt-3 text-lg text-muted-foreground">
+						NACE and NACE-BEL classify economic activity in Belgium and
+						across Europe.
+					</p>
+				</header>
 
 				<section className="grid gap-6 lg:grid-cols-2">
-					<article className="rounded-[2rem] border border-white/60 bg-white/78 p-6 shadow-[0_24px_70px_-50px_rgba(15,23,42,0.65)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 sm:p-8">
-						<h2 className="font-display text-3xl tracking-tight">
+					<article className="rounded-lg border border-border bg-card p-6 sm:p-8">
+						<h2 className="font-bold text-3xl tracking-tight">
 							What is NACE?
 						</h2>
 						<p className="mt-4 leading-8 text-muted-foreground">
@@ -176,8 +180,8 @@ export default function AboutPage() {
 							depend on describing what an organization actually does.
 						</p>
 					</article>
-					<article className="rounded-[2rem] border border-white/60 bg-white/78 p-6 shadow-[0_24px_70px_-50px_rgba(15,23,42,0.65)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 sm:p-8">
-						<h2 className="font-display text-3xl tracking-tight">
+					<article className="rounded-lg border border-border bg-card p-6 sm:p-8">
+						<h2 className="font-bold text-3xl tracking-tight">
 							What is NACE-BEL?
 						</h2>
 						<p className="mt-4 leading-8 text-muted-foreground">
@@ -192,9 +196,9 @@ export default function AboutPage() {
 					</article>
 				</section>
 
-				<section className="rounded-[2rem] border border-white/60 bg-white/78 p-6 shadow-[0_24px_70px_-50px_rgba(15,23,42,0.65)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 sm:p-8">
+				<section className="rounded-lg border border-border bg-card p-6 sm:p-8">
 					<div className="space-y-3">
-						<h2 className="font-display text-3xl tracking-tight">
+						<h2 className="font-bold text-3xl tracking-tight">
 							Code structure
 						</h2>
 						<p className="max-w-3xl text-muted-foreground">
@@ -207,15 +211,19 @@ export default function AboutPage() {
 						{levels.map((item) => (
 							<div
 								key={item.level}
-								className="rounded-[1.5rem] border border-border/70 bg-background/80 p-5 shadow-sm"
+								className="rounded-lg border border-border bg-muted/40 p-5"
 							>
 								<div className="flex items-center justify-between gap-4">
 									<span
-										className={`inline-flex rounded-full px-3 py-1 text-sm font-semibold ${item.tone}`}
+										className="inline-flex items-center rounded-full border px-2.5 py-0.5 font-mono text-xs font-medium"
+										style={{
+											color: `var(--color-level-${item.depth})`,
+											borderColor: `var(--color-level-${item.depth})`,
+										}}
 									>
 										{item.level}
 									</span>
-									<code className="rounded-full border border-border/70 bg-background px-3 py-1 text-sm">
+									<code className="rounded border border-border bg-muted px-2 py-0.5 text-sm">
 										{item.code}
 									</code>
 								</div>
@@ -231,15 +239,15 @@ export default function AboutPage() {
 				</section>
 
 				<section className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
-					<article className="rounded-[2rem] border border-white/60 bg-white/78 p-6 shadow-[0_24px_70px_-50px_rgba(15,23,42,0.65)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 sm:p-8">
-						<h2 className="font-display text-3xl tracking-tight">
+					<article className="rounded-lg border border-border bg-card p-6 sm:p-8">
+						<h2 className="font-bold text-3xl tracking-tight">
 							NACE-BEL versions
 						</h2>
 						<div className="mt-6 space-y-4">
 							{versions.map((version) => (
 								<div
 									key={version.title}
-									className="rounded-[1.5rem] border border-border/70 bg-background/80 p-5 shadow-sm"
+									className="rounded-lg border border-border bg-muted/40 p-5"
 								>
 									<h3 className="text-xl font-semibold">
 										{version.title}
@@ -251,8 +259,8 @@ export default function AboutPage() {
 							))}
 						</div>
 					</article>
-					<article className="rounded-[2rem] border border-white/60 bg-white/78 p-6 shadow-[0_24px_70px_-50px_rgba(15,23,42,0.65)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 sm:p-8">
-						<h2 className="font-display text-3xl tracking-tight">
+					<article className="rounded-lg border border-border bg-card p-6 sm:p-8">
+						<h2 className="font-bold text-3xl tracking-tight">
 							International context
 						</h2>
 						<p className="mt-4 leading-8 text-muted-foreground">
@@ -265,7 +273,7 @@ export default function AboutPage() {
 							review the classification so it keeps pace with how the
 							economy changes.
 						</p>
-						<div className="mt-6 rounded-[1.5rem] border border-primary/15 bg-primary/10 p-5">
+						<div className="mt-6 rounded-lg border border-primary/20 bg-primary/5 p-5">
 							<p className="text-sm leading-7 text-primary/80">
 								The main idea is simple: everyone uses the same
 								structure, so analysis, reporting, and administration
@@ -275,9 +283,9 @@ export default function AboutPage() {
 					</article>
 				</section>
 
-				<section className="rounded-[2rem] border border-white/60 bg-white/78 p-6 shadow-[0_24px_70px_-50px_rgba(15,23,42,0.65)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 sm:p-8">
+				<section className="rounded-lg border border-border bg-card p-6 sm:p-8">
 					<div className="space-y-3">
-						<h2 className="font-display text-3xl tracking-tight">
+						<h2 className="font-bold text-3xl tracking-tight">
 							Applications and uses
 						</h2>
 						<p className="max-w-3xl text-muted-foreground">
@@ -290,7 +298,7 @@ export default function AboutPage() {
 						{applications.map((application) => (
 							<div
 								key={application.title}
-								className="rounded-[1.5rem] border border-border/70 bg-background/80 p-5 shadow-sm"
+								className="rounded-lg border border-border bg-muted/40 p-5"
 							>
 								<h3 className="text-xl font-semibold">
 									{application.title}
@@ -303,10 +311,10 @@ export default function AboutPage() {
 					</div>
 				</section>
 
-				<section className="rounded-[2rem] border border-primary/15 bg-primary/10 p-6 shadow-[0_24px_70px_-50px_rgba(30,64,175,0.45)] sm:p-8">
+				<section className="rounded-lg border border-primary/20 bg-primary/5 p-6 sm:p-8">
 					<div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
 						<div className="space-y-4">
-							<h2 className="font-display text-3xl tracking-tight text-primary">
+							<h2 className="font-bold text-3xl tracking-tight text-primary">
 								Finding the right code
 							</h2>
 							<p className="text-primary/80">
@@ -327,7 +335,7 @@ export default function AboutPage() {
 								/>
 							</div>
 						</div>
-						<div className="rounded-[1.5rem] border border-primary/15 bg-background/85 p-5 shadow-sm">
+						<div className="rounded-lg border border-primary/15 bg-card p-5 shadow-sm">
 							<p className="text-sm font-semibold uppercase tracking-[0.22em] text-muted-foreground">
 								Practical advice
 							</p>

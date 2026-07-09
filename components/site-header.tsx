@@ -2,18 +2,9 @@
 
 import { useEffect, useState } from "react";
 
-import { AdvertisementBanner } from "@/components/advertisement-banner";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Button } from "@/components/ui/button";
-import { useT } from "@/lib/i18n";
-import { siteScope } from "@/lib/i18n/scopes/site";
 import type { Theme } from "@/types";
-
-interface SiteHeaderProps {
-	title?: string;
-	subtitle?: string;
-}
 
 function getCookieValue(name: string) {
 	return document.cookie
@@ -22,8 +13,7 @@ function getCookieValue(name: string) {
 		?.split("=")[1];
 }
 
-export function SiteHeader({ title, subtitle }: SiteHeaderProps) {
-	const t = useT(siteScope);
+export function SiteHeader() {
 	const [theme, setTheme] = useState<Theme>("system");
 
 	useEffect(() => {
@@ -60,43 +50,42 @@ export function SiteHeader({ title, subtitle }: SiteHeaderProps) {
 	}, [theme]);
 
 	return (
-		<div className="space-y-5 sm:space-y-6">
-			<AdvertisementBanner
-				label={t("Recommendation from the team")}
-				text={t(
-					"Need to incorporate a Belgian company? Beldoc handles it online with a cleaner, lower-friction flow.",
-				)}
-				cta={t("Visit beldoc.be")}
-			/>
+		<header className="sticky top-0 z-[1100] border-b border-border bg-card">
+			<div className="container flex h-14 items-center justify-between gap-4">
+				<a
+					href="/"
+					className="group inline-flex items-center gap-2 text-[1.05rem] leading-none font-bold tracking-tight"
+					aria-label="nacebel.codes — home"
+				>
+					<span
+						aria-hidden
+						className="grid size-6 place-items-center rounded bg-primary font-mono text-[0.7rem] font-bold text-primary-foreground"
+					>
+						NB
+					</span>
+					<span>
+						nacebel<span className="text-primary">.codes</span>
+					</span>
+				</a>
 
-			<header className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-				<div className="space-y-1">
-					{title ? (
-						<h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-							{title}
-						</h1>
-					) : null}
-					{subtitle ? (
-						<p className="text-sm text-muted-foreground">{subtitle}</p>
-					) : null}
-				</div>
-				<div className="flex flex-wrap items-center gap-2 sm:gap-3">
-					<Button
-						variant="outline"
-						size="sm"
-						render={<a href="/about">About</a>}
-					/>
-					<Button
-						variant="outline"
-						size="sm"
-						render={<a href="/api/docs">API Docs</a>}
-					/>
-					<div className="flex items-center gap-2 sm:gap-3">
-						<ThemeToggle theme={theme} setTheme={setTheme} />
-						<LanguageSwitcher />
-					</div>
-				</div>
-			</header>
-		</div>
+				<nav className="flex items-center gap-1 sm:gap-2">
+					<a
+						href="/about"
+						className="rounded-md px-2.5 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground sm:px-3"
+					>
+						About
+					</a>
+					<a
+						href="/api/docs"
+						className="rounded-md px-2.5 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground sm:px-3"
+					>
+						API
+					</a>
+					<span className="mx-1 hidden h-5 w-px bg-border sm:block" />
+					<ThemeToggle theme={theme} setTheme={setTheme} />
+					<LanguageSwitcher />
+				</nav>
+			</div>
+		</header>
 	);
 }

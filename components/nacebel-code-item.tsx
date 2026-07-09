@@ -1,17 +1,12 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import type { Language, NacebelCode } from "@/types";
 import { Check, Copy, ExternalLink } from "lucide-react";
 import { memo, type ReactNode } from "react";
 
-const LEVEL_COLOR_CLASSES: Record<number, string> = {
-	2: "bg-emerald-500/15 text-emerald-700 ring-emerald-600/20 dark:bg-emerald-400/15 dark:text-emerald-200 dark:ring-emerald-300/20",
-	3: "bg-amber-500/15 text-amber-700 ring-amber-600/20 dark:bg-amber-400/15 dark:text-amber-200 dark:ring-amber-300/20",
-	4: "bg-sky-500/15 text-sky-700 ring-sky-600/20 dark:bg-sky-400/15 dark:text-sky-200 dark:ring-sky-300/20",
-	5: "bg-rose-500/15 text-rose-700 ring-rose-600/20 dark:bg-rose-400/15 dark:text-rose-200 dark:ring-rose-300/20",
-};
-const DEFAULT_CODE_COLOR = "bg-primary/10 text-primary ring-primary/20";
+function levelVar(level: number): string {
+	return `var(--color-level-${Math.min(Math.max(level, 2), 6)})`;
+}
 
 const REGEX_ESCAPE_RE = /[.*+?^${}()|[\]\\]/g;
 const PUNCTUATION_RE = /[^\p{L}\p{N}\s]/gu;
@@ -118,60 +113,62 @@ function NacebelCodeItemImpl({
 	getDetailLink,
 }: NacebelCodeItemProps) {
 	const isCopied = copiedCode === code.code;
-	const colorClass = LEVEL_COLOR_CLASSES[code.level] || DEFAULT_CODE_COLOR;
+	const color = levelVar(code.level);
+	const depth = Math.min(Math.max(code.level, 2), 6) - 2;
 
 	return (
-		<div className="group flex flex-col gap-3 rounded-[1.25rem] border border-border/70 bg-white/75 p-3 shadow-[0_16px_36px_-34px_rgba(15,23,42,0.45)] backdrop-blur-sm transition-colors duration-200 hover:border-primary/20 dark:bg-white/5 sm:flex-row sm:items-center">
-			<div className="flex items-center gap-2">
+		<div
+			className="group relative flex items-center gap-3 py-2.5 pr-1 transition-colors hover:bg-muted/70 sm:gap-4"
+			style={{ paddingInlineStart: `calc(0.25rem + ${depth} * 0.85rem)` }}
+		>
+			{/* depth tick — a quiet wayfinding marker in the accent-family */}
+			<span
+				aria-hidden
+				className="h-4 w-[3px] shrink-0 rounded-full opacity-70"
+				style={{ background: color }}
+			/>
+			<button
+				type="button"
+				onClick={() => onCopyCode(code.code)}
+				aria-label={`Copy code ${code.code}`}
+				title={`Copy ${code.code}`}
+				data-code
+				className="shrink-0 rounded-sm px-1 py-0.5 text-sm font-semibold tabular-nums hover:bg-primary/10 focus-visible:bg-primary/10"
+				style={{ color, minWidth: "5.5ch" }}
+			>
+				{renderHighlightedText(code.code, searchTerm)}
+			</button>
+			<a
+				href={getDetailLink(code)}
+				className="min-w-0 flex-1 text-[0.95rem] leading-6 text-foreground transition-colors hover:text-primary"
+			>
+				{renderHighlightedText(code.titles[language], searchTerm)}
+			</a>
+			<span className="hidden shrink-0 font-mono text-xs text-muted-foreground sm:inline">
+				L{code.level}
+			</span>
+			<div className="flex shrink-0 items-center gap-0.5 opacity-70 transition-opacity group-hover:opacity-100">
 				<button
 					type="button"
-					onClick={() => onCopyCode(code.code)}
-					aria-label={`Copy code ${code.code}`}
-					className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold ring-1 ring-inset ${colorClass}`}
-				>
-					{renderHighlightedText(code.code, searchTerm)}
-				</button>
-			</div>
-			<div className="min-w-0 flex-1">
-				<a
-					href={getDetailLink(code)}
-					className="text-base font-medium leading-7 text-foreground transition-colors hover:text-primary"
-				>
-					{renderHighlightedText(code.titles[language], searchTerm)}
-				</a>
-			</div>
-			<div className="flex shrink-0 items-center gap-2 self-start sm:self-center">
-				<Button
-					variant="outline"
-					size="sm"
 					onClick={() => onCopy(code.code, code.titles[language])}
-					className="h-9 w-9 rounded-full p-0"
-					aria-label="Copy to clipboard"
+					className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:bg-muted"
+					aria-label="Copy code and description"
 				>
 					{isCopied ? (
-						<Check className="h-3.5 w-3.5 text-emerald-500" />
+						<Check className="h-4 w-4 text-primary" />
 					) : (
-						<Copy className="h-3.5 w-3.5 text-muted-foreground" />
+						<Copy className="h-4 w-4" />
 					)}
-				</Button>
-				<Button
-					variant="outline"
-					size="sm"
-					render={
-						<a
-							href={getExternalLink(code.code)}
-							target="_blank"
-							rel="noopener noreferrer"
-							aria-label="Open external link"
-						>
-							<ExternalLink className="h-3.5 w-3.5 text-muted-foreground group-hover:text-foreground" />
-						</a>
-					}
-					className="h-9 w-9 rounded-full p-0"
-				/>
-				<span className="inline-flex min-w-6 items-center justify-center text-xs font-semibold text-muted-foreground">
-					{code.level}
-				</span>
+				</button>
+				<a
+					href={getExternalLink(code.code)}
+					target="_blank"
+					rel="noopener noreferrer"
+					aria-label={`Open ${code.code} on the KBO register`}
+					className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:bg-muted"
+				>
+					<ExternalLink className="h-4 w-4" />
+				</a>
 			</div>
 		</div>
 	);
