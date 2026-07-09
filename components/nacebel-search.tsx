@@ -19,7 +19,7 @@ import { SearchInput } from "./search-input";
 const ITEMS_PER_PAGE = 100;
 const COPY_FEEDBACK_MS = 2000;
 const URL_SYNC_DEBOUNCE_MS = 250;
-const EXAMPLE_SEARCHES = ["software", "62.01", "consulting"];
+const EXAMPLE_SEARCHES = ["software", "62.10", "consulting"];
 const CODE_LIKE_RE = /^[\d.\s]+$/;
 const PUNCTUATION_RE = /[^\p{L}\p{N}\s]/gu;
 

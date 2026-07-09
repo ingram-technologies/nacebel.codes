@@ -15,7 +15,7 @@ export function PageFooter() {
 					<a
 						href="https://beldoc.be"
 						target="_blank"
-						rel="noopener noreferrer"
+						rel="noopener"
 						className="inline-flex w-fit items-center gap-1 font-medium text-primary hover:underline"
 					>
 						beldoc.be
@@ -30,7 +30,7 @@ export function PageFooter() {
 						nacebel<span className="text-primary">.codes</span>
 					</p>
 					<p>
-						NACE-BEL 2025 directory and API · © 2025{" "}
+						NACE-BEL 2025 directory and API · © {new Date().getFullYear()}{" "}
 						<a
 							href="https://ingram.tech"
 							target="_blank"
