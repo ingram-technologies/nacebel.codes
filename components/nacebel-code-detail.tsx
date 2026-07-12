@@ -1,4 +1,5 @@
 import { ArrowLeft, ChevronRight, ExternalLink } from "lucide-react";
+import { ExplanatoryNote } from "@/components/explanatory-note";
 import { Button } from "@/components/ui/button";
 import { PageFooter } from "@/components/page-footer";
 import { type CodeData, codeHrefFor, codeTitleFor } from "@/lib/code-page";
@@ -15,6 +16,10 @@ interface CodeDetailProps {
 	locale: Locale;
 	ancestors: CodeData[];
 	childCodes: CodeData[];
+	/** Explanatory note body (Markdown with `[[code]]` wikilinks), or "". */
+	note: string;
+	/** Resolved hrefs for codes referenced by the note's wikilinks. */
+	noteLinks: Record<string, string>;
 }
 
 export function NacebelCodeDetail({
@@ -22,6 +27,8 @@ export function NacebelCodeDetail({
 	locale,
 	ancestors,
 	childCodes,
+	note,
+	noteLinks,
 }: CodeDetailProps) {
 	const t = createT(locale, siteScope);
 	const title = codeTitleFor(data, locale);
@@ -118,6 +125,17 @@ export function NacebelCodeDetail({
 						/>
 					</div>
 				</header>
+
+				{note ? (
+					<section className="mt-8">
+						<h2 className="text-sm font-semibold tracking-tight">
+							{t("Explanatory note")}
+						</h2>
+						<div className="mt-3">
+							<ExplanatoryNote text={note} links={noteLinks} />
+						</div>
+					</section>
+				) : null}
 
 				{parent ? (
 					<section className="mt-8">

@@ -1,4 +1,4 @@
-import { NACEBEL, type NACEBELCode } from "nace-codes";
+import { NACEBEL, type NACEBELCode } from "nace-codes/nacebel";
 
 let nacebelInstance: NACEBEL | null = null;
 
@@ -19,6 +19,16 @@ interface PublicNacebelCode {
 		nl: string;
 	};
 	description: {
+		en: string;
+		de: string;
+		fr: string;
+		nl: string;
+	};
+	/**
+	 * Full explanatory note (KBO "Explication" / "Toelichting"), as Markdown with
+	 * `[[code]]` wikilinks. Present only for codes that have one.
+	 */
+	explanatoryNote?: {
 		en: string;
 		de: string;
 		fr: string;
@@ -53,6 +63,14 @@ function mapToPublicNacebelCode(
 			fr: code.description.fr || "",
 			nl: code.description.nl || "",
 		},
+		explanatoryNote: code.explanatoryNote
+			? {
+					en: code.explanatoryNote.en || "",
+					de: code.explanatoryNote.de || "",
+					fr: code.explanatoryNote.fr || "",
+					nl: code.explanatoryNote.nl || "",
+				}
+			: undefined,
 	};
 
 	if (includeChildren) {

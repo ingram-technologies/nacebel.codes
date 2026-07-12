@@ -86,6 +86,26 @@ export default async function CodePage({ params }: PageProps) {
 		(c): c is NonNullable<typeof c> => c !== null,
 	);
 
+	const note = data.explanatoryNote?.[locale] || data.explanatoryNote?.en || "";
+	const referencedCodes = [
+		...new Set(
+			[...note.matchAll(/\[\[([^\]]+)\]\]/g)]
+				.map((m) => m[1])
+				.filter((c): c is string => c !== undefined),
+		),
+	];
+	const resolvedLinks = await Promise.all(
+		referencedCodes.map(async (ref) => {
+			const target = await loadCodeData(ref.replace(/\./g, ""));
+			return target ? ([ref, codeHrefFor(target, locale)] as const) : null;
+		}),
+	);
+	const noteLinks = Object.fromEntries(
+		resolvedLinks.filter(
+			(entry): entry is NonNullable<typeof entry> => entry !== null,
+		),
+	);
+
 	const t = createT(locale, siteScope);
 	const title = codeTitleFor(data, locale);
 	const breadcrumbItems = [
@@ -148,6 +168,8 @@ export default async function CodePage({ params }: PageProps) {
 				locale={locale}
 				ancestors={ancestors}
 				childCodes={childCodes}
+				note={note}
+				noteLinks={noteLinks}
 			/>
 		</>
 	);
