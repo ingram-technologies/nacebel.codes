@@ -41,10 +41,13 @@ export function NacebelCodeDetail({
 		<>
 			<main className="container py-8 sm:py-12">
 				<nav
-					aria-label="Breadcrumb"
+					aria-label={t("Breadcrumb")}
 					className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground"
 				>
-					<a href="/" className="transition-colors hover:text-foreground">
+					<a
+						href={`/${locale}`}
+						className="transition-colors hover:text-foreground"
+					>
 						{t("NACE-BEL 2025 Codes")}
 					</a>
 					{ancestors.map((ancestor) => (
@@ -103,7 +106,7 @@ export function NacebelCodeDetail({
 							variant="outline"
 							size="sm"
 							render={
-								<a href="/">
+								<a href={`/${locale}`}>
 									<ArrowLeft className="mr-1.5 h-4 w-4" />
 									{t("Back to directory")}
 								</a>

@@ -1,15 +1,23 @@
+"use client";
+
+import { useLocale } from "@/contexts/locale-context";
+import { useT } from "@/lib/i18n";
+import { siteScope } from "@/lib/i18n/scopes/site";
 import { ArrowUpRight } from "lucide-react";
 
 export function PageFooter() {
+	const locale = useLocale();
+	const t = useT(siteScope);
+
 	return (
 		<footer className="mt-14 border-t border-border">
 			{/* Sponsor — a quiet strip, not the lead. */}
 			<div className="border-b border-border bg-muted/40">
 				<div className="container flex flex-col gap-2 py-3 text-sm sm:flex-row sm:items-center sm:justify-between">
 					<p className="text-muted-foreground">
-						Incorporating a Belgian company?{" "}
+						{t("Incorporating a Belgian company?")}{" "}
 						<span className="text-foreground">
-							Beldoc handles it online, with less friction.
+							{t("Beldoc handles it online, with less friction.")}
 						</span>
 					</p>
 					<a
@@ -30,7 +38,8 @@ export function PageFooter() {
 						nacebel<span className="text-primary">.codes</span>
 					</p>
 					<p>
-						NACE-BEL 2025 directory and API · © {new Date().getFullYear()}{" "}
+						{t("NACE-BEL 2025 directory and API")} · ©{" "}
+						{new Date().getFullYear()}{" "}
 						<a
 							href="https://ingram.tech"
 							target="_blank"
@@ -42,20 +51,23 @@ export function PageFooter() {
 					</p>
 				</div>
 				<nav className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
-					<a href="/" className="transition-colors hover:text-foreground">
-						Search
-					</a>
 					<a
-						href="/about"
+						href={`/${locale}`}
 						className="transition-colors hover:text-foreground"
 					>
-						About
+						{t("Search")}
 					</a>
 					<a
-						href="/api/docs"
+						href={`/${locale}/about`}
 						className="transition-colors hover:text-foreground"
 					>
-						API
+						{t("About")}
+					</a>
+					<a
+						href={`/${locale}/api/docs`}
+						className="transition-colors hover:text-foreground"
+					>
+						{t("API")}
 					</a>
 					<a
 						href="mailto:contact@nacebel.codes"

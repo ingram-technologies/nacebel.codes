@@ -146,8 +146,8 @@ function NacebelCodeItemImpl({
 			<button
 				type="button"
 				onClick={() => onCopyCode(code.code)}
-				aria-label={`Copy code ${code.code}`}
-				title={`Copy ${code.code}`}
+				aria-label={t("Copy code {code}", { code: code.code })}
+				title={t("Copy {code}", { code: code.code })}
 				data-code
 				className={cn(
 					"shrink-0 rounded-sm px-1 py-0.5 font-semibold tabular-nums hover:bg-primary/10 focus-visible:bg-primary/10",
@@ -185,7 +185,7 @@ function NacebelCodeItemImpl({
 					type="button"
 					onClick={() => onCopy(code.code, code.titles[language])}
 					className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:bg-muted"
-					aria-label="Copy code and description"
+					aria-label={t("Copy code and description")}
 				>
 					{isCopied ? (
 						<Check className="h-4 w-4 text-primary" />
@@ -197,7 +197,9 @@ function NacebelCodeItemImpl({
 					href={getExternalLink(code.code)}
 					target="_blank"
 					rel="noopener noreferrer"
-					aria-label={`Open ${code.code} on the KBO register`}
+					aria-label={t("Open {code} on the KBO register", {
+						code: code.code,
+					})}
 					className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:bg-muted"
 				>
 					<ExternalLink className="h-4 w-4" />

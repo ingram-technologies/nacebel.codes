@@ -2,75 +2,96 @@ import { CodeBlock } from "@/components/code-block";
 import { PageFooter } from "@/components/page-footer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { createT, defineMessages, type Translator } from "@/lib/i18n/core";
+import { hreflangLanguages, SITE_ORIGIN } from "@/lib/i18n/hreflang";
+import { HTML_LANG, SUPPORTED_LOCALES, type Locale } from "@/lib/i18n/locales";
+import { siteScope } from "@/lib/i18n/scopes/site";
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+
+interface PageProps {
+	params: Promise<{ locale: string }>;
+}
+
+function isLocale(value: string): value is Locale {
+	return (SUPPORTED_LOCALES as readonly string[]).includes(value);
+}
 
 const apiDescription =
 	"Free public REST API for the NACE-BEL 2025 classification system. List, search, and look up Belgian economic activity codes in JSON across four languages.";
 
-const apiLanguages: Record<string, string> = {
-	"x-default": "https://nacebel.codes/api/docs",
-	en: "https://nacebel.codes/en/api/docs",
-	"nl-BE": "https://nacebel.codes/nl/api/docs",
-	"fr-BE": "https://nacebel.codes/fr/api/docs",
-	de: "https://nacebel.codes/de/api/docs",
-};
+const apiDocsPathFor = (loc: Locale) => `/${loc}/api/docs`;
 
-export const metadata: Metadata = {
-	title: "NACE-BEL 2025 API Documentation",
-	description: apiDescription,
-	alternates: { canonical: "/api/docs", languages: apiLanguages },
-	openGraph: {
-		title: "NACE-BEL 2025 API Documentation",
-		description: apiDescription,
-		url: "https://nacebel.codes/api/docs",
-		type: "article",
-	},
-	twitter: {
-		card: "summary",
-		title: "NACE-BEL 2025 API Documentation",
-		description: apiDescription,
-	},
-};
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+	const { locale } = await params;
+	if (!isLocale(locale)) return {};
 
-const breadcrumbJsonLd = {
-	"@context": "https://schema.org",
-	"@type": "BreadcrumbList",
-	itemListElement: [
-		{
-			"@type": "ListItem",
-			position: 1,
-			name: "NACE-BEL 2025 Codes",
-			item: "https://nacebel.codes",
+	const t = createT(locale, siteScope);
+	const title = t("NACE-BEL 2025 API Documentation");
+	const description = t(apiDescription);
+
+	return {
+		title,
+		description,
+		alternates: {
+			canonical: apiDocsPathFor(locale),
+			languages: hreflangLanguages(apiDocsPathFor),
 		},
-		{
-			"@type": "ListItem",
-			position: 2,
-			name: "API Documentation",
-			item: "https://nacebel.codes/api/docs",
+		openGraph: {
+			title,
+			description,
+			url: `${SITE_ORIGIN}${apiDocsPathFor(locale)}`,
+			type: "article",
 		},
-	],
-};
+		twitter: {
+			card: "summary",
+			title,
+			description,
+		},
+	};
+}
 
-const apiJsonLd = {
-	"@context": "https://schema.org",
-	"@type": "TechArticle",
-	headline: "NACE-BEL 2025 API Documentation",
-	description: apiDescription,
-	url: "https://nacebel.codes/api/docs",
-	inLanguage: "en",
-	proficiencyLevel: "Beginner",
-	about: {
-		"@type": "WebAPI",
-		name: "NACE-BEL 2025 API",
-		documentation: "https://nacebel.codes/api/docs",
-		url: "https://nacebel.codes/api/v1/nacebel-codes/2025",
-	},
-	publisher: {
-		"@type": "Organization",
-		name: "Ingram Technologies",
-		url: "https://ingram.tech",
-	},
-};
+function buildJsonLd(locale: Locale, t: Translator<typeof siteScope>) {
+	const url = `${SITE_ORIGIN}${apiDocsPathFor(locale)}`;
+	const title = t("NACE-BEL 2025 API Documentation");
+
+	const breadcrumbJsonLd = {
+		"@context": "https://schema.org",
+		"@type": "BreadcrumbList",
+		itemListElement: [
+			{
+				"@type": "ListItem",
+				position: 1,
+				name: t("NACE-BEL 2025 Codes"),
+				item: `${SITE_ORIGIN}/${locale}/`,
+			},
+			{ "@type": "ListItem", position: 2, name: title, item: url },
+		],
+	};
+
+	const apiJsonLd = {
+		"@context": "https://schema.org",
+		"@type": "TechArticle",
+		headline: title,
+		description: t(apiDescription),
+		url,
+		inLanguage: HTML_LANG[locale],
+		proficiencyLevel: "Beginner",
+		about: {
+			"@type": "WebAPI",
+			name: "NACE-BEL 2025 API",
+			documentation: url,
+			url: "https://nacebel.codes/api/v1/nacebel-codes/2025",
+		},
+		publisher: {
+			"@type": "Organization",
+			name: "Ingram Technologies",
+			url: "https://ingram.tech",
+		},
+	};
+
+	return { breadcrumbJsonLd, apiJsonLd };
+}
 
 const listResponseExample = `{
   "data": [
@@ -112,7 +133,7 @@ const notFoundResponseExample = `{
   "error": "NACEBEL code not found."
 }`;
 
-const queryParameters = [
+const queryParameters = defineMessages([
 	{
 		name: "q",
 		type: "string",
@@ -133,9 +154,9 @@ const queryParameters = [
 		type: "number",
 		description: "Minimum NACE-BEL level to include, from 2 to 5.",
 	},
-];
+] as const);
 
-const endpointCards = [
+const endpointCards = defineMessages([
 	{
 		title: "List and search codes",
 		path: "/api/v1/nacebel-codes/2025",
@@ -152,9 +173,14 @@ const endpointCards = [
 		request: `curl "https://nacebel.codes/api/v1/nacebel-codes/2025/0111"`,
 		response: detailResponseExample,
 	},
-];
+] as const);
 
-export default function ApiDocsPage() {
+export default async function ApiDocsPage({ params }: PageProps) {
+	const { locale } = await params;
+	if (!isLocale(locale)) notFound();
+	const t = createT(locale, siteScope);
+	const { breadcrumbJsonLd, apiJsonLd } = buildJsonLd(locale, t);
+
 	return (
 		<div className="bg-background text-foreground">
 			<script
@@ -170,34 +196,41 @@ export default function ApiDocsPage() {
 			<div className="mx-auto max-w-5xl space-y-8 px-4 py-8 sm:py-12">
 				<header className="border-b border-border pb-8">
 					<h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
-						NACE-BEL 2025 API
+						{t("NACE-BEL 2025 API")}
 					</h1>
 					<p className="measure mt-3 text-lg text-muted-foreground">
-						Public API documentation for search and lookup across the
-						NACE-BEL 2025 directory.
+						{t(
+							"Public API documentation for search and lookup across the NACE-BEL 2025 directory.",
+						)}
 					</p>
 				</header>
 
 				<section className="grid gap-3 sm:grid-cols-3">
 					<div className="rounded-lg border border-border bg-muted/40 p-4">
-						<p className="text-sm text-muted-foreground">Endpoints</p>
+						<p className="text-sm text-muted-foreground">
+							{t("Endpoints")}
+						</p>
 						<p className="mt-2 text-2xl font-semibold">2</p>
 						<p className="mt-1 text-sm text-muted-foreground">
-							List/search and detail lookup
+							{t("List/search and detail lookup")}
 						</p>
 					</div>
 					<div className="rounded-lg border border-border bg-muted/40 p-4">
-						<p className="text-sm text-muted-foreground">Max page size</p>
+						<p className="text-sm text-muted-foreground">
+							{t("Max page size")}
+						</p>
 						<p className="mt-2 text-2xl font-semibold">500</p>
 						<p className="mt-1 text-sm text-muted-foreground">
-							Good for bulk reads and exports
+							{t("Good for bulk reads and exports")}
 						</p>
 					</div>
 					<div className="rounded-lg border border-border bg-muted/40 p-4">
-						<p className="text-sm text-muted-foreground">Authentication</p>
-						<p className="mt-2 text-2xl font-semibold">None</p>
+						<p className="text-sm text-muted-foreground">
+							{t("Authentication")}
+						</p>
+						<p className="mt-2 text-2xl font-semibold">{t("None")}</p>
 						<p className="mt-1 text-sm text-muted-foreground">
-							Contact us for higher limits and support
+							{t("Contact us for higher limits and support")}
 						</p>
 					</div>
 				</section>
@@ -205,14 +238,16 @@ export default function ApiDocsPage() {
 				<section className="rounded-lg border border-border bg-card p-6 sm:p-8">
 					<div className="space-y-4">
 						<h2 className="font-bold text-3xl tracking-tight">
-							Base URL and authentication
+							{t("Base URL and authentication")}
 						</h2>
 						<p className="text-muted-foreground">
-							Requests are public. You do not need to send an
+							{t(
+								"Requests are public, so you do not need to send a header such as",
+							)}{" "}
 							<code className="rounded bg-muted px-1.5 py-0.5 text-sm">
 								Authorization
-							</code>{" "}
-							header.
+							</code>
+							.
 						</p>
 						<CodeBlock>{`https://nacebel.codes/api/v1/nacebel-codes/2025`}</CodeBlock>
 					</div>
@@ -221,11 +256,12 @@ export default function ApiDocsPage() {
 				<section className="space-y-6 rounded-lg border border-border bg-card p-6 sm:p-8">
 					<div className="space-y-2">
 						<h2 className="font-bold text-3xl tracking-tight">
-							Query parameters
+							{t("Query parameters")}
 						</h2>
 						<p className="text-muted-foreground">
-							The list endpoint supports paging, search, and level
-							filtering.
+							{t(
+								"The list endpoint supports paging, search, and level filtering.",
+							)}
 						</p>
 					</div>
 					<div className="overflow-hidden rounded-lg border border-border">
@@ -233,11 +269,13 @@ export default function ApiDocsPage() {
 							<thead className="bg-muted/70">
 								<tr>
 									<th className="px-4 py-3 font-semibold">
-										Parameter
+										{t("Parameter")}
 									</th>
-									<th className="px-4 py-3 font-semibold">Type</th>
 									<th className="px-4 py-3 font-semibold">
-										Description
+										{t("Type")}
+									</th>
+									<th className="px-4 py-3 font-semibold">
+										{t("Description")}
 									</th>
 								</tr>
 							</thead>
@@ -254,7 +292,7 @@ export default function ApiDocsPage() {
 											{parameter.type}
 										</td>
 										<td className="px-4 py-3 text-muted-foreground">
-											{parameter.description}
+											{t(parameter.description)}
 										</td>
 									</tr>
 								))}
@@ -280,21 +318,21 @@ export default function ApiDocsPage() {
 								</div>
 								<div>
 									<h3 className="text-2xl font-semibold tracking-tight">
-										{endpoint.title}
+										{t(endpoint.title)}
 									</h3>
 									<p className="mt-2 text-muted-foreground">
-										{endpoint.description}
+										{t(endpoint.description)}
 									</p>
 								</div>
 								<div className="space-y-3">
 									<p className="text-sm font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-										Example request
+										{t("Example request")}
 									</p>
 									<CodeBlock>{endpoint.request}</CodeBlock>
 								</div>
 								<div className="space-y-3">
 									<p className="text-sm font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-										Example response
+										{t("Example response")}
 									</p>
 									<CodeBlock>{endpoint.response}</CodeBlock>
 								</div>
@@ -306,24 +344,26 @@ export default function ApiDocsPage() {
 				<section className="rounded-lg border border-border bg-card p-6 sm:p-8">
 					<div className="space-y-4">
 						<h2 className="font-bold text-3xl tracking-tight">
-							Errors and throttling
+							{t("Errors and throttling")}
 						</h2>
 						<p className="text-muted-foreground">
-							The API returns standard HTTP status codes. If you request a
-							missing code, you will receive a
+							{t(
+								"The API returns standard HTTP status codes. If you request a missing code, you receive a response with status",
+							)}{" "}
 							<code className="mx-1 rounded bg-muted px-1.5 py-0.5 text-sm">
 								404
 							</code>
-							response.
+							.
 						</p>
 						<CodeBlock>{notFoundResponseExample}</CodeBlock>
 						<p className="text-muted-foreground">
-							Public traffic is served on shared infrastructure. Excessive
-							usage may be throttled with
+							{t(
+								"Public traffic is served on shared infrastructure. To protect the service, excessive usage may be throttled with",
+							)}{" "}
 							<code className="mx-1 rounded bg-muted px-1.5 py-0.5 text-sm">
 								429 Too Many Requests
 							</code>
-							to protect the service.
+							.
 						</p>
 					</div>
 				</section>
@@ -332,36 +372,42 @@ export default function ApiDocsPage() {
 					<div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
 						<div className="space-y-4">
 							<h2 className="font-bold text-3xl tracking-tight text-primary">
-								Need higher rate limits or support?
+								{t("Need higher rate limits or support?")}
 							</h2>
 							<p className="max-w-2xl text-primary/80">
-								The public API is available as-is. If you need heavier
-								sustained usage, operational support, or a more tailored
-								integration path, email us and we can work out a setup.
+								{t(
+									"The public API is available as-is. If you need heavier sustained usage, operational support, or a more tailored integration path, email us and we can work out a setup.",
+								)}
 							</p>
 							<div className="flex flex-wrap gap-3">
 								<Button
 									render={
 										<a href="mailto:contact@nacebel.codes?subject=NACE-BEL%20API">
-											Contact us
+											{t("Contact us")}
 										</a>
 									}
 								/>
 								<Button
 									variant="outline"
-									render={<a href="/">Try the search UI</a>}
+									render={
+										<a href={`/${locale}`}>
+											{t("Try the search UI")}
+										</a>
+									}
 								/>
 							</div>
 						</div>
 						<div className="rounded-lg border border-primary/15 bg-card p-5 shadow-sm">
 							<p className="text-sm font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-								Typical reasons to reach out
+								{t("Typical reasons to reach out")}
 							</p>
 							<ul className="mt-4 space-y-3 text-sm text-muted-foreground">
-								<li>Higher sustained request volume</li>
-								<li>Priority issue resolution</li>
-								<li>Integration guidance for production use</li>
-								<li>Commercial or custom data access questions</li>
+								<li>{t("Higher sustained request volume")}</li>
+								<li>{t("Priority issue resolution")}</li>
+								<li>{t("Integration guidance for production use")}</li>
+								<li>
+									{t("Commercial or custom data access questions")}
+								</li>
 							</ul>
 						</div>
 					</div>

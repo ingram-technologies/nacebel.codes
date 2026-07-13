@@ -41,7 +41,7 @@ export function ThemeToggle({ theme, setTheme }: ThemeToggleProps) {
 								? "bg-primary text-primary-foreground shadow-[0_14px_30px_-22px_hsl(var(--primary))]"
 								: "text-muted-foreground hover:bg-accent/80 hover:text-foreground"
 						}`}
-						aria-label={`Set theme to ${label}`}
+						aria-label={t("Set theme to {theme}", { theme: label })}
 					>
 						<Icon className="h-4 w-4" />
 					</Button>

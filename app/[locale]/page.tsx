@@ -1,21 +1,27 @@
 import NacebelSearchClient from "@/components/nacebel-search";
 import { createT } from "@/lib/i18n/core";
-import { HTML_LANG, SUPPORTED_LOCALES } from "@/lib/i18n/locales";
-import { resolveLocale } from "@/lib/i18n/resolve-locale";
+import { hreflangLanguages } from "@/lib/i18n/hreflang";
+import { SUPPORTED_LOCALES, type Locale } from "@/lib/i18n/locales";
 import { siteScope } from "@/lib/i18n/scopes/site";
 import { getPaginatedNacebelCodes } from "@/lib/nacebelData";
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
-const HOME_LANGUAGES: Record<string, string> = {
-	"x-default": "https://nacebel.codes/",
-};
-for (const loc of SUPPORTED_LOCALES) {
-	HOME_LANGUAGES[HTML_LANG[loc]] = `https://nacebel.codes/${loc}/`;
+interface PageProps {
+	params: Promise<{ locale: string }>;
 }
 
-export async function generateMetadata(): Promise<Metadata> {
-	const locale = await resolveLocale();
+function isLocale(value: string): value is Locale {
+	return (SUPPORTED_LOCALES as readonly string[]).includes(value);
+}
+
+const homePathFor = (loc: Locale) => `/${loc}/`;
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+	const { locale } = await params;
+	if (!isLocale(locale)) return {};
+
 	const t = createT(locale, siteScope);
 	const metaTitle = t("NACE-BEL 2025 Codes — Search the Belgian classification");
 	const metaDescription = t(
@@ -25,11 +31,14 @@ export async function generateMetadata(): Promise<Metadata> {
 	return {
 		title: { absolute: metaTitle },
 		description: metaDescription,
-		alternates: { canonical: "/", languages: HOME_LANGUAGES },
+		alternates: {
+			canonical: `/${locale}/`,
+			languages: hreflangLanguages(homePathFor),
+		},
 		openGraph: {
 			title: metaTitle,
 			description: metaDescription,
-			url: "https://nacebel.codes",
+			url: `https://nacebel.codes/${locale}/`,
 			type: "website",
 		},
 		twitter: {
@@ -86,7 +95,10 @@ const datasetJsonLd = {
 	],
 };
 
-export default async function Home() {
+export default async function Home({ params }: PageProps) {
+	const { locale } = await params;
+	if (!isLocale(locale)) notFound();
+
 	const { data: initialCodes } = await getPaginatedNacebelCodes(1, 100000);
 
 	return (

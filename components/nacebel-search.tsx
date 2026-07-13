@@ -246,7 +246,11 @@ export default function NacebelSearchClient({
 	);
 
 	const exportToCSV = () => {
-		const headers = ["Level", "Code", `Description (${locale.toUpperCase()})`];
+		const headers = [
+			t("Level"),
+			t("Code"),
+			`${t("Description")} (${locale.toUpperCase()})`,
+		];
 		const csvContent = [
 			headers.join(","),
 			...filteredCodes.map((code) =>
@@ -280,7 +284,7 @@ export default function NacebelSearchClient({
 	if (initialCodes.length === 0) {
 		return (
 			<div className="text-center text-red-500 dark:text-red-400">
-				Could not load NACEBEL codes.
+				{t("Could not load NACEBEL codes.")}
 			</div>
 		);
 	}
@@ -346,7 +350,9 @@ export default function NacebelSearchClient({
 								to: Math.min(endIndex, filteredCodes.length),
 								total: filteredCodes.length,
 							})}
-							{searchTerm ? ` · ${total.toLocaleString()} indexed` : null}
+							{searchTerm
+								? ` · ${t("{total, number} indexed", { total })}`
+								: null}
 						</p>
 					</div>
 					<Button

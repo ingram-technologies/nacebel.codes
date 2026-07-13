@@ -7,6 +7,7 @@ import {
 	loadCodeData,
 } from "@/lib/code-page";
 import { createT } from "@/lib/i18n/core";
+import { hreflangLanguages } from "@/lib/i18n/hreflang";
 import {
 	HTML_LANG,
 	OG_LOCALE,
@@ -63,18 +64,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 	);
 	const canonicalPath = codeHrefFor(data, locale);
 
-	const languages: Record<string, string> = {};
-	for (const loc of SUPPORTED_LOCALES) {
-		languages[HTML_LANG[loc]] = `https://nacebel.codes${codeHrefFor(data, loc)}`;
-	}
-	languages["x-default"] = `https://nacebel.codes${codeHrefFor(data, "en")}`;
-
 	return {
 		title: { absolute: `${data.code} ${title} | NACE-BEL 2025` },
 		description,
 		alternates: {
 			canonical: canonicalPath,
-			languages,
+			languages: hreflangLanguages((loc) => codeHrefFor(data, loc)),
 		},
 		openGraph: {
 			title: `${data.code} ${title}`,

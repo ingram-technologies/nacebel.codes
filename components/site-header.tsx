@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { useLocale } from "@/contexts/locale-context";
+import { useT } from "@/lib/i18n";
+import { siteScope } from "@/lib/i18n/scopes/site";
 import type { Theme } from "@/types";
 
 function getCookieValue(name: string) {
@@ -14,6 +17,8 @@ function getCookieValue(name: string) {
 }
 
 export function SiteHeader() {
+	const locale = useLocale();
+	const t = useT(siteScope);
 	const [theme, setTheme] = useState<Theme>("system");
 
 	useEffect(() => {
@@ -53,9 +58,9 @@ export function SiteHeader() {
 		<header className="sticky top-0 z-[1100] border-b border-border bg-card">
 			<div className="container flex h-14 items-center justify-between gap-4">
 				<a
-					href="/"
+					href={`/${locale}`}
 					className="group inline-flex items-center gap-2 text-[1.05rem] leading-none font-bold tracking-tight"
-					aria-label="nacebel.codes — home"
+					aria-label={t("nacebel.codes — home")}
 				>
 					<span
 						aria-hidden
@@ -70,16 +75,16 @@ export function SiteHeader() {
 
 				<nav className="flex items-center gap-1 sm:gap-2">
 					<a
-						href="/about"
+						href={`/${locale}/about`}
 						className="rounded-md px-2.5 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground sm:px-3"
 					>
-						About
+						{t("About")}
 					</a>
 					<a
-						href="/api/docs"
+						href={`/${locale}/api/docs`}
 						className="rounded-md px-2.5 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground sm:px-3"
 					>
-						API
+						{t("API")}
 					</a>
 					<span className="mx-1 hidden h-5 w-px bg-border sm:block" />
 					<ThemeToggle theme={theme} setTheme={setTheme} />
