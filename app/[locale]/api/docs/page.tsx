@@ -412,9 +412,9 @@ export default async function ApiDocsPage({ params }: PageProps) {
 						</div>
 					</div>
 				</section>
-
-				<PageFooter />
 			</div>
+
+			<PageFooter />
 		</div>
 	);
 }

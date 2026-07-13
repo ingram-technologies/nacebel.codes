@@ -380,9 +380,9 @@ export default async function AboutPage({ params }: PageProps) {
 						</div>
 					</div>
 				</section>
-
-				<PageFooter />
 			</div>
+
+			<PageFooter />
 		</div>
 	);
 }
