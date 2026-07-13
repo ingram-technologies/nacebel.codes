@@ -1,6 +1,7 @@
 import { NacebelCodeDetail } from "@/components/nacebel-code-detail";
 import {
 	codeHrefFor,
+	codeSlugFor,
 	codeTitleFor,
 	loadAncestors,
 	loadCodeData,
@@ -13,6 +14,7 @@ import {
 	type Locale,
 } from "@/lib/i18n/locales";
 import { siteScope } from "@/lib/i18n/scopes/site";
+import { getPaginatedNacebelCodes } from "@/lib/nacebelData";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -22,6 +24,24 @@ interface PageProps {
 
 function isLocale(value: string): value is Locale {
 	return (SUPPORTED_LOCALES as readonly string[]).includes(value);
+}
+
+// Prerender every code page at build time — the code set is finite and
+// reference-stable, so these are fully static (SSG). The parent `[locale]`
+// layout enumerates locales; this runs once per locale with a locale-correct
+// slug for each code.
+export async function generateStaticParams({
+	params,
+}: {
+	params: { locale: string };
+}): Promise<{ code: string; slug: string }[]> {
+	if (!isLocale(params.locale)) return [];
+	const { locale } = params;
+	const { data } = await getPaginatedNacebelCodes(1, 100000);
+	return data.map((code) => ({
+		code: code.code,
+		slug: codeSlugFor(code, locale),
+	}));
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

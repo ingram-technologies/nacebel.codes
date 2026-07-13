@@ -1,0 +1,37 @@
+import type { ReactNode } from "react";
+import { AppShell } from "@/components/app-shell";
+import { archivo, jetbrainsMono } from "@/lib/fonts";
+import { HTML_LANG, type Locale } from "@/lib/i18n/locales";
+
+/**
+ * The `<html>`/`<body>` document shell, shared by both root layouts. The only
+ * difference between them is where `locale` comes from — the URL param (static
+ * `[locale]` tree) or request negotiation (dynamic `(site)` tree).
+ */
+export function RootHtml({
+	locale,
+	children,
+}: {
+	locale: Locale;
+	children: ReactNode;
+}) {
+	return (
+		<html
+			lang={HTML_LANG[locale]}
+			suppressHydrationWarning
+			className={`${archivo.variable} ${jetbrainsMono.variable}`}
+		>
+			<head>
+				<link
+					rel="search"
+					type="application/opensearchdescription+xml"
+					title="NACE-BEL 2025 Codes"
+					href="/opensearch.xml"
+				/>
+			</head>
+			<body className="min-h-screen bg-background text-foreground antialiased">
+				<AppShell locale={locale}>{children}</AppShell>
+			</body>
+		</html>
+	);
+}
