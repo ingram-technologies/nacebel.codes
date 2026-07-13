@@ -26,10 +26,15 @@ function isLocale(value: string): value is Locale {
 	return (SUPPORTED_LOCALES as readonly string[]).includes(value);
 }
 
-// Prerender every code page at build time — the code set is finite and
-// reference-stable, so these are fully static (SSG). The parent `[locale]`
-// layout enumerates locales; this runs once per locale with a locale-correct
-// slug for each code.
+// On-demand static generation (ISR). Prerendering all ~13k pages × 4 locales at
+// build time emits ~140k output files / 2.2 GB (Next 16 writes ~11 prefetch/RSC
+// segments per page), which exceeds Vercel's deployment limits. Instead we
+// prerender only the shallow top of the tree (sections/divisions/groups) at
+// build time and let `dynamicParams` generate the rest on first request; those
+// are then cached as static HTML at the edge (no `revalidate` → cached until the
+// next deploy). Net result: still static/CDN-served, but a deployable build.
+export const dynamicParams = true;
+
 export async function generateStaticParams({
 	params,
 }: {
@@ -38,10 +43,9 @@ export async function generateStaticParams({
 	if (!isLocale(params.locale)) return [];
 	const { locale } = params;
 	const { data } = await getPaginatedNacebelCodes(1, 100000);
-	return data.map((code) => ({
-		code: code.code,
-		slug: codeSlugFor(code, locale),
-	}));
+	return data
+		.filter((code) => code.level === 2)
+		.map((code) => ({ code: code.code, slug: codeSlugFor(code, locale) }));
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
