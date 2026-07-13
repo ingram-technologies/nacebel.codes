@@ -27,5 +27,6 @@
 	"Level": "Niveau",
 	"Explanatory note": "Toelichting",
 	"View on KBO (Crossroads Bank for Enterprises)": "Bekijk op KBO (Kruispuntbank van Ondernemingen)",
-	"NACE-BEL 2025 code {code} — {title}. Activity classification used by Belgian businesses for registration, tax, and statistics.": "NACE-BEL 2025 code {code} — {title}. Activiteitenclassificatie die Belgische bedrijven gebruiken voor registratie, belastingen en statistieken."
+	"NACE-BEL 2025 code {code} — {title}. Activity classification used by Belgian businesses for registration, tax, and statistics.": "NACE-BEL 2025 code {code} — {title}. Activiteitenclassificatie die Belgische bedrijven gebruiken voor registratie, belastingen en statistieken.",
+	"Section": "Sectie"
 }

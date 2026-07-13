@@ -4,7 +4,8 @@ import { type NextRequest, NextResponse } from "next/server";
 
 const LOCALE_PREFIX_RE = /^\/(en|nl|fr|de)(\/|$)/;
 const CANONICAL_ONLY_PATHS = new Set(["/", "/about", "/api/docs"]);
-const CODE_PATH_RE = /^\/(en|nl|fr|de)\/([\d.]+)(?:\/([^/]*))?\/?$/;
+// Codes are numeric (e.g. 01.11) or a single section letter (e.g. A).
+const CODE_PATH_RE = /^\/(en|nl|fr|de)\/([A-Za-z]|[\d.]+)(?:\/([^/]*))?\/?$/;
 
 export async function proxy(request: NextRequest) {
 	const { pathname } = request.nextUrl;

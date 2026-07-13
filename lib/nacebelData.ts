@@ -42,12 +42,26 @@ function formatCodeForDisplay(code: string): string {
 	return `${code.slice(0, 2)}.${code.slice(2)}`;
 }
 
+/**
+ * Direct children of a code. The library resolves children by code prefix,
+ * which can't connect a section (a letter) to its divisions (numbers) — resolve
+ * those via the `parent` field instead.
+ */
+function childrenOf(code: NACEBELCode): NACEBELCode[] {
+	const nacebel = getNacebelInstance();
+	if (code.level === 1) {
+		return nacebel
+			.getAllCodes(2)
+			.filter((child) => child.parent === code.code)
+			.sort((a, b) => a.code.localeCompare(b.code));
+	}
+	return nacebel.getChildren(code.code);
+}
+
 function mapToPublicNacebelCode(
 	code: NACEBELCode,
 	includeChildren = false,
-): PublicNacebelCode | null {
-	if (code.level === 1) return null;
-
+): PublicNacebelCode {
 	const publicCode: PublicNacebelCode = {
 		level: code.level,
 		code: formatCodeForDisplay(code.code),
@@ -74,11 +88,25 @@ function mapToPublicNacebelCode(
 	};
 
 	if (includeChildren) {
-		const children = getNacebelInstance().getChildren(code.code);
-		publicCode.childrenCodes = children.map((c) => formatCodeForDisplay(c.code));
+		publicCode.childrenCodes = childrenOf(code).map((c) =>
+			formatCodeForDisplay(c.code),
+		);
 	}
 
 	return publicCode;
+}
+
+/**
+ * Sort key that groups every code under its top-level section (`A`–`U`) and
+ * places the section header before its divisions. The `parent` field is only
+ * populated for levels 1–4, so we resolve the section via the division (the
+ * first two digits of the normalized code), whose `parent` is the section.
+ */
+function sectionSortKey(code: NACEBELCode): string {
+	if (code.level === 1) return `${code.code}|`;
+	const division = getNacebelInstance().getCode(code.code.slice(0, 2));
+	const section = division?.parent ?? "~"; // unknown → sort last
+	return `${section}|${code.code}`;
 }
 
 export async function getPaginatedNacebelCodes(
@@ -87,12 +115,16 @@ export async function getPaginatedNacebelCodes(
 	minLevel?: number,
 ): Promise<{ data: PublicNacebelCode[]; totalPages: number; totalItems: number }> {
 	const nacebel = getNacebelInstance();
-	const effectiveMinLevel = minLevel && minLevel > 1 ? minLevel : 2;
+	const effectiveMinLevel = minLevel && minLevel > 1 ? minLevel : 1;
 
 	const allCodes = nacebel
 		.getAllCodes()
 		.filter((code) => code.level >= effectiveMinLevel)
-		.sort((a, b) => a.code.localeCompare(b.code));
+		.sort((a, b) => {
+			const ka = sectionSortKey(a);
+			const kb = sectionSortKey(b);
+			return ka < kb ? -1 : ka > kb ? 1 : 0;
+		});
 
 	const totalItems = allCodes.length;
 	const totalPages = Math.ceil(totalItems / limit);
@@ -100,8 +132,7 @@ export async function getPaginatedNacebelCodes(
 
 	const data = allCodes
 		.slice(startIndex, startIndex + limit)
-		.map((code) => mapToPublicNacebelCode(code, false))
-		.filter((code): code is PublicNacebelCode => code !== null);
+		.map((code) => mapToPublicNacebelCode(code, false));
 
 	return { data, totalPages, totalItems };
 }
@@ -121,7 +152,7 @@ export async function searchNacebelCodes(
 	let results: NACEBELCode[] = [];
 
 	const exactCode = nacebel.getCode(normalizedQuery);
-	if (exactCode && exactCode.level > 1) {
+	if (exactCode) {
 		results = [exactCode];
 	} else {
 		const seen = new Map<string, NACEBELCode>();
@@ -132,7 +163,7 @@ export async function searchNacebelCodes(
 				fuzzy: true,
 			});
 			for (const match of matches) {
-				if (match.level > 1 && !seen.has(match.code)) {
+				if (!seen.has(match.code)) {
 					seen.set(match.code, match);
 				}
 			}
@@ -158,8 +189,7 @@ export async function searchNacebelCodes(
 
 	const data = results
 		.slice(startIndex, startIndex + limit)
-		.map((code) => mapToPublicNacebelCode(code, false))
-		.filter((code): code is PublicNacebelCode => code !== null);
+		.map((code) => mapToPublicNacebelCode(code, false));
 
 	return { data, totalPages, totalItems };
 }
@@ -168,7 +198,7 @@ export async function getNacebelCodeDetails(
 	idWithoutDots: string,
 ): Promise<PublicNacebelCode | null> {
 	const code = getNacebelInstance().getCode(idWithoutDots);
-	if (!code || code.level === 1) return null;
+	if (!code) return null;
 	return mapToPublicNacebelCode(code, true);
 }
 
@@ -176,8 +206,5 @@ export async function getNacebelAncestors(
 	idWithoutDots: string,
 ): Promise<PublicNacebelCode[]> {
 	const ancestors = getNacebelInstance().getAncestors(idWithoutDots);
-	return ancestors
-		.map((code) => mapToPublicNacebelCode(code, false))
-		.filter((code): code is PublicNacebelCode => code !== null)
-		.reverse();
+	return ancestors.map((code) => mapToPublicNacebelCode(code, false)).reverse();
 }

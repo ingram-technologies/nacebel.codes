@@ -44,7 +44,7 @@ export async function generateStaticParams({
 	const { locale } = params;
 	const { data } = await getPaginatedNacebelCodes(1, 100000);
 	return data
-		.filter((code) => code.level === 2)
+		.filter((code) => code.level <= 3)
 		.map((code) => ({ code: code.code, slug: codeSlugFor(code, locale) }));
 }
 

@@ -27,5 +27,6 @@
 	"Level": "Niveau",
 	"Explanatory note": "Explication",
 	"View on KBO (Crossroads Bank for Enterprises)": "Voir sur la BCE (Banque-Carrefour des Entreprises)",
-	"NACE-BEL 2025 code {code} — {title}. Activity classification used by Belgian businesses for registration, tax, and statistics.": "Code NACE-BEL 2025 {code} — {title}. Classification des activités utilisée par les entreprises belges pour l'enregistrement, la fiscalité et les statistiques."
+	"NACE-BEL 2025 code {code} — {title}. Activity classification used by Belgian businesses for registration, tax, and statistics.": "Code NACE-BEL 2025 {code} — {title}. Classification des activités utilisée par les entreprises belges pour l'enregistrement, la fiscalité et les statistiques.",
+	"Section": "Section"
 }

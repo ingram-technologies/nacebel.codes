@@ -1,10 +1,16 @@
 "use client";
 
+import { useT } from "@/lib/i18n";
+import { siteScope } from "@/lib/i18n/scopes/site";
+import { cn } from "@/lib/utils";
 import type { Language, NacebelCode } from "@/types";
 import { Check, Copy, ExternalLink } from "lucide-react";
 import { memo, type ReactNode } from "react";
 
 function levelVar(level: number): string {
+	// Sections (L1) sit above the coloured level scale — mark them with the brand
+	// accent so they read as top-of-hierarchy headers, not another level.
+	if (level === 1) return "var(--color-primary)";
 	return `var(--color-level-${Math.min(Math.max(level, 2), 6)})`;
 }
 
@@ -112,19 +118,29 @@ function NacebelCodeItemImpl({
 	getExternalLink,
 	getDetailLink,
 }: NacebelCodeItemProps) {
+	const t = useT(siteScope);
 	const isCopied = copiedCode === code.code;
+	const isSection = code.level === 1;
 	const color = levelVar(code.level);
 	const depth = Math.min(Math.max(code.level, 2), 6) - 2;
 
 	return (
 		<div
-			className="group relative flex items-center gap-3 py-2.5 pr-1 transition-colors hover:bg-muted/70 sm:gap-4"
+			data-section={isSection || undefined}
+			className={cn(
+				"group relative flex items-center gap-3 pr-1 transition-colors hover:bg-muted/70 sm:gap-4",
+				isSection ? "bg-muted/60 py-3 hover:bg-muted" : "py-2.5",
+			)}
 			style={{ paddingInlineStart: `calc(0.25rem + ${depth} * 0.85rem)` }}
 		>
-			{/* depth tick — a quiet wayfinding marker in the accent-family */}
+			{/* depth tick — a quiet wayfinding marker in the accent-family;
+			    a bolder full bar marks a section header */}
 			<span
 				aria-hidden
-				className="h-4 w-[3px] shrink-0 rounded-full opacity-70"
+				className={cn(
+					"w-[3px] shrink-0 rounded-full",
+					isSection ? "h-6 opacity-100" : "h-4 opacity-70",
+				)}
 				style={{ background: color }}
 			/>
 			<button
@@ -133,20 +149,37 @@ function NacebelCodeItemImpl({
 				aria-label={`Copy code ${code.code}`}
 				title={`Copy ${code.code}`}
 				data-code
-				className="shrink-0 rounded-sm px-1 py-0.5 text-sm font-semibold tabular-nums hover:bg-primary/10 focus-visible:bg-primary/10"
+				className={cn(
+					"shrink-0 rounded-sm px-1 py-0.5 font-semibold tabular-nums hover:bg-primary/10 focus-visible:bg-primary/10",
+					isSection ? "text-base" : "text-sm",
+				)}
 				style={{ color, minWidth: "5.5ch" }}
 			>
 				{renderHighlightedText(code.code, searchTerm)}
 			</button>
 			<a
 				href={getDetailLink(code)}
-				className="min-w-0 flex-1 text-[0.95rem] leading-6 text-foreground transition-colors hover:text-primary"
+				className={cn(
+					"min-w-0 flex-1 transition-colors hover:text-primary",
+					isSection
+						? "text-[0.95rem] font-bold tracking-wide text-foreground uppercase sm:text-base"
+						: "text-[0.95rem] leading-6 text-foreground",
+				)}
 			>
 				{renderHighlightedText(code.titles[language], searchTerm)}
 			</a>
-			<span className="hidden shrink-0 font-mono text-xs text-muted-foreground sm:inline">
-				L{code.level}
-			</span>
+			{isSection ? (
+				<span
+					className="hidden shrink-0 rounded-full border px-2 py-0.5 font-mono text-[0.65rem] font-medium tracking-wide uppercase sm:inline"
+					style={{ color, borderColor: color }}
+				>
+					{t("Section")}
+				</span>
+			) : (
+				<span className="hidden shrink-0 font-mono text-xs text-muted-foreground sm:inline">
+					L{code.level}
+				</span>
+			)}
 			<div className="flex shrink-0 items-center gap-0.5 opacity-70 transition-opacity group-hover:opacity-100">
 				<button
 					type="button"
