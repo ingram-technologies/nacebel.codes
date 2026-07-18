@@ -1,58 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useTheme } from "@ingram-tech/nk-themes/client";
 
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useLocale } from "@/contexts/locale-context";
 import { useT } from "@/lib/i18n";
 import { siteScope } from "@/lib/i18n/scopes/site";
-import type { Theme } from "@/types";
-
-function getCookieValue(name: string) {
-	return document.cookie
-		.split("; ")
-		.find((row) => row.startsWith(`${name}=`))
-		?.split("=")[1];
-}
 
 export function SiteHeader() {
 	const locale = useLocale();
 	const t = useT(siteScope);
-	const [theme, setTheme] = useState<Theme>("system");
-
-	useEffect(() => {
-		const storedTheme = getCookieValue("theme") as Theme | undefined;
-		if (storedTheme && ["light", "dark", "system"].includes(storedTheme)) {
-			setTheme(storedTheme);
-		}
-	}, []);
-
-	useEffect(() => {
-		const applyCurrentTheme = (currentTheme: Theme) => {
-			document.cookie = `theme=${currentTheme};path=/;max-age=31536000;samesite=lax`;
-			if (currentTheme === "light") {
-				document.documentElement.classList.remove("dark");
-			} else if (currentTheme === "dark") {
-				document.documentElement.classList.add("dark");
-			} else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-				document.documentElement.classList.add("dark");
-			} else {
-				document.documentElement.classList.remove("dark");
-			}
-		};
-
-		applyCurrentTheme(theme);
-		const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-		const handleChange = () => {
-			if (theme === "system") {
-				applyCurrentTheme("system");
-			}
-		};
-
-		mediaQuery.addEventListener("change", handleChange);
-		return () => mediaQuery.removeEventListener("change", handleChange);
-	}, [theme]);
+	const { theme, setTheme } = useTheme();
 
 	return (
 		<header className="sticky top-0 z-[1100] border-b border-border bg-card">
@@ -87,7 +46,7 @@ export function SiteHeader() {
 						{t("API")}
 					</a>
 					<span className="mx-1 hidden h-5 w-px bg-border sm:block" />
-					<ThemeToggle theme={theme} setTheme={setTheme} />
+					<ThemeToggle theme={theme ?? "system"} setTheme={setTheme} />
 					<LanguageSwitcher />
 				</nav>
 			</div>

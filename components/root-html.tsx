@@ -1,3 +1,4 @@
+import { ThemeProvider } from "@ingram-tech/nk-themes/next";
 import type { ReactNode } from "react";
 import { AppShell } from "@/components/app-shell";
 import { archivo, jetbrainsMono } from "@/lib/fonts";
@@ -30,7 +31,9 @@ export function RootHtml({
 				/>
 			</head>
 			<body className="min-h-screen bg-background text-foreground antialiased">
-				<AppShell locale={locale}>{children}</AppShell>
+				<ThemeProvider>
+					<AppShell locale={locale}>{children}</AppShell>
+				</ThemeProvider>
 			</body>
 		</html>
 	);
