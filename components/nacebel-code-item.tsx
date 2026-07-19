@@ -4,7 +4,7 @@ import { useT } from "@/lib/i18n";
 import { siteScope } from "@/lib/i18n/scopes/site";
 import { cn } from "@/lib/utils";
 import type { Language, NacebelCode } from "@/types";
-import { Check, Copy, ExternalLink } from "lucide-react";
+import { CheckIcon, CopyIcon, ExternalLinkIcon } from "lucide-react";
 import { memo, type ReactNode } from "react";
 
 function levelVar(level: number): string {
@@ -188,9 +188,9 @@ function NacebelCodeItemImpl({
 					aria-label={t("Copy code and description")}
 				>
 					{isCopied ? (
-						<Check className="h-4 w-4 text-primary" />
+						<CheckIcon className="h-4 w-4 text-primary" />
 					) : (
-						<Copy className="h-4 w-4" />
+						<CopyIcon className="h-4 w-4" />
 					)}
 				</button>
 				<a
@@ -202,7 +202,7 @@ function NacebelCodeItemImpl({
 					})}
 					className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:bg-muted"
 				>
-					<ExternalLink className="h-4 w-4" />
+					<ExternalLinkIcon className="h-4 w-4" />
 				</a>
 			</div>
 		</div>

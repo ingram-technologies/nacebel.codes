@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useT } from "@/lib/i18n";
 import { siteScope } from "@/lib/i18n/scopes/site";
 import type { Theme } from "@/types";
-import { Monitor, Moon, Sun } from "lucide-react";
+import { MonitorIcon, MoonIcon, SunIcon } from "lucide-react";
 
 interface ThemeToggleProps {
 	theme: Theme;
@@ -18,9 +18,9 @@ const THEME_LABEL = {
 } as const satisfies Record<Theme, string>;
 
 const THEME_ICON = {
-	light: Sun,
-	dark: Moon,
-	system: Monitor,
+	light: SunIcon,
+	dark: MoonIcon,
+	system: MonitorIcon,
 } as const;
 
 export function ThemeToggle({ theme, setTheme }: ThemeToggleProps) {

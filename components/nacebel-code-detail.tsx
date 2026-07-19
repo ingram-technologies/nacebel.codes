@@ -1,4 +1,4 @@
-import { ArrowLeft, ChevronRight, ExternalLink } from "lucide-react";
+import { ArrowLeftIcon, ChevronRightIcon, ExternalLinkIcon } from "lucide-react";
 import { ExplanatoryNote } from "@/components/explanatory-note";
 import { Button } from "@/components/ui/button";
 import { PageFooter } from "@/components/page-footer";
@@ -52,7 +52,7 @@ export function NacebelCodeDetail({
 					</a>
 					{ancestors.map((ancestor) => (
 						<span key={ancestor.code} className="flex items-center gap-2">
-							<ChevronRight
+							<ChevronRightIcon
 								className="h-3.5 w-3.5 opacity-40"
 								aria-hidden
 							/>
@@ -70,7 +70,10 @@ export function NacebelCodeDetail({
 						</span>
 					))}
 					<span className="flex items-center gap-2">
-						<ChevronRight className="h-3.5 w-3.5 opacity-40" aria-hidden />
+						<ChevronRightIcon
+							className="h-3.5 w-3.5 opacity-40"
+							aria-hidden
+						/>
 						<span data-code className="font-medium text-foreground">
 							{data.code}
 						</span>
@@ -107,7 +110,7 @@ export function NacebelCodeDetail({
 							size="sm"
 							render={
 								<a href={`/${locale}`}>
-									<ArrowLeft className="mr-1.5 h-4 w-4" />
+									<ArrowLeftIcon className="mr-1.5 h-4 w-4" />
 									{t("Back to directory")}
 								</a>
 							}
@@ -121,7 +124,7 @@ export function NacebelCodeDetail({
 									target="_blank"
 									rel="noopener noreferrer"
 								>
-									<ExternalLink className="mr-1.5 h-4 w-4" />
+									<ExternalLinkIcon className="mr-1.5 h-4 w-4" />
 									{t("View on KBO (Crossroads Bank for Enterprises)")}
 								</a>
 							}
@@ -159,7 +162,7 @@ export function NacebelCodeDetail({
 							<span className="min-w-0 flex-1 truncate text-foreground">
 								{codeTitleFor(parent, locale)}
 							</span>
-							<ChevronRight
+							<ChevronRightIcon
 								className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5"
 								aria-hidden
 							/>
@@ -195,7 +198,7 @@ export function NacebelCodeDetail({
 									<span className="min-w-0 flex-1 truncate text-[0.95rem] text-foreground">
 										{codeTitleFor(child, locale)}
 									</span>
-									<ChevronRight
+									<ChevronRightIcon
 										className="h-4 w-4 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100"
 										aria-hidden
 									/>

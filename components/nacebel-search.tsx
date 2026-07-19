@@ -7,7 +7,7 @@ import { useT } from "@/lib/i18n";
 import { siteScope } from "@/lib/i18n/scopes/site";
 import { slugify } from "@/lib/slug";
 import type { NacebelCode } from "@/types";
-import { Download } from "lucide-react";
+import { DownloadIcon } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
@@ -361,7 +361,7 @@ export default function NacebelSearchClient({
 						onClick={exportToCSV}
 						className="h-9 shrink-0 gap-2 self-start px-3 sm:self-auto"
 					>
-						<Download className="h-4 w-4" />
+						<DownloadIcon className="h-4 w-4" />
 						<span>{t("Export CSV")}</span>
 					</Button>
 				</div>

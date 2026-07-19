@@ -14,7 +14,7 @@ import {
 	type Locale,
 	SUPPORTED_LOCALES,
 } from "@/lib/i18n/locales";
-import { ChevronDown } from "lucide-react";
+import { ChevronDownIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -63,7 +63,7 @@ export function LanguageSwitcher() {
 				}
 			>
 				<span>{LOCALE_NAMES[locale]}</span>
-				<ChevronDown className="h-4 w-4 opacity-60" />
+				<ChevronDownIcon className="h-4 w-4 opacity-60" />
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="end" className="min-w-40">
 				{SUPPORTED_LOCALES.map((loc: Locale) => (

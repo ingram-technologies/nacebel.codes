@@ -3,7 +3,7 @@
 import { useLocale } from "@/contexts/locale-context";
 import { useT } from "@/lib/i18n";
 import { siteScope } from "@/lib/i18n/scopes/site";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRightIcon } from "lucide-react";
 
 export function PageFooter() {
 	const locale = useLocale();
@@ -27,7 +27,7 @@ export function PageFooter() {
 						className="inline-flex w-fit items-center gap-1 font-medium text-primary hover:underline"
 					>
 						beldoc.be
-						<ArrowUpRight className="h-3.5 w-3.5" />
+						<ArrowUpRightIcon className="h-3.5 w-3.5" />
 					</a>
 				</div>
 			</div>

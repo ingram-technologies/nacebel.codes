@@ -1,7 +1,7 @@
 "use client";
 
 import { type VariantProps } from "class-variance-authority";
-import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
+import { ChevronLeftIcon, ChevronRightIcon, MoreHorizontalIcon } from "lucide-react";
 import type * as React from "react";
 
 import { buttonVariants } from "@/components/ui/button";
@@ -76,7 +76,7 @@ function PaginationPrevious({
 			className={cn("gap-1.5 rounded-full px-3.5 sm:pl-3", className)}
 			{...props}
 		>
-			<ChevronLeft className="size-3.5" />
+			<ChevronLeftIcon className="size-3.5" />
 			<span className="hidden sm:block">{label}</span>
 		</PaginationLink>
 	);
@@ -95,7 +95,7 @@ function PaginationNext({
 			{...props}
 		>
 			<span className="hidden sm:block">{label}</span>
-			<ChevronRight className="size-3.5" />
+			<ChevronRightIcon className="size-3.5" />
 		</PaginationLink>
 	);
 }
@@ -111,7 +111,7 @@ function PaginationEllipsis({ className, ...props }: React.ComponentProps<"span"
 			)}
 			{...props}
 		>
-			<MoreHorizontal className="size-3.5" />
+			<MoreHorizontalIcon className="size-3.5" />
 			<span className="sr-only">More pages</span>
 		</span>
 	);

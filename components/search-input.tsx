@@ -3,7 +3,7 @@
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
-import { Search } from "lucide-react";
+import { SearchIcon } from "lucide-react";
 
 interface SearchInputProps {
 	searchTerm: string;
@@ -17,7 +17,7 @@ export const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
 	({ searchTerm, setSearchTerm, placeholder, className, autoFocus }, ref) => {
 		return (
 			<div className={cn("group relative w-full", className)}>
-				<Search
+				<SearchIcon
 					className="pointer-events-none absolute inset-y-0 left-4 my-auto h-5 w-5 text-muted-foreground transition-colors group-focus-within:text-primary"
 					aria-hidden
 				/>
